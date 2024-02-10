@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Crypto Price Alert</string>
+    <string name="watchlist">Watchlist</string>
+    <string name="cryptocurrency">Cryptocurrency</string>
+    <string name="popular">Popular</string>
+    <string name="profile">Profile</string>
 </resources>

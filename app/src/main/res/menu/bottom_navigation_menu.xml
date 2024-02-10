@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/navigation_watch_list"
+        android:icon="@drawable/watch_list"
+        android:title="@string/watchlist" />
+
+    <item
+        android:id="@+id/navigation_popular"
+        android:icon="@drawable/popular"
+        android:title="@string/popular" />
+
+    <item
+        android:id="@+id/navigation_cryptocurrency"
+        android:icon="@drawable/cryptocurrency"
+        android:title="@string/cryptocurrency" />
+
+    <item
+        android:id="@+id/navigation_profile"
+        android:icon="@drawable/profile"
+        android:title="@string/profile" />
+</menu>
