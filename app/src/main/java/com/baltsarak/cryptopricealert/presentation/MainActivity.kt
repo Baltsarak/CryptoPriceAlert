@@ -1,7 +1,8 @@
-package com.baltsarak.cryptopricealert
+package com.baltsarak.cryptopricealert.presentation
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.baltsarak.cryptopricealert.R
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
