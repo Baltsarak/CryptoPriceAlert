@@ -1,10 +1,10 @@
-package com.baltsarak.cryptopricealert.data.models
+package com.baltsarak.cryptopricealert.data.network.models
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
-data class CoinInfoListOfData (
+data class CoinListDto (
     @SerializedName("Data")
     @Expose
-    val data : List<Datum>? = null
+    val coins : List<CoinContainerDto>? = null
 )
