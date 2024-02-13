@@ -1,4 +1,4 @@
-package com.baltsarak.cryptopricealert.domain.pojo
+package com.baltsarak.cryptopricealert.data.models
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName

@@ -1,7 +1,7 @@
 package com.baltsarak.cryptopricealert.data.network
 
-import com.baltsarak.cryptopricealert.domain.pojo.CoinInfoListOfData
-import com.baltsarak.cryptopricealert.domain.pojo.CoinPriceInfoRawData
+import com.baltsarak.cryptopricealert.data.models.CoinInfoListOfData
+import com.baltsarak.cryptopricealert.data.models.CoinPriceInfoRawData
 import io.reactivex.rxjava3.core.Single
 import retrofit2.http.GET
 import retrofit2.http.Query
