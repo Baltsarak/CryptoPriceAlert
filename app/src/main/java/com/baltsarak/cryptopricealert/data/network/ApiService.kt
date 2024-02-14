@@ -1,25 +1,24 @@
 package com.baltsarak.cryptopricealert.data.network
 
-import com.baltsarak.cryptopricealert.data.network.models.CoinListDto
 import com.baltsarak.cryptopricealert.data.network.models.CoinInfoJsonContainerDto
-import io.reactivex.rxjava3.core.Single
+import com.baltsarak.cryptopricealert.data.network.models.CoinListDto
 import retrofit2.http.GET
 import retrofit2.http.Query
 
 interface ApiService {
     @GET("top/totalvolfull")
-    fun getTopCoinInfo(
+    suspend fun getTopCoinInfo(
         @Query(QUERY_PARAM_API_KEY) apiKey: String = "",
         @Query(QUERY_PARAM_LIMIT) limit: Int = 10,
         @Query(QUERY_PARAM_TO_SYMBOL) tSym: String = CURRENCY
-    ): Single<CoinListDto>
+    ): CoinListDto
 
     @GET("pricemultifull")
-    fun getFullPriceList(
+    suspend fun getFullPriceList(
         @Query(QUERY_PARAM_API_KEY) apiKey: String = "",
         @Query(QUERY_PARAM_FROM_SYMBOLS) fSyms: String,
         @Query(QUERY_PARAM_TO_SYMBOLS) tSyms: String = CURRENCY
-    ): Single<CoinInfoJsonContainerDto>
+    ): CoinInfoJsonContainerDto
 
     companion object {
         private const val QUERY_PARAM_API_KEY = "api_key"
