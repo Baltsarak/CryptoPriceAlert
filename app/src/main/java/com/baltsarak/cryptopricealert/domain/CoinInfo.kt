@@ -1,7 +1,7 @@
 package com.baltsarak.cryptopricealert.domain
 
 data class CoinInfo (
-    val fromSymbol: String?,
+    val fromSymbol: String,
     val toSymbol: String?,
     val lastMarket: String?,
     val price: Double?,
