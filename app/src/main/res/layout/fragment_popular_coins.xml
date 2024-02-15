@@ -7,7 +7,7 @@
     tools:context=".presentation.WatchListFragment">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_view_watch_list"
+        android:id="@+id/recycler_view_popular_coins"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"

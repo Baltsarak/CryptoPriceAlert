@@ -28,7 +28,7 @@ class CoinMapper {
         lastUpdate = dbModel.lastUpdate,
         highDay = dbModel.highDay,
         lowDay = dbModel.lowDay,
-        imageUrl = dbModel.imageUrl
+        imageUrl = BASE_IMAGE_URL + dbModel.imageUrl
     )
 
     fun mapJsonContainerToListCoinInfo(jsonContainer: CoinInfoJsonContainerDto): List<CoinInfoDto> {
@@ -53,6 +53,18 @@ class CoinMapper {
         return coinsListDto.coins?.map { it.coinName?.name }?.joinToString(",") ?: ""
     }
 
+//    private fun convertTimestampToTime(timestamp: Long?): String {
+//        if (timestamp == null) return ""
+//        val stamp = Timestamp(timestamp * 1000)
+//        val date = Date(stamp.time)
+//        val pattern = "HH:mm:ss"
+//        val sdf = SimpleDateFormat(pattern, Locale.getDefault())
+//        sdf.timeZone = TimeZone.getDefault()
+//        return sdf.format(date)
+//    }
 
+    companion object {
+        const val BASE_IMAGE_URL = "https://cryptocompare.com"
+    }
 }
 

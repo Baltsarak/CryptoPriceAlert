@@ -8,5 +8,5 @@ data class CoinInfo (
     val lastUpdate: Int?,
     val highDay: Double?,
     val lowDay: Double?,
-    val imageUrl: String?
+    val imageUrl: String
 )
