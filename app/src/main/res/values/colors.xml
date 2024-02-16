@@ -4,5 +4,6 @@
     <color name="white">#FFFFFFFF</color>
     <color name="bottom_navigation_icon_color">@color/item_menu_color_selector</color>
     <color name="bottom_navigation_text_color">@color/item_menu_color_selector</color>
+    <color name="colorPrimary">#1c2227</color>
 
 </resources>

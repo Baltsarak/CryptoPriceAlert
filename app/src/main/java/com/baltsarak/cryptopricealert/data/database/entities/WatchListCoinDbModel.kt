@@ -1,10 +1,10 @@
-package com.baltsarak.cryptopricealert.data.database
+package com.baltsarak.cryptopricealert.data.database.entities
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "full_price_list")
-data class CoinInfoDbModel(
+@Entity(tableName = "watch_list_coins")
+data class WatchListCoinDbModel(
     @PrimaryKey
     val fromSymbol: String,
     val toSymbol: String?,
@@ -14,4 +14,4 @@ data class CoinInfoDbModel(
     val highDay: Double?,
     val lowDay: Double?,
     val imageUrl: String?
-)
+): CoinDbModel()

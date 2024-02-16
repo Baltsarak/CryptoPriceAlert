@@ -14,22 +14,37 @@ class CoinRepositoryImpl(
     private val application: Application
 ) : CoinRepository {
 
-    private val coinInfoDao = AppDatabase.getInstance(application).coinInfoDao()
+    private val popularCoinInfoDao = AppDatabase.getInstance(application).popularCoinInfoDao()
+    private val watchListCoinInfoDao = AppDatabase.getInstance(application).watchListCoinInfoDao()
 
     private val apiService = ApiFactory.apiService
 
     private val mapper = CoinMapper()
 
-    override fun getCoinInfoList(): LiveData<List<CoinInfo>> {
-        return coinInfoDao.getPriceList().map {
+    override fun getWatchListCoins(): LiveData<List<CoinInfo>> {
+        return watchListCoinInfoDao.getWatchListCoins().map {
             it.map {
                 mapper.mapDbModelToEntity(it)
             }
         }
     }
 
-    override fun getCoinInfo(fromSymbol: String): LiveData<CoinInfo> {
-        return coinInfoDao.getPriceInfoAboutCoin(fromSymbol).map {
+    override fun getCoinInfoFromWatchList(fromSymbol: String): LiveData<CoinInfo> {
+        return watchListCoinInfoDao.getInfoAboutCoin(fromSymbol).map {
+            mapper.mapDbModelToEntity(it)
+        }
+    }
+
+    override fun getPopularCoinInfoList(): LiveData<List<CoinInfo>> {
+        return popularCoinInfoDao.getListPopularCoins().map {
+            it.map {
+                mapper.mapDbModelToEntity(it)
+            }
+        }
+    }
+
+    override fun getPopularCoinInfo(fromSymbol: String): LiveData<CoinInfo> {
+        return popularCoinInfoDao.getInfoAboutPopularCoin(fromSymbol).map {
             mapper.mapDbModelToEntity(it)
         }
     }
@@ -37,12 +52,12 @@ class CoinRepositoryImpl(
     override suspend fun loadData() {
         while (true) {
             try {
-                val topCoins = apiService.getTopCoinInfo(limit = 50)
-                val fSyms = mapper.mapNamesListToString(topCoins)
-                val jsonContainer = apiService.getFullPriceList(fSyms = fSyms)
+                val popularCoins = apiService.getPopularCoinsList(limit = 50)
+                val fSyms = mapper.mapNamesListToString(popularCoins)
+                val jsonContainer = apiService.getFullInfoAboutCoins(fSyms = fSyms)
                 val coinInfoDtoList = mapper.mapJsonContainerToListCoinInfo(jsonContainer)
                 val dbModelList = coinInfoDtoList.map { mapper.mapDtoToDbModel(it) }
-                coinInfoDao.insertPriceList(dbModelList)
+                popularCoinInfoDao.insertListPopularCoins(dbModelList)
             } catch (e: Exception) {
             }
             delay(10000)

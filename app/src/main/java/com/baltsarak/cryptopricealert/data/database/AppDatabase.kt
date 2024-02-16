@@ -4,8 +4,15 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.baltsarak.cryptopricealert.data.database.dao.PopularCoinInfoDao
+import com.baltsarak.cryptopricealert.data.database.dao.WatchListCoinInfoDao
+import com.baltsarak.cryptopricealert.data.database.entities.PopularCoinDbModel
+import com.baltsarak.cryptopricealert.data.database.entities.WatchListCoinDbModel
 
-@Database(entities = [CoinInfoDbModel::class], version = 1, exportSchema = false)
+@Database(entities = [
+    PopularCoinDbModel::class,
+    WatchListCoinDbModel::class
+                     ], version = 1, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
 
     companion object {
@@ -28,5 +35,6 @@ abstract class AppDatabase : RoomDatabase() {
         }
     }
 
-    abstract fun coinInfoDao(): CoinInfoDao
+    abstract fun popularCoinInfoDao(): PopularCoinInfoDao
+    abstract fun watchListCoinInfoDao(): WatchListCoinInfoDao
 }

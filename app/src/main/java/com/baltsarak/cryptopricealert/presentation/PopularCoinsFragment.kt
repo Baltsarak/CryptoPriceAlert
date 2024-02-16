@@ -1,6 +1,7 @@
 package com.baltsarak.cryptopricealert.presentation
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +14,7 @@ import com.baltsarak.cryptopricealert.presentation.adapter.CoinInfoAdapter
 class PopularCoinsFragment: Fragment() {
 
     private lateinit var viewModel: CoinViewModel
+    private lateinit var adapter: CoinInfoAdapter
 
     private var _binding: FragmentPopularCoinsBinding? = null
     private val binding: FragmentPopularCoinsBinding
@@ -23,20 +25,20 @@ class PopularCoinsFragment: Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        viewModel = ViewModelProvider(this)[CoinViewModel::class.java]
+        adapter  = CoinInfoAdapter()
         _binding = FragmentPopularCoinsBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val adapter  = CoinInfoAdapter()
         adapter.onCoinClickListener = object : CoinInfoAdapter.OnCoinClickListener {
             override fun onCoinClick(coinPriceInfo: CoinInfo) {
-                TODO()
+                Log.d("ON_CLICK_TEST", coinPriceInfo.fromSymbol)
             }
         }
         binding.recyclerViewPopularCoins.adapter = adapter
-        viewModel = ViewModelProvider(this)[CoinViewModel::class.java]
         viewModel.coinInfoList.observe(viewLifecycleOwner) {
             adapter.submitList(it)
         }

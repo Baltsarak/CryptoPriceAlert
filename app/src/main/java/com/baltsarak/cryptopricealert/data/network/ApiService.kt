@@ -7,14 +7,14 @@ import retrofit2.http.Query
 
 interface ApiService {
     @GET("top/totalvolfull")
-    suspend fun getTopCoinInfo(
+    suspend fun getPopularCoinsList(
         @Query(QUERY_PARAM_API_KEY) apiKey: String = "",
         @Query(QUERY_PARAM_LIMIT) limit: Int = 10,
         @Query(QUERY_PARAM_TO_SYMBOL) tSym: String = CURRENCY
     ): CoinListDto
 
     @GET("pricemultifull")
-    suspend fun getFullPriceList(
+    suspend fun getFullInfoAboutCoins(
         @Query(QUERY_PARAM_API_KEY) apiKey: String = "",
         @Query(QUERY_PARAM_FROM_SYMBOLS) fSyms: String,
         @Query(QUERY_PARAM_TO_SYMBOLS) tSyms: String = CURRENCY

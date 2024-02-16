@@ -1,6 +1,7 @@
 package com.baltsarak.cryptopricealert.data.mapper
 
-import com.baltsarak.cryptopricealert.data.database.CoinInfoDbModel
+import com.baltsarak.cryptopricealert.data.database.entities.PopularCoinDbModel
+import com.baltsarak.cryptopricealert.data.database.entities.WatchListCoinDbModel
 import com.baltsarak.cryptopricealert.data.network.models.CoinInfoDto
 import com.baltsarak.cryptopricealert.data.network.models.CoinInfoJsonContainerDto
 import com.baltsarak.cryptopricealert.data.network.models.CoinListDto
@@ -9,7 +10,7 @@ import com.google.gson.Gson
 
 class CoinMapper {
 
-    fun mapDtoToDbModel(dto: CoinInfoDto) = CoinInfoDbModel(
+    fun mapDtoToDbModel(dto: CoinInfoDto) = PopularCoinDbModel(
         fromSymbol = dto.fromsymbol,
         toSymbol = dto.tosymbol,
         price = dto.price,
@@ -20,7 +21,18 @@ class CoinMapper {
         imageUrl = dto.imageurl
     )
 
-    fun mapDbModelToEntity(dbModel: CoinInfoDbModel) = CoinInfo(
+    fun mapDbModelToEntity(dbModel: PopularCoinDbModel) = CoinInfo(
+        fromSymbol = dbModel.fromSymbol,
+        toSymbol = dbModel.toSymbol,
+        price = dbModel.price,
+        lastMarket = dbModel.lastMarket,
+        lastUpdate = dbModel.lastUpdate,
+        highDay = dbModel.highDay,
+        lowDay = dbModel.lowDay,
+        imageUrl = BASE_IMAGE_URL + dbModel.imageUrl
+    )
+
+    fun mapDbModelToEntity(dbModel: WatchListCoinDbModel) = CoinInfo(
         fromSymbol = dbModel.fromSymbol,
         toSymbol = dbModel.toSymbol,
         price = dbModel.price,
