@@ -10,7 +10,18 @@ import com.google.gson.Gson
 
 class CoinMapper {
 
-    fun mapDtoToDbModel(dto: CoinInfoDto) = PopularCoinDbModel(
+    fun mapDtoToPopularCoinDbModel(dto: CoinInfoDto) = PopularCoinDbModel(
+        fromSymbol = dto.fromsymbol,
+        toSymbol = dto.tosymbol,
+        price = dto.price,
+        lastMarket = dto.lastmarket,
+        lastUpdate = dto.lastupdate,
+        highDay = dto.highday,
+        lowDay = dto.lowday,
+        imageUrl = dto.imageurl
+    )
+
+    fun mapDtoToWatchListDbModel(dto: CoinInfoDto) = WatchListCoinDbModel(
         fromSymbol = dto.fromsymbol,
         toSymbol = dto.tosymbol,
         price = dto.price,

@@ -16,5 +16,12 @@ interface WatchListCoinInfoDao {
     fun getInfoAboutCoin(fSym: String): LiveData<WatchListCoinDbModel>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertCoinToWatchList(coin: WatchListCoinDbModel)
+    fun insertCoinToWatchList(fSym: String)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertWatchLisCoins(coinList: List<WatchListCoinDbModel>)
+
+    @Query("DELETE FROM watch_list_coins WHERE fromsymbol = :fSym")
+    fun deleteCoinFromWatchList(fSym: String)
+
 }

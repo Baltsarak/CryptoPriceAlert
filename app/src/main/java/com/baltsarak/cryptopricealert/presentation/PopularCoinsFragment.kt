@@ -39,7 +39,7 @@ class PopularCoinsFragment: Fragment() {
             }
         }
         binding.recyclerViewPopularCoins.adapter = adapter
-        viewModel.coinInfoList.observe(viewLifecycleOwner) {
+        viewModel.popularCoinList.observe(viewLifecycleOwner) {
             adapter.submitList(it)
         }
     }

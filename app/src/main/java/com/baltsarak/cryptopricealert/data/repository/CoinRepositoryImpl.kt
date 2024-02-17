@@ -21,6 +21,14 @@ class CoinRepositoryImpl(
 
     private val mapper = CoinMapper()
 
+    override fun addCoinToWatchList(fromSymbol: String) {
+        watchListCoinInfoDao.insertCoinToWatchList(fromSymbol)
+    }
+
+    override fun deleteCoinFromWatchList(fromSymbol: String) {
+        watchListCoinInfoDao.deleteCoinFromWatchList(fromSymbol)
+    }
+
     override fun getWatchListCoins(): LiveData<List<CoinInfo>> {
         return watchListCoinInfoDao.getWatchListCoins().map {
             it.map {
@@ -56,8 +64,14 @@ class CoinRepositoryImpl(
                 val fSyms = mapper.mapNamesListToString(popularCoins)
                 val jsonContainer = apiService.getFullInfoAboutCoins(fSyms = fSyms)
                 val coinInfoDtoList = mapper.mapJsonContainerToListCoinInfo(jsonContainer)
-                val dbModelList = coinInfoDtoList.map { mapper.mapDtoToDbModel(it) }
-                popularCoinInfoDao.insertListPopularCoins(dbModelList)
+                val popularDbModelList = coinInfoDtoList.map { mapper.mapDtoToPopularCoinDbModel(it) }
+                popularCoinInfoDao.insertListPopularCoins(popularDbModelList)
+
+                val watchList = getWatchListCoins().value?.joinToString(",") ?: ""
+                val watchListJsonContainer = apiService.getFullInfoAboutCoins(fSyms = watchList)
+                val watchListDtoList = mapper.mapJsonContainerToListCoinInfo(watchListJsonContainer)
+                val watchDbModelList = watchListDtoList.map { mapper.mapDtoToWatchListDbModel(it) }
+                watchListCoinInfoDao.insertWatchLisCoins(watchDbModelList)
             } catch (e: Exception) {
             }
             delay(10000)
