@@ -26,12 +26,15 @@ class CoinViewModel(application: Application): AndroidViewModel(application) {
     private val loadDataUseCase = LoadDataUseCase(repository)
 
     val popularCoinList = getPopularCoinInfoListUseCase()
+    val watchList = getWatchListCoinsUseCase()
 
     fun getPopularCoinDetailInfo(fSym:String) = getPopularCoinInfoUseCase(fSym)
 
-    fun addCoinToWatchList(fSym: String) = addCoinToWatchListUseCase(fSym)
-
-
+    fun addCoinToWatchList(fSym: String) {
+        viewModelScope.launch {
+            addCoinToWatchListUseCase(fSym)
+        }
+    }
 
     init {
         viewModelScope.launch {

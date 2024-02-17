@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.map
 import com.baltsarak.cryptopricealert.data.database.AppDatabase
+import com.baltsarak.cryptopricealert.data.database.entities.WatchListCoinDbModel
 import com.baltsarak.cryptopricealert.data.mapper.CoinMapper
 import com.baltsarak.cryptopricealert.data.network.ApiFactory
 import com.baltsarak.cryptopricealert.domain.CoinInfo
@@ -21,8 +22,8 @@ class CoinRepositoryImpl(
 
     private val mapper = CoinMapper()
 
-    override fun addCoinToWatchList(fromSymbol: String) {
-        watchListCoinInfoDao.insertCoinToWatchList(fromSymbol)
+    override suspend fun addCoinToWatchList(fromSymbol: String) {
+        watchListCoinInfoDao.insertCoinToWatchList(getCoinInfo(fromSymbol))
     }
 
     override fun deleteCoinFromWatchList(fromSymbol: String) {
@@ -67,7 +68,7 @@ class CoinRepositoryImpl(
                 val popularDbModelList = coinInfoDtoList.map { mapper.mapDtoToPopularCoinDbModel(it) }
                 popularCoinInfoDao.insertListPopularCoins(popularDbModelList)
 
-                val watchList = getWatchListCoins().value?.joinToString(",") ?: ""
+                val watchList = getWatchListCoins().value?.joinToString(",") ?: "BTC"
                 val watchListJsonContainer = apiService.getFullInfoAboutCoins(fSyms = watchList)
                 val watchListDtoList = mapper.mapJsonContainerToListCoinInfo(watchListJsonContainer)
                 val watchDbModelList = watchListDtoList.map { mapper.mapDtoToWatchListDbModel(it) }
@@ -76,5 +77,11 @@ class CoinRepositoryImpl(
             }
             delay(10000)
         }
+    }
+
+    private suspend fun getCoinInfo(fSym: String): WatchListCoinDbModel {
+        val json = apiService.getFullInfoAboutCoins(fSyms = fSym)
+        val coin = mapper.mapJsonContainerToListCoinInfo(json)[0]
+        return mapper.mapDtoToWatchListDbModel(coin)
     }
 }

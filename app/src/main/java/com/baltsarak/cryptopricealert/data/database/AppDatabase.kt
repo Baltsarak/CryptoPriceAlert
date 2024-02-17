@@ -12,7 +12,7 @@ import com.baltsarak.cryptopricealert.data.database.entities.WatchListCoinDbMode
 @Database(entities = [
     PopularCoinDbModel::class,
     WatchListCoinDbModel::class
-                     ], version = 1, exportSchema = false)
+                     ], version = 2, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
 
     companion object {
@@ -28,7 +28,9 @@ abstract class AppDatabase : RoomDatabase() {
                         context,
                         AppDatabase::class.java,
                         DB_NAME
-                    ).build()
+                    )
+                        .fallbackToDestructiveMigration()
+                        .build()
                 db = instance
                 return instance
             }

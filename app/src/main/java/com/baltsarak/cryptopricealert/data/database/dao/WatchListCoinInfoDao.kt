@@ -16,7 +16,7 @@ interface WatchListCoinInfoDao {
     fun getInfoAboutCoin(fSym: String): LiveData<WatchListCoinDbModel>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertCoinToWatchList(fSym: String)
+    fun insertCoinToWatchList(coin: WatchListCoinDbModel)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertWatchLisCoins(coinList: List<WatchListCoinDbModel>)

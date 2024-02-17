@@ -8,7 +8,7 @@ interface CoinRepository {
 
     fun getCoinInfoFromWatchList(fromSymbol: String): LiveData<CoinInfo>
 
-    fun addCoinToWatchList(fromSymbol: String)
+    suspend fun addCoinToWatchList(fromSymbol: String)
 
     fun deleteCoinFromWatchList(fromSymbol: String)
 

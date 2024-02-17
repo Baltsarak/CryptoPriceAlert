@@ -18,7 +18,13 @@ class MainActivity : AppCompatActivity() {
         binding.bottomNavigation.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.navigation_watch_list  -> {
-                    TODO()
+                    if (savedInstanceState == null) {
+                        supportFragmentManager
+                            .beginTransaction()
+                            .replace(R.id.main_screen_fragment_container, WatchListFragment())
+                            .commit()
+                    }
+                    true
                 }
                 R.id.navigation_popular -> {
                     if (savedInstanceState == null) {

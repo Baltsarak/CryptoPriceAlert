@@ -1,19 +1,51 @@
 package com.baltsarak.cryptopricealert.presentation
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.baltsarak.cryptopricealert.R
+import androidx.lifecycle.ViewModelProvider
+import com.baltsarak.cryptopricealert.databinding.FragmentWatchlistBinding
+import com.baltsarak.cryptopricealert.domain.CoinInfo
+import com.baltsarak.cryptopricealert.presentation.adapter.CoinInfoAdapter
 
-class WatchListFragment: Fragment() {
+class WatchListFragment : Fragment() {
+
+    private lateinit var viewModel: CoinViewModel
+    private lateinit var adapter: CoinInfoAdapter
+
+    private var _binding: FragmentWatchlistBinding? = null
+    private val binding: FragmentWatchlistBinding
+        get() = _binding ?: throw RuntimeException("FragmentWatchlistBinding is null")
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_watchlist, container, false)
+    ): View {
+        viewModel = ViewModelProvider(this)[CoinViewModel::class.java]
+        adapter = CoinInfoAdapter()
+        _binding = FragmentWatchlistBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        adapter.onCoinClickListener = object : CoinInfoAdapter.OnCoinClickListener {
+            override fun onCoinClick(coinPriceInfo: CoinInfo) {
+                Log.d("ON_CLICK_TEST", coinPriceInfo.fromSymbol)
+            }
+        }
+        binding.recyclerViewWatchList.adapter = adapter
+        viewModel.watchList.observe(viewLifecycleOwner) {
+            adapter.submitList(it)
+        }
+    }
+
+    override fun onDestroy() {
+        _binding = null
+        super.onDestroy()
     }
 }
