@@ -17,4 +17,7 @@ interface PopularCoinInfoDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertListPopularCoins(priceList: List<PopularCoinDbModel>)
+
+    @Query("DELETE FROM popular_coins")
+    suspend fun deleteAllFromPopularCoins()
 }

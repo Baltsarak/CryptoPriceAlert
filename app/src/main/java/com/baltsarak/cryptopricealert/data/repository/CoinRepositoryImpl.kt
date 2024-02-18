@@ -1,6 +1,7 @@
 package com.baltsarak.cryptopricealert.data.repository
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.map
 import com.baltsarak.cryptopricealert.data.database.AppDatabase
@@ -59,6 +60,7 @@ class CoinRepositoryImpl(
     }
 
     override suspend fun loadData() {
+        popularCoinInfoDao.deleteAllFromPopularCoins()
         while (true) {
             try {
                 val popularCoins = apiService.getPopularCoinsList(limit = 50)
@@ -74,6 +76,7 @@ class CoinRepositoryImpl(
                 val watchDbModelList = watchListDtoList.map { mapper.mapDtoToWatchListDbModel(it) }
                 watchListCoinInfoDao.insertWatchLisCoins(watchDbModelList)
             } catch (e: Exception) {
+                Log.d("loadData", "ERROR LOAD DATA " + e.message)
             }
             delay(10000)
         }
