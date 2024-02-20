@@ -7,9 +7,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.baltsarak.cryptopricealert.databinding.FragmentWatchlistBinding
 import com.baltsarak.cryptopricealert.domain.CoinInfo
 import com.baltsarak.cryptopricealert.presentation.adapter.CoinInfoAdapter
+import kotlinx.coroutines.launch
 
 class WatchListFragment : Fragment() {
 
@@ -39,8 +41,10 @@ class WatchListFragment : Fragment() {
             }
         }
         binding.recyclerViewWatchList.adapter = adapter
-        viewModel.watchList.observe(viewLifecycleOwner) {
-            adapter.submitList(it)
+        lifecycleScope.launch {
+            viewModel.watchList().observe(viewLifecycleOwner) {
+                adapter.submitList(it)
+            }
         }
     }
 

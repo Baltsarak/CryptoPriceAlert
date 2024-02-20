@@ -10,13 +10,15 @@ import com.baltsarak.cryptopricealert.data.mapper.CoinMapper
 import com.baltsarak.cryptopricealert.data.network.ApiFactory
 import com.baltsarak.cryptopricealert.domain.CoinInfo
 import com.baltsarak.cryptopricealert.domain.CoinRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
 
 class CoinRepositoryImpl(
     private val application: Application
 ) : CoinRepository {
 
-    private val popularCoinInfoDao = AppDatabase.getInstance(application).popularCoinInfoDao()
+    private val coinInfoDao = AppDatabase.getInstance(application).coinInfoDao()
     private val watchListCoinInfoDao = AppDatabase.getInstance(application).watchListCoinInfoDao()
 
     private val apiService = ApiFactory.apiService
@@ -24,57 +26,40 @@ class CoinRepositoryImpl(
     private val mapper = CoinMapper()
 
     override suspend fun addCoinToWatchList(fromSymbol: String) {
-        watchListCoinInfoDao.insertCoinToWatchList(getCoinInfo(fromSymbol))
+        watchListCoinInfoDao.insertCoinToWatchList(WatchListCoinDbModel(fromSymbol))
     }
 
     override fun deleteCoinFromWatchList(fromSymbol: String) {
         watchListCoinInfoDao.deleteCoinFromWatchList(fromSymbol)
     }
 
-    override fun getWatchListCoins(): LiveData<List<CoinInfo>> {
-        return watchListCoinInfoDao.getWatchListCoins().map {
+    override suspend fun getWatchListCoins(): LiveData<List<CoinInfo>> {
+        return coinInfoDao.getListCoinsInfo(getWatchList()).map {
             it.map {
                 mapper.mapDbModelToEntity(it)
             }
         }
     }
 
-    override fun getCoinInfoFromWatchList(fromSymbol: String): LiveData<CoinInfo> {
-        return watchListCoinInfoDao.getInfoAboutCoin(fromSymbol).map {
-            mapper.mapDbModelToEntity(it)
-        }
-    }
-
-    override fun getPopularCoinInfoList(): LiveData<List<CoinInfo>> {
-        return popularCoinInfoDao.getListPopularCoins().map {
+    override suspend fun getPopularCoinsList(): LiveData<List<CoinInfo>> {
+        return coinInfoDao.getListCoinsInfo(getPopularCoinsListFromApi()).map {
             it.map {
                 mapper.mapDbModelToEntity(it)
             }
         }
     }
 
-    override fun getPopularCoinInfo(fromSymbol: String): LiveData<CoinInfo> {
-        return popularCoinInfoDao.getInfoAboutPopularCoin(fromSymbol).map {
+    override fun getCoinInfo(fromSymbol: String): LiveData<CoinInfo> {
+        return coinInfoDao.getInfoAboutCoin(fromSymbol).map {
             mapper.mapDbModelToEntity(it)
         }
     }
 
     override suspend fun loadData() {
-        popularCoinInfoDao.deleteAllFromPopularCoins()
         while (true) {
             try {
-                val popularCoins = apiService.getPopularCoinsList(limit = 50)
-                val fSyms = mapper.mapNamesListToString(popularCoins)
-                val jsonContainer = apiService.getFullInfoAboutCoins(fSyms = fSyms)
-                val coinInfoDtoList = mapper.mapJsonContainerToListCoinInfo(jsonContainer)
-                val popularDbModelList = coinInfoDtoList.map { mapper.mapDtoToPopularCoinDbModel(it) }
-                popularCoinInfoDao.insertListPopularCoins(popularDbModelList)
-
-                val watchList = getWatchListCoins().value?.joinToString(",") ?: "BTC"
-                val watchListJsonContainer = apiService.getFullInfoAboutCoins(fSyms = watchList)
-                val watchListDtoList = mapper.mapJsonContainerToListCoinInfo(watchListJsonContainer)
-                val watchDbModelList = watchListDtoList.map { mapper.mapDtoToWatchListDbModel(it) }
-                watchListCoinInfoDao.insertWatchLisCoins(watchDbModelList)
+                loadPopularCoins()
+                loadWatchListCoins()
             } catch (e: Exception) {
                 Log.d("loadData", "ERROR LOAD DATA " + e.message)
             }
@@ -82,9 +67,33 @@ class CoinRepositoryImpl(
         }
     }
 
-    private suspend fun getCoinInfo(fSym: String): WatchListCoinDbModel {
-        val json = apiService.getFullInfoAboutCoins(fSyms = fSym)
-        val coin = mapper.mapJsonContainerToListCoinInfo(json)[0]
-        return mapper.mapDtoToWatchListDbModel(coin)
+    private suspend fun loadPopularCoins() {
+        val popularCoins = apiService.getPopularCoinsList(limit = 50)
+        val fSym = mapper.mapPopularCoinsListToString(popularCoins)
+        val jsonContainer = apiService.getFullInfoAboutCoins(fSyms = fSym)
+        val coinInfoDtoList = mapper.mapJsonContainerToListCoinInfo(jsonContainer)
+        val popularDbModelList = coinInfoDtoList.map { mapper.mapDtoToDbModel(it) }
+        coinInfoDao.insertListCoinsInfo(popularDbModelList)
+    }
+
+    private suspend fun loadWatchListCoins() {
+        val watchList = withContext(Dispatchers.Default) {
+            watchListCoinInfoDao.getWatchListCoins().joinToString(",")
+        }
+        val watchListJsonContainer = apiService.getFullInfoAboutCoins(fSyms = watchList)
+        val watchListDto = mapper.mapJsonContainerToListCoinInfo(watchListJsonContainer)
+        val watchDbModelList = watchListDto.map { mapper.mapDtoToDbModel(it) }
+        coinInfoDao.insertListCoinsInfo(watchDbModelList)
+    }
+
+    private suspend fun getPopularCoinsListFromApi(): List<String?> {
+        return (apiService.getPopularCoinsList(limit = 50))
+            .coins?.map { it.coinName?.name } ?: listOf("BTC")
+    }
+
+    private suspend fun getWatchList(): List<String> {
+        return withContext(Dispatchers.Default) {
+            watchListCoinInfoDao.getWatchListCoins()
+        }
     }
 }

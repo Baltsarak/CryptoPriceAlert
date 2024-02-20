@@ -7,11 +7,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.baltsarak.cryptopricealert.databinding.FragmentPopularCoinsBinding
 import com.baltsarak.cryptopricealert.domain.CoinInfo
 import com.baltsarak.cryptopricealert.presentation.adapter.CoinInfoAdapter
+import kotlinx.coroutines.launch
 
-class PopularCoinsFragment: Fragment() {
+class PopularCoinsFragment : Fragment() {
 
     private lateinit var viewModel: CoinViewModel
     private lateinit var adapter: CoinInfoAdapter
@@ -26,7 +28,7 @@ class PopularCoinsFragment: Fragment() {
         savedInstanceState: Bundle?
     ): View {
         viewModel = ViewModelProvider(this)[CoinViewModel::class.java]
-        adapter  = CoinInfoAdapter()
+        adapter = CoinInfoAdapter()
         _binding = FragmentPopularCoinsBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -39,8 +41,10 @@ class PopularCoinsFragment: Fragment() {
             }
         }
         binding.recyclerViewPopularCoins.adapter = adapter
-        viewModel.popularCoinList.observe(viewLifecycleOwner) {
-            adapter.submitList(it)
+        lifecycleScope.launch {
+            viewModel.popularCoinList().observe(viewLifecycleOwner) {
+                adapter.submitList(it)
+            }
         }
     }
 

@@ -1,4 +1,6 @@
-package com.baltsarak.cryptopricealert.domain
+package com.baltsarak.cryptopricealert.domain.usecases
+
+import com.baltsarak.cryptopricealert.domain.CoinRepository
 
 class AddCoinToWatchListUseCase(private val repository: CoinRepository) {
 
