@@ -61,6 +61,7 @@ dependencies {
     kapt ("androidx.room:room-compiler:2.6.1")
 
     implementation ("com.squareup.picasso:picasso:2.71828")
+    implementation ("com.github.PhilJay:MPAndroidChart:v3.1.0")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

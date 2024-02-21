@@ -6,7 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.baltsarak.cryptopricealert.databinding.FragmentCoinDetailInfoBinding
+import kotlinx.coroutines.launch
 
 class CoinDetailInfoFragment : Fragment() {
 
@@ -28,6 +30,13 @@ class CoinDetailInfoFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val fromSymbol = getFromSymbol()
+        lifecycleScope.launch {
+            viewModel.getCoinDetailInfo(fromSymbol).observe(viewLifecycleOwner) {
+                with(binding) {
+
+                }
+            }
+        }
     }
 
     private fun getFromSymbol(): String {
@@ -42,10 +51,9 @@ class CoinDetailInfoFragment : Fragment() {
     companion object {
 
         private const val EXTRA_FROM_SYMBOL = "fSym"
-        private const val EXTRA_LOAD_MODE = "loadMode"
         private const val EMPTY_SYMBOL = ""
 
-        fun newInstance(fSym: String, loadMode: Int) =
+        fun newInstance(fSym: String) =
             CoinDetailInfoFragment().apply {
                 arguments = Bundle().apply {
                     putString(EXTRA_FROM_SYMBOL, fSym)
