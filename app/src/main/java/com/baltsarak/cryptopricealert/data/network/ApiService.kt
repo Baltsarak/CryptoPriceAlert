@@ -2,6 +2,7 @@ package com.baltsarak.cryptopricealert.data.network
 
 import com.baltsarak.cryptopricealert.data.network.models.CoinInfoJsonContainerDto
 import com.baltsarak.cryptopricealert.data.network.models.CoinListDto
+import com.baltsarak.cryptopricealert.data.network.models.DayPriceContainerDto
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -27,7 +28,7 @@ interface ApiService {
         @Query(QUERY_PARAM_TO_SYMBOL) tSym: String = CURRENCY,
         @Query(QUERY_PARAM_LIMIT) limit: Int = 10,
         @Query(QUERY_PARAM_TO_DATE) toTs: Long = YEAR_AGO
-    )
+    ): DayPriceContainerDto
 
     companion object {
         private const val QUERY_PARAM_API_KEY = "api_key"

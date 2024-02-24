@@ -20,6 +20,7 @@ class CoinRepositoryImpl(
 
     private val coinInfoDao = AppDatabase.getInstance(application).coinInfoDao()
     private val watchListCoinInfoDao = AppDatabase.getInstance(application).watchListCoinInfoDao()
+    private val coinPriceHistoryDao = AppDatabase.getInstance(application).coinPriceHistoryDao()
 
     private val apiService = ApiFactory.apiService
 
@@ -53,6 +54,15 @@ class CoinRepositoryImpl(
         return coinInfoDao.getInfoAboutCoin(fromSymbol).map {
             mapper.mapDbModelToEntity(it)
         }
+    }
+
+    override suspend fun loadCoinPriceHistory(fromSymbol: String) {
+        val dayPriceList = apiService.getCoinPriceHistory(
+            fSym = fromSymbol
+        ).data?.data
+        val dayPriceDbModelList = dayPriceList
+            ?.map { mapper.mapDayPriceDtoToDbModel(fromSymbol, it) } ?: listOf()
+        coinPriceHistoryDao.insertCoinsPriceHistoryList(dayPriceDbModelList)
     }
 
     override suspend fun loadData() {

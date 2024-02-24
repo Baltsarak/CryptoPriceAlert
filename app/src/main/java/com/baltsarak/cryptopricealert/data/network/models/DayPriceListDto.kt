@@ -4,10 +4,6 @@ import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
 data class DayPriceListDto(
-    @SerializedName("Aggregated")
-    @Expose
-    var aggregated: Boolean?,
-
     @SerializedName("TimeFrom")
     @Expose
     var timeFrom: Int?,

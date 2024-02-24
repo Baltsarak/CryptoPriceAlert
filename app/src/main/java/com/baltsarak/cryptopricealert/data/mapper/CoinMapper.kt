@@ -1,9 +1,11 @@
 package com.baltsarak.cryptopricealert.data.mapper
 
 import com.baltsarak.cryptopricealert.data.database.entities.CoinInfoDbModel
+import com.baltsarak.cryptopricealert.data.database.entities.DayPriceDbModel
 import com.baltsarak.cryptopricealert.data.network.models.CoinInfoDto
 import com.baltsarak.cryptopricealert.data.network.models.CoinInfoJsonContainerDto
 import com.baltsarak.cryptopricealert.data.network.models.CoinListDto
+import com.baltsarak.cryptopricealert.data.network.models.DayPriceDto
 import com.baltsarak.cryptopricealert.domain.CoinInfo
 import com.google.gson.Gson
 
@@ -48,6 +50,15 @@ class CoinMapper {
         }
         return result
     }
+
+    fun mapDayPriceDtoToDbModel(fSym: String, dto: DayPriceDto) = DayPriceDbModel(
+        fromSymbol = fSym,
+        time = dto.time,
+        high = dto.high,
+        low = dto.low,
+        open = dto.open,
+        close = dto.close
+    )
 
     fun mapPopularCoinsListToString(coinListDto: CoinListDto): String {
         return coinListDto.coins?.map { it.coinName?.name }?.joinToString(",") ?: "BTC"
