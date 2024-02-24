@@ -15,5 +15,7 @@ interface CoinRepository {
 
     suspend fun loadCoinPriceHistory(fromSymbol: String)
 
+    fun getCoinPriceHistory(fromSymbol: String): LiveData<List<Double>>
+
     suspend fun loadData()
 }

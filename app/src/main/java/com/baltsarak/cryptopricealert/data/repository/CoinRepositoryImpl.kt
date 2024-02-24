@@ -57,12 +57,25 @@ class CoinRepositoryImpl(
     }
 
     override suspend fun loadCoinPriceHistory(fromSymbol: String) {
-        val dayPriceList = apiService.getCoinPriceHistory(
-            fSym = fromSymbol
-        ).data?.data
-        val dayPriceDbModelList = dayPriceList
-            ?.map { mapper.mapDayPriceDtoToDbModel(fromSymbol, it) } ?: listOf()
-        coinPriceHistoryDao.insertCoinsPriceHistoryList(dayPriceDbModelList)
+        try {
+            val dayPriceList = apiService.getCoinPriceHistory(
+                fSym = fromSymbol
+            ).data?.data
+            val dayPriceDbModelList = dayPriceList
+                ?.map { mapper.mapDayPriceDtoToDbModel(fromSymbol, it) } ?: listOf()
+            coinPriceHistoryDao.insertCoinsPriceHistoryList(dayPriceDbModelList)
+        } catch (e: Exception) {
+            Log.d("loadData", "ERROR LOAD DATA PRICE HISTORY " + e.message)
+        }
+    }
+
+    override fun getCoinPriceHistory(fromSymbol: String): LiveData<List<Double>> {
+        val dbModelList = coinPriceHistoryDao
+            .getCoinsPriceHistoryList(fromSymbol)
+        val priceList = dbModelList.map {
+            it.map { it.close }
+        }
+        return priceList
     }
 
     override suspend fun loadData() {

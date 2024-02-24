@@ -11,5 +11,5 @@ data class DayPriceDbModel(
     var high: Double?,
     var low: Double?,
     var open: Double?,
-    var close: Double?
+    var close: Double
 )
