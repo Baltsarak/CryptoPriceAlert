@@ -9,7 +9,7 @@ import com.baltsarak.cryptopricealert.data.database.entities.DayPriceDbModel
 
 @Dao
 interface CoinPriceHistoryDao {
-    @Query("SELECT * FROM coin_price_history WHERE fromSymbol = :fSym")
+    @Query("SELECT * FROM coin_price_history WHERE fromSymbol LIKE :fSym")
     fun getCoinsPriceHistoryList(fSym: String): LiveData<List<DayPriceDbModel>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

@@ -28,13 +28,25 @@ class CoinViewModel(application: Application) : AndroidViewModel(application) {
     private val getWatchListCoinsUseCase = GetWatchListCoinsUseCase(repository)
     private val loadDataUseCase = LoadDataUseCase(repository)
 
-    suspend fun popularCoinList() = viewModelScope.async { getPopularCoinListUseCase() }.await()
-    suspend fun watchList() = viewModelScope.async { getWatchListCoinsUseCase() }.await()
-    suspend fun getCoinDetailInfo(fSym: String) = viewModelScope.async { getCoinInfoUseCase(fSym) }.await()
+    suspend fun popularCoinList() =
+        viewModelScope.async { getPopularCoinListUseCase() }.await()
+    suspend fun watchList() =
+        viewModelScope.async { getWatchListCoinsUseCase() }.await()
+    suspend fun getCoinDetailInfo(fSym: String) =
+        viewModelScope.async { getCoinInfoUseCase(fSym) }.await()
+
+    suspend fun getCoinPriceHistory(fSym: String) =
+        viewModelScope.async { getCoinPriceHistoryInfoUseCase(fSym) }.await()
 
     fun addCoinToWatchList(fSym: String) {
         viewModelScope.launch {
             addCoinToWatchListUseCase(fSym)
+        }
+    }
+
+    fun loadCoinPriceHistoryInfo(fSym: String) {
+        viewModelScope.launch {
+            loadCoinPriceHistoryInfoUseCase(fSym)
         }
     }
 

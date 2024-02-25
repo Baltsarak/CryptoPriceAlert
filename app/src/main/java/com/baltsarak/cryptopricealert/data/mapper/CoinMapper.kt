@@ -33,7 +33,7 @@ class CoinMapper {
         imageUrl = BASE_IMAGE_URL + dbModel.imageUrl
     )
 
-    fun mapJsonContainerToListCoinInfo(jsonContainer: CoinInfoJsonContainerDto): List<CoinInfoDto> {
+    fun  mapJsonContainerToListCoinInfo(jsonContainer: CoinInfoJsonContainerDto): List<CoinInfoDto> {
         val result = mutableListOf<CoinInfoDto>()
         val jsonObject = jsonContainer.json ?: return result
         val coinKeySet = jsonObject.keySet()
@@ -51,14 +51,19 @@ class CoinMapper {
         return result
     }
 
-    fun mapDayPriceDtoToDbModel(fSym: String, dto: DayPriceDto) = DayPriceDbModel(
-        fromSymbol = fSym,
-        time = dto.time,
-        high = dto.high,
-        low = dto.low,
-        open = dto.open,
-        close = dto.close
-    )
+    fun mapDayPriceDtoToDbModel(fSym: String, dto: DayPriceDto): DayPriceDbModel {
+        return DayPriceDbModel(
+            id = 0,
+            fromSymbol = fSym,
+            time = dto.time
+                ?: throw RuntimeException("DATA LOADING ERROR: price history not received"),
+            high = dto.high,
+            low = dto.low,
+            open = dto.open,
+            close = dto.close
+                ?: throw RuntimeException("DATA LOADING ERROR: price history not received")
+        )
+    }
 
     fun mapPopularCoinsListToString(coinListDto: CoinListDto): String {
         return coinListDto.coins?.map { it.coinName?.name }?.joinToString(",") ?: "BTC"

@@ -24,9 +24,8 @@ interface ApiService {
     @GET("v2/histoday")
     suspend fun getCoinPriceHistory(
         @Query(QUERY_PARAM_API_KEY) apiKey: String = "",
-        @Query(QUERY_PARAM_FROM_SYMBOLS) fSym: String,
+        @Query(QUERY_PARAM_FROM_SYMBOL) fSym: String,
         @Query(QUERY_PARAM_TO_SYMBOL) tSym: String = CURRENCY,
-        @Query(QUERY_PARAM_LIMIT) limit: Int = 10,
         @Query(QUERY_PARAM_TO_DATE) toTs: Long = YEAR_AGO
     ): DayPriceContainerDto
 
@@ -34,6 +33,7 @@ interface ApiService {
         private const val QUERY_PARAM_API_KEY = "api_key"
         private const val QUERY_PARAM_TO_SYMBOL = "tsym"
         private const val QUERY_PARAM_TO_SYMBOLS = "tsyms"
+        private const val QUERY_PARAM_FROM_SYMBOL = "fsym"
         private const val QUERY_PARAM_FROM_SYMBOLS = "fsyms"
         private const val QUERY_PARAM_LIMIT = "limit"
         private const val QUERY_PARAM_TO_DATE = "toTs"

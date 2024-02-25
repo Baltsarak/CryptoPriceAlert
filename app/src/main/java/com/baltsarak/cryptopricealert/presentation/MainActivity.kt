@@ -36,7 +36,13 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.navigation_cryptocurrency -> {
-                    TODO()
+                    if (savedInstanceState == null) {
+                        supportFragmentManager
+                            .beginTransaction()
+                            .replace(R.id.main_screen_fragment_container, CoinDetailInfoFragment.newInstance("BTC"))
+                            .commit()
+                    }
+                    true
                 }
                 R.id.navigation_profile  -> {
                     TODO()

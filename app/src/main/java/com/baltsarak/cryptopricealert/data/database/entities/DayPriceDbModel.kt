@@ -5,11 +5,11 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "coin_price_history")
 data class DayPriceDbModel(
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true) val id: Int,
     val fromSymbol: String,
-    var time: Int?,
-    var high: Double?,
-    var low: Double?,
-    var open: Double?,
-    var close: Double
+    val time: Int,
+    val high: Double?,
+    val low: Double?,
+    val open: Double?,
+    val close: Double
 )
