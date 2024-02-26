@@ -45,15 +45,16 @@ class CoinDetailInfoFragment : Fragment() {
                     val entries = ArrayList<Entry>()
 
                     lifecycleScope.launch {
-                        viewModel.getCoinPriceHistory(fromSymbol).observe(viewLifecycleOwner) {
-                            for (data in it) {
-                                entries.add(Entry(data.key.toFloat(), data.value.toFloat()))
-                            }
+                        val coinMap = viewModel.getCoinPriceHistory(fromSymbol)
+                        Log.d("onViewCreated", coinMap.toString())
+
+                        for (data in coinMap) {
+                            entries.add(Entry(data.key.toFloat(), data.value.toFloat()))
                         }
+                        val priceHistoryDataSet = LineDataSet(entries, "priceHistory")
+                        coinPriceChart.data = LineData(priceHistoryDataSet)
+                        coinPriceChart.invalidate()
                     }
-                    Log.d("onViewCreated", entries.toString())
-                    val priceHistoryDataSet = LineDataSet(entries, "priceHistory")
-                    coinPriceChart.data = LineData(priceHistoryDataSet)
                 }
             }
         }

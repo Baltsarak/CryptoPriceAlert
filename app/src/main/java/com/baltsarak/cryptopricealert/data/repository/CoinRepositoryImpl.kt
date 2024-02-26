@@ -70,14 +70,10 @@ class CoinRepositoryImpl(
         }
     }
 
-    override fun getCoinPriceHistory(fromSymbol: String): LiveData<Map<Int, Double>> {
+    override suspend fun getCoinPriceHistory(fromSymbol: String): Map<Int, Double> {
         val dbModelList = coinPriceHistoryDao
             .getCoinsPriceHistoryList(fromSymbol)
-        Log.d("onViewCreated", "load $fromSymbol ${dbModelList.value}")
-        val priceList = dbModelList.map {       //???
-            it.associate { it.time to it.close }
-        }
-        return priceList
+        return dbModelList.associate { it.time to it.close }
     }
 
     override suspend fun loadData() {
