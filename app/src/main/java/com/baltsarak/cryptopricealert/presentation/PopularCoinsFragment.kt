@@ -36,7 +36,7 @@ class PopularCoinsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         adapter.onCoinClickListener = object : CoinInfoAdapter.OnCoinClickListener {
             override fun onCoinClick(coinPriceInfo: CoinInfo) {
-                (activity as MainActivity).goToCoinDetailInfo(coinPriceInfo.fromSymbol)
+                (activity as? MainActivity)?.goToCoinDetailInfo(coinPriceInfo.fromSymbol)
             }
         }
         binding.recyclerViewPopularCoins.adapter = adapter

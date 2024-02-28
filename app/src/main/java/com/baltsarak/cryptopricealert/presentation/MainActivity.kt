@@ -19,37 +19,48 @@ class MainActivity : AppCompatActivity() {
 
         binding.bottomNavigation.setOnItemSelectedListener { item ->
             when (item.itemId) {
-                R.id.navigation_watch_list  -> {
-                    if (savedInstanceState == null) {
-                        supportFragmentManager
-                            .beginTransaction()
-                            .replace(R.id.main_screen_fragment_container, WatchListFragment())
-                            .commit()
-                    }
+                R.id.navigation_watch_list -> {
+                    supportFragmentManager.popBackStack()
+                    supportFragmentManager
+                        .beginTransaction()
+                        .replace(
+                            R.id.main_screen_fragment_container,
+                            WatchListFragment(),
+                            "WatchList"
+                        )
+                        .commit()
                     true
                 }
+
                 R.id.navigation_popular -> {
-                    if (savedInstanceState == null) {
-                        supportFragmentManager
-                            .beginTransaction()
-                            .replace(R.id.main_screen_fragment_container, PopularCoinsFragment())
-                            .commit()
-                    }
+                    supportFragmentManager
+                        .beginTransaction()
+                        .replace(
+                            R.id.main_screen_fragment_container,
+                            PopularCoinsFragment(),
+                            "PopularCoins"
+                        )
+                        .commit()
                     true
                 }
+
                 R.id.navigation_cryptocurrency -> {
-                    if (savedInstanceState == null) {
-                        supportFragmentManager
-                            .beginTransaction()
-                            .replace(R.id.main_screen_fragment_container, CoinDetailInfoFragment.newInstance(targetCoin))
-                            .addToBackStack(null)
-                            .commit()
-                    }
+                    supportFragmentManager
+                        .beginTransaction()
+                        .replace(
+                            R.id.main_screen_fragment_container,
+                            CoinDetailInfoFragment.newInstance(targetCoin),
+                            "DetailInfo"
+                        )
+                        .addToBackStack(null)
+                        .commit()
                     true
                 }
-                R.id.navigation_profile  -> {
+
+                R.id.navigation_profile -> {
                     TODO()
                 }
+
                 else -> false
             }
         }
@@ -58,5 +69,16 @@ class MainActivity : AppCompatActivity() {
     fun goToCoinDetailInfo(fromSymbol: String) {
         targetCoin = fromSymbol
         binding.bottomNavigation.selectedItemId = R.id.navigation_cryptocurrency
+    }
+
+    fun returnByBackStack() {
+        val previousFragment = supportFragmentManager.findFragmentByTag(
+            "PopularCoins"
+        )
+        if (previousFragment != null) {
+            binding.bottomNavigation.selectedItemId = R.id.navigation_popular
+        } else {
+            binding.bottomNavigation.selectedItemId = R.id.navigation_watch_list
+        }
     }
 }
