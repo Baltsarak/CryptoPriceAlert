@@ -11,6 +11,8 @@ class MainActivity : AppCompatActivity() {
         ActivityMainBinding.inflate(layoutInflater)
     }
 
+    private var targetCoin = "BTC"
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
@@ -39,7 +41,8 @@ class MainActivity : AppCompatActivity() {
                     if (savedInstanceState == null) {
                         supportFragmentManager
                             .beginTransaction()
-                            .replace(R.id.main_screen_fragment_container, CoinDetailInfoFragment.newInstance("BTC"))
+                            .replace(R.id.main_screen_fragment_container, CoinDetailInfoFragment.newInstance(targetCoin))
+                            .addToBackStack(null)
                             .commit()
                     }
                     true
@@ -50,5 +53,10 @@ class MainActivity : AppCompatActivity() {
                 else -> false
             }
         }
+    }
+
+    fun goToCoinDetailInfo(fromSymbol: String) {
+        targetCoin = fromSymbol
+        binding.bottomNavigation.selectedItemId = R.id.navigation_cryptocurrency
     }
 }

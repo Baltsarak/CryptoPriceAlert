@@ -1,7 +1,6 @@
 package com.baltsarak.cryptopricealert.presentation
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -37,7 +36,7 @@ class WatchListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         adapter.onCoinClickListener = object : CoinInfoAdapter.OnCoinClickListener {
             override fun onCoinClick(coinPriceInfo: CoinInfo) {
-                Log.d("ON_CLICK_TEST", coinPriceInfo.fromSymbol)
+                (activity as MainActivity).goToCoinDetailInfo(coinPriceInfo.fromSymbol)
             }
         }
         binding.recyclerViewWatchList.adapter = adapter

@@ -1,13 +1,15 @@
 package com.baltsarak.cryptopricealert.presentation
 
+import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import com.baltsarak.cryptopricealert.R
 import com.baltsarak.cryptopricealert.databinding.FragmentCoinDetailInfoBinding
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
@@ -40,19 +42,33 @@ class CoinDetailInfoFragment : Fragment() {
                 with(binding) {
                     textViewCoinName.text = it.fromSymbol
                     textViewPrice.text = it.price.toString()
-                    val coinPriceChart = priceChart
-
-                    val entries = ArrayList<Entry>()
 
                     lifecycleScope.launch {
+                        val coinPriceChart = priceChart
+                        val entries = ArrayList<Entry>()
                         val coinMap = viewModel.getCoinPriceHistory(fromSymbol)
-                        Log.d("onViewCreated", coinMap.toString())
-
                         for (data in coinMap) {
                             entries.add(Entry(data.key.toFloat(), data.value.toFloat()))
                         }
-                        val priceHistoryDataSet = LineDataSet(entries, "priceHistory")
-                        coinPriceChart.data = LineData(priceHistoryDataSet)
+                        val priceHistoryDataSet = LineDataSet(entries, it.fromSymbol)
+                        with(priceHistoryDataSet) {
+                            mode = LineDataSet.Mode.CUBIC_BEZIER
+                            color = Color.WHITE
+                            lineWidth = 5F
+                            setDrawValues(false)
+                            setDrawCircles(false)
+                            setDrawFilled(true)
+                            fillColor = Color.WHITE
+                            fillDrawable = ContextCompat.getDrawable(
+                                requireContext(), R.drawable.chart_gradient_fill
+                            )
+                        }
+                        with(coinPriceChart) {
+                            axisRight.isEnabled = false
+                            xAxis.isEnabled = false
+                            axisLeft.textColor = Color.WHITE
+                            data = LineData(priceHistoryDataSet)
+                        }
                         coinPriceChart.invalidate()
                     }
                 }
