@@ -1,11 +1,10 @@
 package com.baltsarak.cryptopricealert.data.network.models
 
-import com.google.gson.JsonObject
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
-data class CoinInfoJsonContainerDto(
-    @SerializedName("RAW")
+data class CoinPriceDto(
+    @SerializedName("PRICE")
     @Expose
-    val json: JsonObject?
+    val price: Double?
 )

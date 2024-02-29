@@ -21,6 +21,13 @@ interface ApiService {
         @Query(QUERY_PARAM_TO_SYMBOLS) tSyms: String = CURRENCY
     ): CoinInfoJsonContainerDto
 
+    @GET("price")
+    suspend fun getCoinPrice(
+        @Query(QUERY_PARAM_API_KEY) apiKey: String = "",
+        @Query(QUERY_PARAM_FROM_SYMBOLS) fSym: String,
+        @Query(QUERY_PARAM_TO_SYMBOLS) tSyms: String = CURRENCY
+    )
+
     @GET("v2/histoday")
     suspend fun getCoinPriceHistory(
         @Query(QUERY_PARAM_API_KEY) apiKey: String = "",
