@@ -13,6 +13,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="24dp"
+        android:textColor="@color/white"
+        android:fontFamily="@font/work_sans_regular"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -23,6 +25,8 @@
         android:layout_height="wrap_content"
         android:layout_margin="24dp"
         android:textSize="32sp"
+        android:textColor="@color/white"
+        android:fontFamily="@font/work_sans_bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/text_view_coin_name" />
@@ -35,5 +39,42 @@
         app:layout_constraintTop_toBottomOf="@id/text_view_price"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
+
+    <TextView
+        android:id="@+id/price_question"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:textColor="@color/white"
+        android:fontFamily="@font/work_sans_regular"
+        android:text="@string/price_question"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/price_chart" />
+
+    <EditText
+        android:id="@+id/target_price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:textColor="@color/white"
+        android:fontFamily="@font/work_sans_bold"
+        android:ems="10"
+        android:inputType="numberDecimal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/price_question"
+        android:hint="@string/usd"
+        android:textColorHint="#333"
+        android:importantForAutofill="no" />
+
+    <ImageView
+        android:id="@+id/button_add"
+        android:layout_width="52dp"
+        android:layout_height="52dp"
+        android:layout_margin="16dp"
+        android:src="@drawable/icon_add"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/price_question"
+        android:contentDescription="@string/description_button_add" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

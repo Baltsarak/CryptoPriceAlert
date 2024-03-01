@@ -5,4 +5,7 @@
     <string name="popular">Popular</string>
     <string name="profile">Profile</string>
     <string name="cryptocurrency_logo">Логотип криптовалюты</string>
+    <string name="price_question">Получить уведомление когда цена достигнет:</string>
+    <string name="description_button_add">Кнопка установки цены, при достижении которой будет прислано оповещение</string>
+    <string name="usd">USD</string>
 </resources>
