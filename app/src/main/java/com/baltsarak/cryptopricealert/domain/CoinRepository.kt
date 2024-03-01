@@ -3,11 +3,11 @@ package com.baltsarak.cryptopricealert.domain
 import androidx.lifecycle.LiveData
 
 interface CoinRepository {
-    suspend fun addCoinToWatchList(fromSymbol: String)
+    suspend fun addCoinToWatchList(fromSymbol: String, targetPrice: Double)
 
     fun deleteCoinFromWatchList(fromSymbol: String)
 
-    suspend fun getWatchListCoins(): LiveData<List<CoinInfo>>
+    suspend fun getWatchListCoins(): List<CoinInfo>
 
     suspend fun getPopularCoinsList(): LiveData<List<CoinInfo>>
 

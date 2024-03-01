@@ -25,6 +25,7 @@ class CoinMapper {
     fun mapDbModelToEntity(dbModel: CoinInfoDbModel) = CoinInfo(
         fromSymbol = dbModel.fromSymbol,
         toSymbol = dbModel.toSymbol,
+        targetPrice = listOf(),
         price = dbModel.price,
         lastMarket = dbModel.lastMarket,
         lastUpdate = dbModel.lastUpdate,
@@ -33,7 +34,7 @@ class CoinMapper {
         imageUrl = BASE_IMAGE_URL + dbModel.imageUrl
     )
 
-    fun  mapJsonContainerToListCoinInfo(jsonContainer: CoinInfoJsonContainerDto): List<CoinInfoDto> {
+    fun mapJsonContainerToListCoinInfo(jsonContainer: CoinInfoJsonContainerDto): List<CoinInfoDto> {
         val result = mutableListOf<CoinInfoDto>()
         val jsonObject = jsonContainer.json ?: return result
         val coinKeySet = jsonObject.keySet()

@@ -5,6 +5,7 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "watch_list_coins")
 data class WatchListCoinDbModel(
-    @PrimaryKey
-    val fromSymbol: String
+    @PrimaryKey(autoGenerate = true) val id: Int,
+    val fromSymbol: String,
+    val targetPrice: Double?
 )

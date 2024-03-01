@@ -10,6 +10,7 @@ import com.baltsarak.cryptopricealert.data.mapper.CoinMapper
 import com.baltsarak.cryptopricealert.data.network.ApiFactory
 import com.baltsarak.cryptopricealert.domain.CoinInfo
 import com.baltsarak.cryptopricealert.domain.CoinRepository
+import com.baltsarak.cryptopricealert.domain.usecases.TargetPrice
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
@@ -26,20 +27,38 @@ class CoinRepositoryImpl(
 
     private val mapper = CoinMapper()
 
-    override suspend fun addCoinToWatchList(fromSymbol: String) {
-        watchListCoinInfoDao.insertCoinToWatchList(WatchListCoinDbModel(fromSymbol))
+    override suspend fun addCoinToWatchList(fromSymbol: String, targetPrice: Double) {
+        watchListCoinInfoDao.insertCoinToWatchList(WatchListCoinDbModel(0, fromSymbol, targetPrice))
     }
 
     override fun deleteCoinFromWatchList(fromSymbol: String) {
         watchListCoinInfoDao.deleteCoinFromWatchList(fromSymbol)
     }
 
-    override suspend fun getWatchListCoins(): LiveData<List<CoinInfo>> {
-        return coinInfoDao.getListCoinsInfo(getWatchList()).map {
-            it.map {
-                mapper.mapDbModelToEntity(it)
+    override suspend fun getWatchListCoins(): List<CoinInfo> {
+        val result = mutableListOf<CoinInfo>()
+        val targetPrices = getTargetPrices()
+        val watchListCoins = targetPrices
+            .groupBy { it.fromSymbol }
+            .mapValues { entry ->
+                entry.value.map { it.targetPrice }
             }
+        for (coin in watchListCoins) {
+            val coinInfoFromDb = coinInfoDao.getInfoAboutCoin(coin.key).value
+            val coinInfoEntity = CoinInfo(
+                fromSymbol = coin.key,
+                toSymbol = coinInfoFromDb?.toSymbol,
+                targetPrice = coin.value,
+                price = coinInfoFromDb?.price,
+                lastMarket = coinInfoFromDb?.lastMarket,
+                lastUpdate = coinInfoFromDb?.lastUpdate,
+                highDay = coinInfoFromDb?.highDay,
+                lowDay = coinInfoFromDb?.lowDay,
+                imageUrl = CoinMapper.BASE_IMAGE_URL + coinInfoFromDb?.imageUrl
+            )
+            result.add(coinInfoEntity)
         }
+        return result
     }
 
     override suspend fun getPopularCoinsList(): LiveData<List<CoinInfo>> {
@@ -112,9 +131,9 @@ class CoinRepositoryImpl(
             .coins?.map { it.coinName?.name } ?: listOf("BTC")
     }
 
-    private suspend fun getWatchList(): List<String> {
+    private suspend fun getTargetPrices(): List<TargetPrice> {
         return withContext(Dispatchers.Default) {
-            watchListCoinInfoDao.getWatchListCoins()
+            watchListCoinInfoDao.getTargetPrices()
         }
     }
 }

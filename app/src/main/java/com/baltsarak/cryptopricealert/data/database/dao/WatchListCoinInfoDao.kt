@@ -5,11 +5,15 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.baltsarak.cryptopricealert.data.database.entities.WatchListCoinDbModel
+import com.baltsarak.cryptopricealert.domain.usecases.TargetPrice
 
 @Dao
 interface WatchListCoinInfoDao {
-    @Query("SELECT fromSymbol FROM watch_list_coins")
+    @Query("SELECT fromSymbol FROM watch_list_coins GROUP BY fromSymbol")
     fun getWatchListCoins(): List<String>
+
+    @Query("SELECT fromSymbol, targetPrice FROM watch_list_coins")
+    fun getTargetPrices(): List<TargetPrice>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertCoinToWatchList(coin: WatchListCoinDbModel)

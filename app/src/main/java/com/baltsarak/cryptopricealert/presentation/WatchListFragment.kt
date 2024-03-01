@@ -1,5 +1,6 @@
 package com.baltsarak.cryptopricealert.presentation
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -32,6 +33,7 @@ class WatchListFragment : Fragment() {
         return binding.root
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         adapter.onCoinClickListener = object : CoinInfoAdapter.OnCoinClickListener {
@@ -40,15 +42,15 @@ class WatchListFragment : Fragment() {
             }
         }
         binding.recyclerViewWatchList.adapter = adapter
+
         lifecycleScope.launch {
-            viewModel.watchList().observe(viewLifecycleOwner) {
-                adapter.submitList(it)
-            }
+            adapter.submitList(viewModel.watchList())
+            adapter.notifyDataSetChanged()
         }
     }
 
     override fun onDestroy() {
-        _binding = null
         super.onDestroy()
+        _binding = null
     }
 }

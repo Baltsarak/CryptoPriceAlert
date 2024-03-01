@@ -32,21 +32,21 @@ class CoinViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.async { getPopularCoinListUseCase() }.await()
     suspend fun watchList() =
         viewModelScope.async { getWatchListCoinsUseCase() }.await()
-    suspend fun getCoinDetailInfo(fSym: String) =
-        viewModelScope.async { getCoinInfoUseCase(fSym) }.await()
+    suspend fun getCoinDetailInfo(fromSymbol: String) =
+        viewModelScope.async { getCoinInfoUseCase(fromSymbol) }.await()
 
-    suspend fun getCoinPriceHistory(fSym: String) =
-        viewModelScope.async { getCoinPriceHistoryInfoUseCase(fSym) }.await()
+    suspend fun getCoinPriceHistory(fromSymbol: String) =
+        viewModelScope.async { getCoinPriceHistoryInfoUseCase(fromSymbol) }.await()
 
-    fun addCoinToWatchList(fSym: String) {
+    fun addCoinToWatchList(fromSymbol: String, targetPrice: Double) {
         viewModelScope.launch {
-            addCoinToWatchListUseCase(fSym)
+            addCoinToWatchListUseCase(fromSymbol, targetPrice)
         }
     }
 
-    fun loadCoinPriceHistoryInfo(fSym: String) {
+    fun loadCoinPriceHistoryInfo(fromSymbol: String) {
         viewModelScope.launch {
-            loadCoinPriceHistoryInfoUseCase(fSym)
+            loadCoinPriceHistoryInfoUseCase(fromSymbol)
         }
     }
 
