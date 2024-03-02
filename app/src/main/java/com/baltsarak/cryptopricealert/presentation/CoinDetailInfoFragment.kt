@@ -75,6 +75,14 @@ class CoinDetailInfoFragment : Fragment() {
                 }
             }
         }
+
+        binding.buttonAdd.setOnClickListener {
+            lifecycleScope.launch {
+                val targetPrice = binding.targetPrice.text.toString()
+                viewModel.addCoinToWatchList(fromSymbol, targetPrice)
+            }
+        }
+
         val callback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 (activity as? MainActivity)?.returnByBackStack()
