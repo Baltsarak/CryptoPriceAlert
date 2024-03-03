@@ -11,11 +11,11 @@ interface CoinRepository {
 
     suspend fun getPopularCoinsList(): LiveData<List<CoinInfo>>
 
-   fun getCoinInfo(fromSymbol: String): LiveData<CoinInfo>
+    suspend fun getCoinInfo(fromSymbol: String): LiveData<CoinInfo>
 
     suspend fun loadCoinPriceHistory(fromSymbol: String)
 
-    suspend fun getCoinPriceHistory(fromSymbol: String): Map<Int, Double>
+    suspend fun getCoinPriceHistory(fromSymbol: String): Map<Float, Float>
 
     suspend fun loadData()
 }

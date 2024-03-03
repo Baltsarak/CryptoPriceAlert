@@ -49,7 +49,7 @@ class CoinDetailInfoFragment : Fragment() {
                         val entries = ArrayList<Entry>()
                         val coinMap = viewModel.getCoinPriceHistory(fromSymbol)
                         for (data in coinMap) {
-                            entries.add(Entry(data.key.toFloat(), data.value.toFloat()))
+                            entries.add(Entry(data.key, data.value))
                         }
                         val priceHistoryDataSet = LineDataSet(entries, it.fromSymbol)
                         with(priceHistoryDataSet) {

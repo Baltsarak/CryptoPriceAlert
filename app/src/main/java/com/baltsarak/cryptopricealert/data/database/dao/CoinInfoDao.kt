@@ -13,9 +13,11 @@ interface CoinInfoDao {
     @Query("SELECT * FROM coins_info WHERE fromSymbol IN (:fSym)")
     fun getListCoinsInfo(fSym: List<String?>): LiveData<List<CoinInfoDbModel>>
 
+    @Query("SELECT * FROM coins_info WHERE fromsymbol = :fSym LIMIT 1")
+    fun getLiveDataInfoAboutCoin(fSym: String): LiveData<CoinInfoDbModel>
 
     @Query("SELECT * FROM coins_info WHERE fromsymbol = :fSym LIMIT 1")
-    fun getInfoAboutCoin(fSym: String): LiveData<CoinInfoDbModel>
+    suspend fun getInfoAboutCoin(fSym: String): CoinInfoDbModel
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertListCoinsInfo(priceList: List<CoinInfoDbModel>)

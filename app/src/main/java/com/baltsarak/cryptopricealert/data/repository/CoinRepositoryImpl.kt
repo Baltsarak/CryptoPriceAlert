@@ -44,17 +44,17 @@ class CoinRepositoryImpl(
                 entry.value.map { it.targetPrice }
             }
         for (coin in watchListCoins) {
-            val coinInfoFromDb = coinInfoDao.getInfoAboutCoin(coin.key).value
+            val coinInfoFromDb = coinInfoDao.getInfoAboutCoin(coin.key)
             val coinInfoEntity = CoinInfo(
                 fromSymbol = coin.key,
-                toSymbol = coinInfoFromDb?.toSymbol,
+                toSymbol = coinInfoFromDb.toSymbol,
                 targetPrice = coin.value,
-                price = coinInfoFromDb?.price,
-                lastMarket = coinInfoFromDb?.lastMarket,
-                lastUpdate = coinInfoFromDb?.lastUpdate,
-                highDay = coinInfoFromDb?.highDay,
-                lowDay = coinInfoFromDb?.lowDay,
-                imageUrl = CoinMapper.BASE_IMAGE_URL + coinInfoFromDb?.imageUrl
+                price = coinInfoFromDb.price,
+                lastMarket = coinInfoFromDb.lastMarket,
+                lastUpdate = coinInfoFromDb.lastUpdate,
+                highDay = coinInfoFromDb.highDay,
+                lowDay = coinInfoFromDb.lowDay,
+                imageUrl = CoinMapper.BASE_IMAGE_URL + coinInfoFromDb.imageUrl
             )
             result.add(coinInfoEntity)
         }
@@ -69,10 +69,9 @@ class CoinRepositoryImpl(
         }
     }
 
-    override fun getCoinInfo(fromSymbol: String): LiveData<CoinInfo> {
-        return coinInfoDao.getInfoAboutCoin(fromSymbol).map {
-            mapper.mapDbModelToEntity(it)
-        }
+    override suspend fun getCoinInfo(fromSymbol: String): LiveData<CoinInfo> {
+        return coinInfoDao.getLiveDataInfoAboutCoin(fromSymbol)
+            .map { mapper.mapDbModelToEntity(it) }
     }
 
     override suspend fun loadCoinPriceHistory(fromSymbol: String) {
@@ -89,10 +88,9 @@ class CoinRepositoryImpl(
         }
     }
 
-    override suspend fun getCoinPriceHistory(fromSymbol: String): Map<Int, Double> {
-        val dbModelList = coinPriceHistoryDao
-            .getCoinsPriceHistoryList(fromSymbol)
-        return dbModelList.associate { it.time to it.close }
+    override suspend fun getCoinPriceHistory(fromSymbol: String): Map<Float, Float> {
+        val dbModelList = coinPriceHistoryDao.getCoinsPriceHistoryList(fromSymbol)
+        return dbModelList.associate { it.time.toFloat() to it.close.toFloat() }
     }
 
     override suspend fun loadData() {
