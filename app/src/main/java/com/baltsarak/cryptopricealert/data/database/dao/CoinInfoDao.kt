@@ -22,6 +22,9 @@ interface CoinInfoDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertListCoinsInfo(priceList: List<CoinInfoDbModel>)
 
+    @Query("UPDATE coins_info SET price = :newPrice WHERE fromSymbol = :fromSymbol")
+    suspend fun updatePrice(fromSymbol: String, newPrice: Double)
+
     @Query("DELETE FROM coins_info WHERE fromSymbol IN (:fSym)")
     suspend fun deleteCoins(fSym: String)
 }

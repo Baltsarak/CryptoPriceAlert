@@ -4,7 +4,6 @@ import com.baltsarak.cryptopricealert.data.database.entities.CoinInfoDbModel
 import com.baltsarak.cryptopricealert.data.database.entities.DayPriceDbModel
 import com.baltsarak.cryptopricealert.data.network.models.CoinInfoDto
 import com.baltsarak.cryptopricealert.data.network.models.CoinInfoJsonContainerDto
-import com.baltsarak.cryptopricealert.data.network.models.CoinListDto
 import com.baltsarak.cryptopricealert.data.network.models.DayPriceDto
 import com.baltsarak.cryptopricealert.domain.CoinInfo
 import com.google.gson.Gson
@@ -64,10 +63,6 @@ class CoinMapper {
             close = dto.close
                 ?: throw RuntimeException("DATA LOADING ERROR: price history not received")
         )
-    }
-
-    fun mapPopularCoinsListToString(coinListDto: CoinListDto): String {
-        return coinListDto.coins?.map { it.coinName?.name }?.joinToString(",") ?: "BTC"
     }
 
 //    private fun convertTimestampToTime(timestamp: Long?): String {

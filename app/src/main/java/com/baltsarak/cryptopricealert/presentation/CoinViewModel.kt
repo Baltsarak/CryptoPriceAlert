@@ -12,6 +12,7 @@ import com.baltsarak.cryptopricealert.domain.usecases.AddCoinToWatchListUseCase
 import com.baltsarak.cryptopricealert.domain.usecases.DeleteCoinFromWatchListUseCase
 import com.baltsarak.cryptopricealert.domain.usecases.GetCoinInfoUseCase
 import com.baltsarak.cryptopricealert.domain.usecases.GetCoinPriceHistoryInfoUseCase
+import com.baltsarak.cryptopricealert.domain.usecases.GetCurrentCoinPriceUseCase
 import com.baltsarak.cryptopricealert.domain.usecases.GetPopularCoinListUseCase
 import com.baltsarak.cryptopricealert.domain.usecases.GetWatchListCoinsUseCase
 import com.baltsarak.cryptopricealert.domain.usecases.LoadCoinPriceHistoryInfoUseCase
@@ -29,8 +30,13 @@ class CoinViewModel(application: Application) : AndroidViewModel(application) {
     private val getCoinPriceHistoryInfoUseCase = GetCoinPriceHistoryInfoUseCase(repository)
     private val getPopularCoinListUseCase = GetPopularCoinListUseCase(repository)
     private val getCoinInfoUseCase = GetCoinInfoUseCase(repository)
+    private val getCurrentCoinPriceUseCase = GetCurrentCoinPriceUseCase(repository)
     private val getWatchListCoinsUseCase = GetWatchListCoinsUseCase(repository)
     private val loadDataUseCase = LoadDataUseCase(repository)
+
+    private val _currentCoinPrice = MutableLiveData<Double>()
+    val currentCoinPrice: LiveData<Double>
+        get() = _currentCoinPrice
 
     private val _watchList = MutableLiveData<List<CoinInfo>>()
     val watchList: LiveData<List<CoinInfo>>
@@ -53,6 +59,12 @@ class CoinViewModel(application: Application) : AndroidViewModel(application) {
             }
         } else {
             Log.d("addCoinToWatchList", "Неверное значение цены")
+        }
+    }
+
+    fun getCurrentCoinPrice(fromSymbol: String) {
+        viewModelScope.launch {
+            _currentCoinPrice.value = getCurrentCoinPriceUseCase(fromSymbol)
         }
     }
 

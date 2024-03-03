@@ -13,6 +13,8 @@ interface CoinRepository {
 
     suspend fun getCoinInfo(fromSymbol: String): LiveData<CoinInfo>
 
+    suspend fun getCurrentCoinPrice(fromSymbol: String): Double
+
     suspend fun loadCoinPriceHistory(fromSymbol: String)
 
     suspend fun getCoinPriceHistory(fromSymbol: String): Map<Float, Float>

@@ -43,10 +43,10 @@ class CoinDetailInfoFragment : Fragment() {
                 with(binding) {
                     textViewCoinName.text = it.fromSymbol
                     textViewPrice.text = it.price.toString()
+                    val coinPriceChart = priceChart
+                    val entries = ArrayList<Entry>()
 
                     lifecycleScope.launch {
-                        val coinPriceChart = priceChart
-                        val entries = ArrayList<Entry>()
                         val coinMap = viewModel.getCoinPriceHistory(fromSymbol)
                         for (data in coinMap) {
                             entries.add(Entry(data.key, data.value))

@@ -2,6 +2,7 @@ package com.baltsarak.cryptopricealert.data.network
 
 import com.baltsarak.cryptopricealert.data.network.models.CoinInfoJsonContainerDto
 import com.baltsarak.cryptopricealert.data.network.models.CoinListDto
+import com.baltsarak.cryptopricealert.data.network.models.CoinPriceDto
 import com.baltsarak.cryptopricealert.data.network.models.DayPriceContainerDto
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -24,9 +25,9 @@ interface ApiService {
     @GET("price")
     suspend fun getCoinPrice(
         @Query(QUERY_PARAM_API_KEY) apiKey: String = "",
-        @Query(QUERY_PARAM_FROM_SYMBOLS) fSym: String,
+        @Query(QUERY_PARAM_FROM_SYMBOL) fSym: String,
         @Query(QUERY_PARAM_TO_SYMBOLS) tSyms: String = CURRENCY
-    )
+    ): CoinPriceDto
 
     @GET("v2/histoday")
     suspend fun getCoinPriceHistory(

@@ -1,4 +1,4 @@
-package com.baltsarak.cryptopricealert.domain.usecases
+package com.baltsarak.cryptopricealert.domain
 
 data class TargetPrice(
     val fromSymbol: String,

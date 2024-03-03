@@ -10,10 +10,11 @@ import com.baltsarak.cryptopricealert.data.mapper.CoinMapper
 import com.baltsarak.cryptopricealert.data.network.ApiFactory
 import com.baltsarak.cryptopricealert.domain.CoinInfo
 import com.baltsarak.cryptopricealert.domain.CoinRepository
-import com.baltsarak.cryptopricealert.domain.usecases.TargetPrice
+import com.baltsarak.cryptopricealert.domain.TargetPrice
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
+import java.util.TreeSet
 
 class CoinRepositoryImpl(
     application: Application
@@ -93,35 +94,30 @@ class CoinRepositoryImpl(
         return dbModelList.associate { it.time.toFloat() to it.close.toFloat() }
     }
 
+    override suspend fun getCurrentCoinPrice(fromSymbol: String): Double {
+        return apiService.getCoinPrice(fSym = fromSymbol).price
+    }
+
     override suspend fun loadData() {
         while (true) {
             try {
-                loadPopularCoins()
-                loadWatchListCoins()
+                val popularCoins = getPopularCoinsListFromApi()
+                val watchList = withContext(Dispatchers.Default) {
+                    watchListCoinInfoDao.getWatchListCoins()
+                }
+                val setAllCoins = TreeSet<String>(popularCoins).apply {
+                    addAll(watchList)
+                }
+                val fromSymbols = setAllCoins.joinToString(",")
+                val jsonContainer = apiService.getFullInfoAboutCoins(fSyms = fromSymbols)
+                val coinInfoDtoList = mapper.mapJsonContainerToListCoinInfo(jsonContainer)
+                val coinInfoDbModelList = coinInfoDtoList.map { mapper.mapDtoToDbModel(it) }
+                coinInfoDao.insertListCoinsInfo(coinInfoDbModelList)
             } catch (e: Exception) {
                 Log.d("loadData", "ERROR LOAD DATA " + e.message)
             }
             delay(10000)
         }
-    }
-
-    private suspend fun loadPopularCoins() {
-        val popularCoins = apiService.getPopularCoinsList(limit = 50)
-        val fSym = mapper.mapPopularCoinsListToString(popularCoins)
-        val jsonContainer = apiService.getFullInfoAboutCoins(fSyms = fSym)
-        val coinInfoDtoList = mapper.mapJsonContainerToListCoinInfo(jsonContainer)
-        val popularDbModelList = coinInfoDtoList.map { mapper.mapDtoToDbModel(it) }
-        coinInfoDao.insertListCoinsInfo(popularDbModelList)
-    }
-
-    private suspend fun loadWatchListCoins() {
-        val watchList = withContext(Dispatchers.Default) {
-            watchListCoinInfoDao.getWatchListCoins().joinToString(",")
-        }
-        val watchListJsonContainer = apiService.getFullInfoAboutCoins(fSyms = watchList)
-        val watchListDto = mapper.mapJsonContainerToListCoinInfo(watchListJsonContainer)
-        val watchDbModelList = watchListDto.map { mapper.mapDtoToDbModel(it) }
-        coinInfoDao.insertListCoinsInfo(watchDbModelList)
     }
 
     private suspend fun getPopularCoinsListFromApi(): List<String?> {
