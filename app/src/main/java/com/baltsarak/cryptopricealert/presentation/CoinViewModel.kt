@@ -62,6 +62,13 @@ class CoinViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    fun deleteCoinFromWatchList(fromSymbol: String) {
+        viewModelScope.launch {
+            deleteCoinFromWatchListUseCase(fromSymbol)
+            _watchList.value = getWatchListCoinsUseCase()
+        }
+    }
+
     fun getCurrentCoinPrice(fromSymbol: String) {
         viewModelScope.launch {
             _currentCoinPrice.value = getCurrentCoinPriceUseCase(fromSymbol)

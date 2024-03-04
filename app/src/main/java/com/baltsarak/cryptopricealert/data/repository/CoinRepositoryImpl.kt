@@ -32,7 +32,7 @@ class CoinRepositoryImpl(
         watchListCoinInfoDao.insertCoinToWatchList(WatchListCoinDbModel(0, fromSymbol, targetPrice))
     }
 
-    override fun deleteCoinFromWatchList(fromSymbol: String) {
+    override suspend fun deleteCoinFromWatchList(fromSymbol: String) {
         watchListCoinInfoDao.deleteCoinFromWatchList(fromSymbol)
     }
 
