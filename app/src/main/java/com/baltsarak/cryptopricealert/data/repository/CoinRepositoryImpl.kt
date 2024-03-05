@@ -32,6 +32,15 @@ class CoinRepositoryImpl(
         watchListCoinInfoDao.insertCoinToWatchList(WatchListCoinDbModel(0, fromSymbol, targetPrice))
     }
 
+    override suspend fun addListToWatchList(watchList: List<CoinInfo>) {
+        val listCoinDbModel = watchList.flatMap { coinInfo ->
+            coinInfo.targetPrice.map { targetPrice ->
+                WatchListCoinDbModel(0, coinInfo.fromSymbol, targetPrice)
+            }
+        }
+        listCoinDbModel.forEach { watchListCoinInfoDao.insertCoinToWatchList(it) }
+    }
+
     override suspend fun deleteCoinFromWatchList(fromSymbol: String) {
         watchListCoinInfoDao.deleteCoinFromWatchList(fromSymbol)
     }

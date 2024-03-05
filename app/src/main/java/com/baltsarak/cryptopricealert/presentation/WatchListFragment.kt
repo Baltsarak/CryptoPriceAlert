@@ -34,13 +34,13 @@ class WatchListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupClickListener()
-        setupSwipeListener()
         binding.recyclerViewWatchList.adapter = adapter
         viewModel.getWatchListCoins()
         viewModel.watchList.observe(viewLifecycleOwner) {
             adapter.submitList(it)
         }
+        setupClickListener()
+        setupSwipeAndMoveListener()
     }
 
     private fun setupClickListener() {
@@ -51,17 +51,38 @@ class WatchListFragment : Fragment() {
         }
     }
 
-    private fun setupSwipeListener() {
-        val callback = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+    private fun setupSwipeAndMoveListener() {
+        val callback = object : ItemTouchHelper.Callback() {
+
+            override fun isLongPressDragEnabled(): Boolean {
+                return true
+            }
+
+            override fun isItemViewSwipeEnabled(): Boolean {
+                return true
+            }
+
+            override fun getMovementFlags(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder
+            ): Int {
+                val dragFlags = ItemTouchHelper.UP or ItemTouchHelper.DOWN
+                val swipeFlags = ItemTouchHelper.START
+                return makeMovementFlags(dragFlags, swipeFlags)
+            }
+
             override fun onMove(
                 recyclerView: RecyclerView,
                 viewHolder: RecyclerView.ViewHolder,
                 target: RecyclerView.ViewHolder
             ): Boolean {
-                return false
+                adapter.onItemMove(viewHolder.adapterPosition, target.adapterPosition)
+                viewModel.addListToWatchList(adapter.currentList)
+                return true
             }
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                adapter.onItemDismiss(viewHolder.adapterPosition)
                 val item = adapter.currentList[viewHolder.adapterPosition]
                 viewModel.deleteCoinFromWatchList(item.fromSymbol)
             }
@@ -73,5 +94,10 @@ class WatchListFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+    }
+
+    interface ItemTouchHelperAdapter {
+        fun onItemMove(fromPosition: Int, toPosition: Int): Boolean
+        fun onItemDismiss(position: Int)
     }
 }

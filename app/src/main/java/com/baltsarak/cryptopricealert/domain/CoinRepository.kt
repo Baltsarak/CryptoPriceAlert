@@ -5,6 +5,8 @@ import androidx.lifecycle.LiveData
 interface CoinRepository {
     suspend fun addCoinToWatchList(fromSymbol: String, targetPrice: Double)
 
+    suspend fun addListToWatchList(watchList: List<CoinInfo>)
+
     suspend fun deleteCoinFromWatchList(fromSymbol: String)
 
     suspend fun getWatchListCoins(): List<CoinInfo>
