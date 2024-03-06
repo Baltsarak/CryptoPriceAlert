@@ -2,13 +2,22 @@ package com.baltsarak.cryptopricealert.data.mapper
 
 import com.baltsarak.cryptopricealert.data.database.entities.CoinInfoDbModel
 import com.baltsarak.cryptopricealert.data.database.entities.DayPriceDbModel
+import com.baltsarak.cryptopricealert.data.database.entities.WatchListCoinDbModel
 import com.baltsarak.cryptopricealert.data.network.models.CoinInfoDto
 import com.baltsarak.cryptopricealert.data.network.models.CoinInfoJsonContainerDto
 import com.baltsarak.cryptopricealert.data.network.models.DayPriceDto
 import com.baltsarak.cryptopricealert.domain.CoinInfo
+import com.baltsarak.cryptopricealert.domain.TargetPrice
 import com.google.gson.Gson
 
 class CoinMapper {
+
+    fun mapTargetPriceToDbModel(targetPrice: TargetPrice) = WatchListCoinDbModel(
+        id = 0,
+        fromSymbol = targetPrice.fromSymbol,
+        targetPrice = targetPrice.targetPrice,
+        higherThenCurrent = targetPrice.higherThenCurrent
+    )
 
     fun mapDtoToDbModel(dto: CoinInfoDto) = CoinInfoDbModel(
         fromSymbol = dto.fromsymbol,

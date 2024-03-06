@@ -7,5 +7,6 @@ import androidx.room.PrimaryKey
 data class WatchListCoinDbModel(
     @PrimaryKey(autoGenerate = true) val id: Int,
     val fromSymbol: String,
-    val targetPrice: Double?
+    val targetPrice: Double?,
+    val higherThenCurrent: Boolean?
 )

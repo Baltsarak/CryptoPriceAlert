@@ -9,7 +9,6 @@ import androidx.lifecycle.viewModelScope
 import com.baltsarak.cryptopricealert.data.repository.CoinRepositoryImpl
 import com.baltsarak.cryptopricealert.domain.CoinInfo
 import com.baltsarak.cryptopricealert.domain.usecases.AddCoinToWatchListUseCase
-import com.baltsarak.cryptopricealert.domain.usecases.RewriteWatchListUseCase
 import com.baltsarak.cryptopricealert.domain.usecases.DeleteCoinFromWatchListUseCase
 import com.baltsarak.cryptopricealert.domain.usecases.GetCoinInfoUseCase
 import com.baltsarak.cryptopricealert.domain.usecases.GetCoinPriceHistoryInfoUseCase
@@ -18,6 +17,7 @@ import com.baltsarak.cryptopricealert.domain.usecases.GetPopularCoinListUseCase
 import com.baltsarak.cryptopricealert.domain.usecases.GetWatchListCoinsUseCase
 import com.baltsarak.cryptopricealert.domain.usecases.LoadCoinPriceHistoryInfoUseCase
 import com.baltsarak.cryptopricealert.domain.usecases.LoadDataUseCase
+import com.baltsarak.cryptopricealert.domain.usecases.RewriteWatchListUseCase
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
@@ -36,16 +36,15 @@ class CoinViewModel(application: Application) : AndroidViewModel(application) {
     private val getWatchListCoinsUseCase = GetWatchListCoinsUseCase(repository)
     private val loadDataUseCase = LoadDataUseCase(repository)
 
-    private val _currentCoinPrice = MutableLiveData<Double>()
-    val currentCoinPrice: LiveData<Double>
-        get() = _currentCoinPrice
-
     private val _watchList = MutableLiveData<List<CoinInfo>>()
     val watchList: LiveData<List<CoinInfo>>
         get() = _watchList
 
     suspend fun popularCoinList() =
         viewModelScope.async { getPopularCoinListUseCase() }.await()
+
+    private suspend fun getCurrentCoinPrice(fromSymbol: String) =
+        viewModelScope.async { getCurrentCoinPriceUseCase(fromSymbol) }.await()
 
     suspend fun getCoinDetailInfo(fromSymbol: String) =
         viewModelScope.async { getCoinInfoUseCase(fromSymbol) }.await()
@@ -54,10 +53,12 @@ class CoinViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.async { getCoinPriceHistoryInfoUseCase(fromSymbol) }.await()
 
     suspend fun addCoinToWatchList(fromSymbol: String, targetPrice: String) {
+        val currentPrice = getCurrentCoinPrice(fromSymbol)
         val priceAlert = targetPrice.trim().toDoubleOrNull()
         if (priceAlert != null && priceAlert > 0) {
+            val higherThenCurrentPrice = priceAlert > currentPrice
             viewModelScope.launch {
-                addCoinToWatchListUseCase(fromSymbol, priceAlert)
+                addCoinToWatchListUseCase(fromSymbol, priceAlert, higherThenCurrentPrice)
             }
         } else {
             Log.d("addCoinToWatchList", "Неверное значение цены")
@@ -68,19 +69,12 @@ class CoinViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             rewriteWatchListUseCase(newList)
         }
-
     }
 
     fun deleteCoinFromWatchList(fromSymbol: String) {
         viewModelScope.launch {
             deleteCoinFromWatchListUseCase(fromSymbol)
             _watchList.value = getWatchListCoinsUseCase()
-        }
-    }
-
-    fun getCurrentCoinPrice(fromSymbol: String) {
-        viewModelScope.launch {
-            _currentCoinPrice.value = getCurrentCoinPriceUseCase(fromSymbol)
         }
     }
 

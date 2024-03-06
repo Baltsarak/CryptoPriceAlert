@@ -4,10 +4,13 @@ import android.app.Application
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.map
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.WorkManager
 import com.baltsarak.cryptopricealert.data.database.AppDatabase
 import com.baltsarak.cryptopricealert.data.database.entities.WatchListCoinDbModel
 import com.baltsarak.cryptopricealert.data.mapper.CoinMapper
 import com.baltsarak.cryptopricealert.data.network.ApiFactory
+import com.baltsarak.cryptopricealert.data.worker.PriceMonitoringWorker
 import com.baltsarak.cryptopricealert.domain.CoinInfo
 import com.baltsarak.cryptopricealert.domain.CoinRepository
 import com.baltsarak.cryptopricealert.domain.TargetPrice
@@ -17,7 +20,7 @@ import kotlinx.coroutines.withContext
 import java.util.TreeSet
 
 class CoinRepositoryImpl(
-    application: Application
+    private val application: Application
 ) : CoinRepository {
 
     private val coinInfoDao = AppDatabase.getInstance(application).coinInfoDao()
@@ -28,15 +31,32 @@ class CoinRepositoryImpl(
 
     private val mapper = CoinMapper()
 
-    override suspend fun addCoinToWatchList(fromSymbol: String, targetPrice: Double) {
-        watchListCoinInfoDao.insertCoinToWatchList(WatchListCoinDbModel(0, fromSymbol, targetPrice))
+    override suspend fun addCoinToWatchList(
+        fromSymbol: String,
+        targetPrice: Double,
+        higherThenCurrentPrice: Boolean
+    ) {
+        watchListCoinInfoDao.insertCoinToWatchList(
+            WatchListCoinDbModel(
+                0,
+                fromSymbol,
+                targetPrice,
+                higherThenCurrentPrice
+            )
+        )
     }
 
     override suspend fun rewriteWatchList(watchList: List<CoinInfo>) {
         watchListCoinInfoDao.deleteAllFromWatchList()
         val listCoinDbModel = watchList.flatMap { coinInfo ->
             coinInfo.targetPrice.map { targetPrice ->
-                WatchListCoinDbModel(0, coinInfo.fromSymbol, targetPrice)
+                WatchListCoinDbModel(
+                    0,
+                    coinInfo.fromSymbol,
+                    targetPrice?.targetPrice,
+                    targetPrice?.higherThenCurrent
+                )
+
             }
         }
         listCoinDbModel.forEach { watchListCoinInfoDao.insertCoinToWatchList(it) }
@@ -51,9 +71,7 @@ class CoinRepositoryImpl(
         val targetPrices = getTargetPrices()
         val watchListCoins = targetPrices
             .groupBy { it.fromSymbol }
-            .mapValues { entry ->
-                entry.value.map { it.targetPrice }
-            }
+
         for (coin in watchListCoins) {
             val coinInfoFromDb = coinInfoDao.getInfoAboutCoin(coin.key)
             val coinInfoEntity = CoinInfo(
@@ -107,6 +125,12 @@ class CoinRepositoryImpl(
     }
 
     override suspend fun loadData() {
+        val workManager = WorkManager.getInstance(application)
+        workManager.enqueueUniquePeriodicWork(
+            PriceMonitoringWorker.NAME,
+            ExistingPeriodicWorkPolicy.KEEP,
+            PriceMonitoringWorker.WORK_REQUEST
+        )
         while (true) {
             try {
                 val popularCoins = getPopularCoinsListFromApi()

@@ -12,7 +12,7 @@ interface WatchListCoinInfoDao {
     @Query("SELECT fromSymbol FROM watch_list_coins GROUP BY fromSymbol")
     fun getWatchListCoins(): List<String>
 
-    @Query("SELECT fromSymbol, targetPrice FROM watch_list_coins")
+    @Query("SELECT fromSymbol, targetPrice, higherThenCurrent FROM watch_list_coins")
     fun getTargetPrices(): List<TargetPrice>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
