@@ -20,4 +20,7 @@ interface WatchListCoinInfoDao {
 
     @Query("DELETE FROM watch_list_coins WHERE fromsymbol = :fSym")
     suspend fun deleteCoinFromWatchList(fSym: String)
+
+    @Query("DELETE FROM watch_list_coins")
+    suspend fun deleteAllFromWatchList()
 }

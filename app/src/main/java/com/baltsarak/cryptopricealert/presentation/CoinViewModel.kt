@@ -9,7 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.baltsarak.cryptopricealert.data.repository.CoinRepositoryImpl
 import com.baltsarak.cryptopricealert.domain.CoinInfo
 import com.baltsarak.cryptopricealert.domain.usecases.AddCoinToWatchListUseCase
-import com.baltsarak.cryptopricealert.domain.usecases.AddListToWatchListUseCase
+import com.baltsarak.cryptopricealert.domain.usecases.RewriteWatchListUseCase
 import com.baltsarak.cryptopricealert.domain.usecases.DeleteCoinFromWatchListUseCase
 import com.baltsarak.cryptopricealert.domain.usecases.GetCoinInfoUseCase
 import com.baltsarak.cryptopricealert.domain.usecases.GetCoinPriceHistoryInfoUseCase
@@ -26,7 +26,7 @@ class CoinViewModel(application: Application) : AndroidViewModel(application) {
     private val repository = CoinRepositoryImpl(application)
 
     private val addCoinToWatchListUseCase = AddCoinToWatchListUseCase(repository)
-    private val addListToWatchListUseCase = AddListToWatchListUseCase(repository)
+    private val rewriteWatchListUseCase = RewriteWatchListUseCase(repository)
     private val deleteCoinFromWatchListUseCase = DeleteCoinFromWatchListUseCase(repository)
     private val loadCoinPriceHistoryInfoUseCase = LoadCoinPriceHistoryInfoUseCase(repository)
     private val getCoinPriceHistoryInfoUseCase = GetCoinPriceHistoryInfoUseCase(repository)
@@ -64,9 +64,9 @@ class CoinViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun addListToWatchList(newList: List<CoinInfo>) {
+    fun rewriteWatchList(newList: List<CoinInfo>) {
         viewModelScope.launch {
-            addListToWatchListUseCase(newList)
+            rewriteWatchListUseCase(newList)
         }
 
     }

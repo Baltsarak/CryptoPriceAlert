@@ -32,7 +32,8 @@ class CoinRepositoryImpl(
         watchListCoinInfoDao.insertCoinToWatchList(WatchListCoinDbModel(0, fromSymbol, targetPrice))
     }
 
-    override suspend fun addListToWatchList(watchList: List<CoinInfo>) {
+    override suspend fun rewriteWatchList(watchList: List<CoinInfo>) {
+        watchListCoinInfoDao.deleteAllFromWatchList()
         val listCoinDbModel = watchList.flatMap { coinInfo ->
             coinInfo.targetPrice.map { targetPrice ->
                 WatchListCoinDbModel(0, coinInfo.fromSymbol, targetPrice)
@@ -60,8 +61,6 @@ class CoinRepositoryImpl(
                 toSymbol = coinInfoFromDb.toSymbol,
                 targetPrice = coin.value,
                 price = coinInfoFromDb.price,
-                lastMarket = coinInfoFromDb.lastMarket,
-                lastUpdate = coinInfoFromDb.lastUpdate,
                 highDay = coinInfoFromDb.highDay,
                 lowDay = coinInfoFromDb.lowDay,
                 imageUrl = CoinMapper.BASE_IMAGE_URL + coinInfoFromDb.imageUrl

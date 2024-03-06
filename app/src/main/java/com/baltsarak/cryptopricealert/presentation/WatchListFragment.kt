@@ -76,8 +76,11 @@ class WatchListFragment : Fragment() {
                 viewHolder: RecyclerView.ViewHolder,
                 target: RecyclerView.ViewHolder
             ): Boolean {
-                adapter.onItemMove(viewHolder.adapterPosition, target.adapterPosition)
-                viewModel.addListToWatchList(adapter.currentList)
+                val newList = adapter.onItemMove(
+                    viewHolder.adapterPosition,
+                    target.adapterPosition
+                )
+                viewModel.rewriteWatchList(newList)
                 return true
             }
 
@@ -97,7 +100,7 @@ class WatchListFragment : Fragment() {
     }
 
     interface ItemTouchHelperAdapter {
-        fun onItemMove(fromPosition: Int, toPosition: Int): Boolean
+        fun onItemMove(fromPosition: Int, toPosition: Int): List<CoinInfo>
         fun onItemDismiss(position: Int)
     }
 }

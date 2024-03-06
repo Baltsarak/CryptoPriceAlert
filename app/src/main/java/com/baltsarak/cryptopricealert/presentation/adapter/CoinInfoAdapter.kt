@@ -10,7 +10,8 @@ import com.squareup.picasso.Picasso
 import java.util.Collections
 
 class CoinInfoAdapter :
-    ListAdapter<CoinInfo, CoinInfoViewHolder>(CoinInfoDiffCallback), WatchListFragment.ItemTouchHelperAdapter {
+    ListAdapter<CoinInfo, CoinInfoViewHolder>(CoinInfoDiffCallback),
+    WatchListFragment.ItemTouchHelperAdapter {
 
     var onCoinClickListener: OnCoinClickListener? = null
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CoinInfoViewHolder {
@@ -37,17 +38,17 @@ class CoinInfoAdapter :
         }
     }
 
-    override fun onItemMove(fromPosition: Int, toPosition: Int): Boolean {
-        val currentList = currentList.toMutableList()
-        Collections.swap(currentList, fromPosition, toPosition)
-        submitList(currentList)
-        return true
+    override fun onItemMove(fromPosition: Int, toPosition: Int): List<CoinInfo> {
+        val newList = currentList.toMutableList()
+        Collections.swap(newList, fromPosition, toPosition)
+        submitList(newList)
+        return newList
     }
 
     override fun onItemDismiss(position: Int) {
-        val currentList = currentList.toMutableList()
-        currentList.removeAt(position)
-        submitList(currentList)
+        val newList = currentList.toMutableList()
+        newList.removeAt(position)
+        submitList(newList)
     }
 
     interface OnCoinClickListener {

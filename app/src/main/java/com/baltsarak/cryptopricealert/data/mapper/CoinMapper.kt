@@ -14,8 +14,6 @@ class CoinMapper {
         fromSymbol = dto.fromsymbol,
         toSymbol = dto.tosymbol,
         price = dto.price,
-        lastMarket = dto.lastmarket,
-        lastUpdate = dto.lastupdate,
         highDay = dto.highday,
         lowDay = dto.lowday,
         imageUrl = dto.imageurl
@@ -26,8 +24,6 @@ class CoinMapper {
         toSymbol = dbModel.toSymbol,
         targetPrice = listOf(),
         price = dbModel.price,
-        lastMarket = dbModel.lastMarket,
-        lastUpdate = dbModel.lastUpdate,
         highDay = dbModel.highDay,
         lowDay = dbModel.lowDay,
         imageUrl = BASE_IMAGE_URL + dbModel.imageUrl
