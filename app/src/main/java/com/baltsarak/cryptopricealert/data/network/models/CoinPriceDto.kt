@@ -4,7 +4,7 @@ import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
 data class CoinPriceDto(
-    @SerializedName("price")
+    @SerializedName("USD")
     @Expose
     val price: Double
 )

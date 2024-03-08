@@ -4,7 +4,7 @@ import android.app.Application
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.map
-import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.ExistingWorkPolicy
 import androidx.work.WorkManager
 import com.baltsarak.cryptopricealert.data.database.AppDatabase
 import com.baltsarak.cryptopricealert.data.database.entities.WatchListCoinDbModel
@@ -126,9 +126,9 @@ class CoinRepositoryImpl(
 
     override suspend fun loadData() {
         val workManager = WorkManager.getInstance(application)
-        workManager.enqueueUniquePeriodicWork(
+        workManager.enqueueUniqueWork(
             PriceMonitoringWorker.NAME,
-            ExistingPeriodicWorkPolicy.KEEP,
+            ExistingWorkPolicy.KEEP,
             PriceMonitoringWorker.WORK_REQUEST
         )
         while (true) {

@@ -1,16 +1,16 @@
 package com.baltsarak.cryptopricealert.data.worker
 
 import android.content.Context
+import android.util.Log
 import androidx.work.Constraints
 import androidx.work.CoroutineWorker
 import androidx.work.NetworkType
-import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkerParameters
 import com.baltsarak.cryptopricealert.data.database.AppDatabase
 import com.baltsarak.cryptopricealert.data.network.ApiFactory
 import com.baltsarak.cryptopricealert.domain.TargetPrice
-import kotlinx.coroutines.flow.asFlow
-import java.util.concurrent.TimeUnit
+import kotlinx.coroutines.delay
 
 class PriceMonitoringWorker(
     context: Context,
@@ -22,18 +22,23 @@ class PriceMonitoringWorker(
         AppDatabase.getInstance(context).watchListCoinInfoDao()
 
     override suspend fun doWork(): Result {
-        val targetPrices = watchListCoinInfoDao.getTargetPrices().asFlow()
+        while (true) {
+            val targetPrices = watchListCoinInfoDao.getTargetPrices()
 
-        targetPrices
-            .collect {
-                checkPrice(it)
+            for (targetPrice in targetPrices) {
+                Log.d(
+                    "doWork",
+                    "Working... ${targetPrice.fromSymbol} ${targetPrice.targetPrice} ${targetPrice.higherThenCurrent}"
+                )
+                checkPrice(targetPrice)
             }
-
-        return Result.success()
+            delay(30_000)
+        }
     }
 
     private suspend fun checkPrice(targetPrice: TargetPrice) {
         val currentPrice = apiService.getCoinPrice(fSym = targetPrice.fromSymbol)
+        Log.d("doWork", currentPrice.price.toString())
 
         val isTargetReached = if (targetPrice.higherThenCurrent) {
             currentPrice.price >= targetPrice.targetPrice
@@ -42,14 +47,23 @@ class PriceMonitoringWorker(
         }
 
         if (isTargetReached) {
-            //TODO оповещение что цена достигла целевой
+            showNotification(targetPrice)
         }
+    }
+
+    private fun showNotification(targetPrice: TargetPrice) {
+        val notificationHelper = NotificationHelper(applicationContext)
+        notificationHelper.createNotificationChannel()
+        notificationHelper.sendNotification(
+            "Price Alert",
+            "Цена ${targetPrice.fromSymbol} достигла: ${targetPrice.targetPrice}"
+        )
     }
 
     companion object {
         const val NAME = "PriceMonitoringWorker"
 
-        val WORK_REQUEST = PeriodicWorkRequestBuilder<PriceMonitoringWorker>(30, TimeUnit.SECONDS)
+        val WORK_REQUEST = OneTimeWorkRequestBuilder<PriceMonitoringWorker>()
             .setConstraints(
                 Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
             )

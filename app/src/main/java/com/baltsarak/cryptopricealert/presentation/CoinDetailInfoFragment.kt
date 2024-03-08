@@ -1,11 +1,15 @@
 package com.baltsarak.cryptopricealert.presentation
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -77,9 +81,24 @@ class CoinDetailInfoFragment : Fragment() {
         }
 
         binding.buttonAdd.setOnClickListener {
-            lifecycleScope.launch {
-                val targetPrice = binding.targetPrice.text.toString()
-                viewModel.addCoinToWatchList(fromSymbol, targetPrice)
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                if (ContextCompat.checkSelfPermission(
+                        this.requireActivity(),
+                        Manifest.permission.POST_NOTIFICATIONS
+                    ) != PackageManager.PERMISSION_GRANTED
+                ) {
+                    ActivityCompat.requestPermissions(
+                        this.requireActivity(),
+                        arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                        REQUEST_CODE_POST_NOTIFICATIONS
+                    )
+                } else {
+                    lifecycleScope.launch {
+                        val targetPrice = binding.targetPrice.text.toString()
+                        viewModel.addCoinToWatchList(fromSymbol, targetPrice)
+                    }
+                }
             }
         }
 
@@ -102,6 +121,7 @@ class CoinDetailInfoFragment : Fragment() {
 
     companion object {
 
+        private const val REQUEST_CODE_POST_NOTIFICATIONS = 11
         private const val EXTRA_FROM_SYMBOL = "fSym"
         private const val EMPTY_SYMBOL = ""
 
