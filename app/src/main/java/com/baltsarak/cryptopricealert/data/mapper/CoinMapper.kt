@@ -16,7 +16,8 @@ class CoinMapper {
         id = 0,
         fromSymbol = targetPrice.fromSymbol,
         targetPrice = targetPrice.targetPrice,
-        higherThenCurrent = targetPrice.higherThenCurrent
+        higherThenCurrent = targetPrice.higherThenCurrent,
+        position = targetPrice.position
     )
 
     fun mapDtoToDbModel(dto: CoinInfoDto) = CoinInfoDbModel(

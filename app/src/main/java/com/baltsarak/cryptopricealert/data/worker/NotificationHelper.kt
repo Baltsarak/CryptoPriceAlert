@@ -24,7 +24,7 @@ class NotificationHelper(private val context: Context) {
         }
     }
 
-    fun sendNotification(title: String, message: String) {
+    fun sendNotification(id: Int, title: String, message: String) {
         val notification = NotificationCompat.Builder(context, "PRICE_ALERT_CHANNEL_ID")
             .setSmallIcon(R.drawable.cryptocurrency)
             .setContentTitle(title)
@@ -32,10 +32,6 @@ class NotificationHelper(private val context: Context) {
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .build()
 
-        notificationManager.notify(NOTIFICATION_ID, notification)
-    }
-
-    companion object {
-        private const val NOTIFICATION_ID = 1
+        notificationManager.notify(id, notification)
     }
 }

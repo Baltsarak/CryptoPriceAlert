@@ -16,6 +16,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.baltsarak.cryptopricealert.R
 import com.baltsarak.cryptopricealert.databinding.FragmentCoinDetailInfoBinding
+import com.baltsarak.cryptopricealert.domain.CoinInfo
+import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
@@ -29,6 +31,8 @@ class CoinDetailInfoFragment : Fragment() {
     private val binding: FragmentCoinDetailInfoBinding
         get() = _binding ?: throw RuntimeException("FragmentCoinDetailInfoBinding is null")
 
+    lateinit var fromSymbol: String
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -40,7 +44,12 @@ class CoinDetailInfoFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val fromSymbol = getFromSymbol()
+        fromSymbol = requireArguments().getString(EXTRA_FROM_SYMBOL, EMPTY_SYMBOL)
+        loadDataAndFillingView(fromSymbol)
+        setOnClickListeners()
+    }
+
+    private fun loadDataAndFillingView(fromSymbol: String) {
         lifecycleScope.launch {
             viewModel.loadCoinPriceHistoryInfo(fromSymbol)
             viewModel.getCoinDetailInfo(fromSymbol).observe(viewLifecycleOwner) {
@@ -48,40 +57,44 @@ class CoinDetailInfoFragment : Fragment() {
                     textViewCoinName.text = it.fromSymbol
                     textViewPrice.text = it.price.toString()
                     val coinPriceChart = priceChart
-                    val entries = ArrayList<Entry>()
-
-                    lifecycleScope.launch {
-                        val coinMap = viewModel.getCoinPriceHistory(fromSymbol)
-                        for (data in coinMap) {
-                            entries.add(Entry(data.key, data.value))
-                        }
-                        val priceHistoryDataSet = LineDataSet(entries, it.fromSymbol)
-                        with(priceHistoryDataSet) {
-                            mode = LineDataSet.Mode.CUBIC_BEZIER
-                            color = Color.WHITE
-                            lineWidth = 5F
-                            setDrawValues(false)
-                            setDrawCircles(false)
-                            setDrawFilled(true)
-                            fillColor = Color.WHITE
-                            fillDrawable = ContextCompat.getDrawable(
-                                requireContext(), R.drawable.chart_gradient_fill
-                            )
-                        }
-                        with(coinPriceChart) {
-                            axisRight.isEnabled = false
-                            xAxis.isEnabled = false
-                            axisLeft.textColor = Color.WHITE
-                            data = LineData(priceHistoryDataSet)
-                        }
-                        coinPriceChart.invalidate()
-                    }
+                    settingPriceChart(coinPriceChart, it)
                 }
             }
         }
+    }
 
+    private fun settingPriceChart(coinPriceChart: LineChart, coinInfo: CoinInfo) {
+        val entries = ArrayList<Entry>()
+        lifecycleScope.launch {
+            val coinMap = viewModel.getCoinPriceHistory(fromSymbol)
+            for (data in coinMap) {
+                entries.add(Entry(data.key, data.value))
+            }
+            val priceHistoryDataSet = LineDataSet(entries, coinInfo.fromSymbol)
+            with(priceHistoryDataSet) {
+                mode = LineDataSet.Mode.CUBIC_BEZIER
+                color = Color.WHITE
+                lineWidth = 5F
+                setDrawValues(false)
+                setDrawCircles(false)
+                setDrawFilled(true)
+                fillColor = Color.WHITE
+                fillDrawable = ContextCompat.getDrawable(
+                    requireContext(), R.drawable.chart_gradient_fill
+                )
+            }
+            with(coinPriceChart) {
+                axisRight.isEnabled = false
+                xAxis.isEnabled = false
+                axisLeft.textColor = Color.WHITE
+                data = LineData(priceHistoryDataSet)
+            }
+            coinPriceChart.invalidate()
+        }
+    }
+
+    private fun setOnClickListeners() {
         binding.buttonAdd.setOnClickListener {
-
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 if (ContextCompat.checkSelfPermission(
                         this.requireActivity(),
@@ -94,14 +107,11 @@ class CoinDetailInfoFragment : Fragment() {
                         REQUEST_CODE_POST_NOTIFICATIONS
                     )
                 } else {
-                    lifecycleScope.launch {
-                        val targetPrice = binding.targetPrice.text.toString()
-                        viewModel.addCoinToWatchList(fromSymbol, targetPrice)
-                    }
+                    addCoinToWatchList()
+                    viewModel.startWorker()
                 }
             }
         }
-
         val callback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 (activity as? MainActivity)?.returnByBackStack()
@@ -110,8 +120,11 @@ class CoinDetailInfoFragment : Fragment() {
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
     }
 
-    private fun getFromSymbol(): String {
-        return requireArguments().getString(EXTRA_FROM_SYMBOL, EMPTY_SYMBOL)
+    private fun addCoinToWatchList() {
+        lifecycleScope.launch {
+            val targetPrice = binding.targetPrice.text.toString()
+            viewModel.addCoinToWatchList(fromSymbol, targetPrice)
+        }
     }
 
     override fun onDestroy() {

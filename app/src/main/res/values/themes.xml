@@ -5,6 +5,7 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorOnPrimary">#eaeff0</item>
         <item name="colorSecondary">#eaeff0</item>
+        <item name="android:navigationBarColor">@color/colorFragmentBackground</item>
     </style>
 
     <style name="Theme.CryptoPriceAlert" parent="Base.Theme.CryptoPriceAlert" />

@@ -57,6 +57,7 @@ class PriceMonitoringWorker(
         val notificationHelper = NotificationHelper(applicationContext)
         notificationHelper.createNotificationChannel()
         notificationHelper.sendNotification(
+            targetPrice.id,
             "Price Alert",
             "Цена ${targetPrice.fromSymbol} достигла: ${targetPrice.targetPrice}"
         )

@@ -41,25 +41,31 @@ class CoinRepositoryImpl(
                 0,
                 fromSymbol,
                 targetPrice,
-                higherThenCurrentPrice
+                higherThenCurrentPrice,
+                0
             )
         )
     }
 
     override suspend fun rewriteWatchList(watchList: List<CoinInfo>) {
-        watchListCoinInfoDao.deleteAllFromWatchList()
-        val listCoinDbModel = watchList.flatMap { coinInfo ->
+        val listCoinDbModel = watchList.flatMapIndexed() { index, coinInfo ->
             coinInfo.targetPrice.map { targetPrice ->
-                WatchListCoinDbModel(
-                    0,
-                    coinInfo.fromSymbol,
-                    targetPrice?.targetPrice,
-                    targetPrice?.higherThenCurrent
-                )
-
+                targetPrice?.let {
+                    WatchListCoinDbModel(
+                        it.id,
+                        coinInfo.fromSymbol,
+                        targetPrice.targetPrice,
+                        targetPrice.higherThenCurrent,
+                        index + 1
+                    )
+                }
             }
         }
-        listCoinDbModel.forEach { watchListCoinInfoDao.insertCoinToWatchList(it) }
+        listCoinDbModel.forEach {
+            if (it != null) {
+                watchListCoinInfoDao.insertCoinToWatchList(it)
+            }
+        }
     }
 
     override suspend fun deleteCoinFromWatchList(fromSymbol: String) {
@@ -124,13 +130,16 @@ class CoinRepositoryImpl(
         return apiService.getCoinPrice(fSym = fromSymbol).price
     }
 
-    override suspend fun loadData() {
+    override fun startWorker() {
         val workManager = WorkManager.getInstance(application)
         workManager.enqueueUniqueWork(
             PriceMonitoringWorker.NAME,
             ExistingWorkPolicy.KEEP,
             PriceMonitoringWorker.WORK_REQUEST
         )
+    }
+
+    override suspend fun loadData() {
         while (true) {
             try {
                 val popularCoins = getPopularCoinsListFromApi()
@@ -148,7 +157,7 @@ class CoinRepositoryImpl(
             } catch (e: Exception) {
                 Log.d("loadData", "ERROR LOAD DATA " + e.message)
             }
-            delay(10000)
+            delay(10_000)
         }
     }
 

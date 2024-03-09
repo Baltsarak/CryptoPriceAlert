@@ -18,6 +18,7 @@ import com.baltsarak.cryptopricealert.domain.usecases.GetWatchListCoinsUseCase
 import com.baltsarak.cryptopricealert.domain.usecases.LoadCoinPriceHistoryInfoUseCase
 import com.baltsarak.cryptopricealert.domain.usecases.LoadDataUseCase
 import com.baltsarak.cryptopricealert.domain.usecases.RewriteWatchListUseCase
+import com.baltsarak.cryptopricealert.domain.usecases.StartWorkerUseCase
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
@@ -35,6 +36,7 @@ class CoinViewModel(application: Application) : AndroidViewModel(application) {
     private val getCurrentCoinPriceUseCase = GetCurrentCoinPriceUseCase(repository)
     private val getWatchListCoinsUseCase = GetWatchListCoinsUseCase(repository)
     private val loadDataUseCase = LoadDataUseCase(repository)
+    private val startWorkerUseCase = StartWorkerUseCase(repository)
 
     private val _watchList = MutableLiveData<List<CoinInfo>>()
     val watchList: LiveData<List<CoinInfo>>
@@ -88,6 +90,10 @@ class CoinViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             _watchList.value = getWatchListCoinsUseCase()
         }
+    }
+
+    fun startWorker() {
+        startWorkerUseCase()
     }
 
     init {

@@ -12,13 +12,21 @@ interface WatchListCoinInfoDao {
     @Query("SELECT fromSymbol FROM watch_list_coins GROUP BY fromSymbol")
     fun getWatchListCoins(): List<String>
 
-    @Query("SELECT fromSymbol, targetPrice, higherThenCurrent FROM watch_list_coins")
+    @Query(
+        "SELECT id, fromSymbol, targetPrice, higherThenCurrent, position " +
+                "FROM watch_list_coins " +
+                "ORDER BY position"
+    )
     fun getTargetPrices(): List<TargetPrice>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertCoinToWatchList(coin: WatchListCoinDbModel)
 
-    @Query("UPDATE watch_list_coins SET targetPrice = null WHERE fromSymbol = :fSym AND targetPrice = :tPrice")
+    @Query(
+        "UPDATE watch_list_coins " +
+                "SET targetPrice = null AND higherThenCurrent = null " +
+                "WHERE fromSymbol = :fSym AND targetPrice = :tPrice"
+    )
     suspend fun deleteTargetPriceFromWatchList(fSym: String, tPrice: Double)
 
     @Query("DELETE FROM watch_list_coins WHERE fromsymbol = :fSym")
