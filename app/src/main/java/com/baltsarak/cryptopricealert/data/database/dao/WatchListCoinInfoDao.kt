@@ -22,6 +22,9 @@ interface WatchListCoinInfoDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertCoinToWatchList(coin: WatchListCoinDbModel)
 
+    @Query("SELECT COUNT(DISTINCT fromSymbol) FROM watch_list_coins")
+    suspend fun getWatchListSize(): Int
+
     @Query(
         "UPDATE watch_list_coins " +
                 "SET targetPrice = null AND higherThenCurrent = null " +

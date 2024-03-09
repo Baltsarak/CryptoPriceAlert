@@ -36,13 +36,14 @@ class CoinRepositoryImpl(
         targetPrice: Double,
         higherThenCurrentPrice: Boolean
     ) {
+        val size = watchListCoinInfoDao.getWatchListSize()
         watchListCoinInfoDao.insertCoinToWatchList(
             WatchListCoinDbModel(
                 0,
                 fromSymbol,
                 targetPrice,
                 higherThenCurrentPrice,
-                0
+                size + 1
             )
         )
     }
