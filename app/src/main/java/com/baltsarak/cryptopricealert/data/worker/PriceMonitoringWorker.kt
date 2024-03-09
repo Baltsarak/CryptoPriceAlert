@@ -26,11 +26,9 @@ class PriceMonitoringWorker(
             val targetPrices = watchListCoinInfoDao.getTargetPrices()
 
             for (targetPrice in targetPrices) {
-                Log.d(
-                    "doWork",
-                    "Working... ${targetPrice.fromSymbol} ${targetPrice.targetPrice} ${targetPrice.higherThenCurrent}"
-                )
-                checkPrice(targetPrice)
+                if (targetPrice.targetPrice > 0) {
+                    checkPrice(targetPrice)
+                }
             }
             delay(30_000)
         }
@@ -48,6 +46,10 @@ class PriceMonitoringWorker(
 
         if (isTargetReached) {
             showNotification(targetPrice)
+            watchListCoinInfoDao.deleteTargetPriceFromWatchList(
+                targetPrice.fromSymbol,
+                targetPrice.targetPrice
+            )
         }
     }
 

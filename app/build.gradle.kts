@@ -60,7 +60,8 @@ dependencies {
     implementation ("androidx.room:room-ktx:2.6.1")
     ksp ("androidx.room:room-compiler:2.6.1")
 
-    implementation ("com.squareup.picasso:picasso:2.71828")
+    implementation ("com.github.bumptech.glide:glide:4.11.0")
+    ksp ("com.github.bumptech.glide:compiler:4.11.0")
     implementation ("com.github.PhilJay:MPAndroidChart:v3.1.0")
 
     debugImplementation ("com.squareup.leakcanary:leakcanary-android:2.7")

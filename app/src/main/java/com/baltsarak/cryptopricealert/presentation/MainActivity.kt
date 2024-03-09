@@ -58,7 +58,15 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 R.id.navigation_profile -> {
-                    TODO()
+                    supportFragmentManager
+                        .beginTransaction()
+                        .replace(
+                            R.id.main_screen_fragment_container,
+                            AccountFragment(),
+                            "Account"
+                        )
+                        .commit()
+                    true
                 }
 
                 else -> false

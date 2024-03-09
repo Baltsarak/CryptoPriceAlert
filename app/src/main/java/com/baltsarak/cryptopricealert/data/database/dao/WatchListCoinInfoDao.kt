@@ -18,6 +18,9 @@ interface WatchListCoinInfoDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertCoinToWatchList(coin: WatchListCoinDbModel)
 
+    @Query("UPDATE watch_list_coins SET targetPrice = null WHERE fromSymbol = :fSym AND targetPrice = :tPrice")
+    suspend fun deleteTargetPriceFromWatchList(fSym: String, tPrice: Double)
+
     @Query("DELETE FROM watch_list_coins WHERE fromsymbol = :fSym")
     suspend fun deleteCoinFromWatchList(fSym: String)
 

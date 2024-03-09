@@ -25,11 +25,11 @@ class NotificationHelper(private val context: Context) {
     }
 
     fun sendNotification(title: String, message: String) {
-        val notification = NotificationCompat.Builder(context, "CHANNEL_ID")
+        val notification = NotificationCompat.Builder(context, "PRICE_ALERT_CHANNEL_ID")
             .setSmallIcon(R.drawable.cryptocurrency)
             .setContentTitle(title)
             .setContentText(message)
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
             .build()
 
         notificationManager.notify(NOTIFICATION_ID, notification)

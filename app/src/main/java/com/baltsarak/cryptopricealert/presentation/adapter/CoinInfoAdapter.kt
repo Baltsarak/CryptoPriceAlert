@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.ListAdapter
 import com.baltsarak.cryptopricealert.databinding.ItemCoinListBinding
 import com.baltsarak.cryptopricealert.domain.CoinInfo
 import com.baltsarak.cryptopricealert.presentation.WatchListFragment
-import com.squareup.picasso.Picasso
+import com.bumptech.glide.Glide
 import java.util.Collections
 
 class CoinInfoAdapter :
@@ -30,7 +30,7 @@ class CoinInfoAdapter :
                 val pairTemplate = "%s / %s"
                 currencyPair.text = String.format(pairTemplate, fromSymbol, toSymbol)
                 coinPrice.text = price.toString()
-                Picasso.get().load(imageUrl).into(coinLogo)
+                Glide.with(holder.itemView.context).load(imageUrl).into(coinLogo)
                 root.setOnClickListener {
                     onCoinClickListener?.onCoinClick(this)
                 }

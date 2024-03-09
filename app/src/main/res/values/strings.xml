@@ -8,4 +8,7 @@
     <string name="price_question">Получить уведомление когда цена достигнет:</string>
     <string name="description_button_add">Кнопка установки цены, при достижении которой будет прислано оповещение</string>
     <string name="usd">USD</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="account_logo">Логотип профиля</string>
 </resources>
