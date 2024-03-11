@@ -7,6 +7,7 @@ import androidx.lifecycle.map
 import androidx.work.ExistingWorkPolicy
 import androidx.work.WorkManager
 import com.baltsarak.cryptopricealert.data.database.AppDatabase
+import com.baltsarak.cryptopricealert.data.database.entities.CoinInfoDbModel
 import com.baltsarak.cryptopricealert.data.database.entities.WatchListCoinDbModel
 import com.baltsarak.cryptopricealert.data.mapper.CoinMapper
 import com.baltsarak.cryptopricealert.data.network.ApiFactory
@@ -15,9 +16,10 @@ import com.baltsarak.cryptopricealert.domain.CoinInfo
 import com.baltsarak.cryptopricealert.domain.CoinRepository
 import com.baltsarak.cryptopricealert.domain.TargetPrice
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
-import java.util.TreeSet
 
 class CoinRepositoryImpl(
     private val application: Application
@@ -82,13 +84,13 @@ class CoinRepositoryImpl(
         for (coin in watchListCoins) {
             val coinInfoFromDb = coinInfoDao.getInfoAboutCoin(coin.key)
             val coinInfoEntity = CoinInfo(
+                id = coinInfoFromDb.id,
                 fromSymbol = coin.key,
+                fullName = coinInfoFromDb.fullName,
                 toSymbol = coinInfoFromDb.toSymbol,
                 targetPrice = coin.value,
                 price = coinInfoFromDb.price,
-                highDay = coinInfoFromDb.highDay,
-                lowDay = coinInfoFromDb.lowDay,
-                imageUrl = CoinMapper.BASE_IMAGE_URL + coinInfoFromDb.imageUrl
+                imageUrl = coinInfoFromDb.imageUrl
             )
             result.add(coinInfoEntity)
         }
@@ -143,18 +145,27 @@ class CoinRepositoryImpl(
     override suspend fun loadData() {
         while (true) {
             try {
-                val popularCoins = getPopularCoinsListFromApi()
-                val watchList = withContext(Dispatchers.Default) {
+                val popularCoins = apiService.getPopularCoinsList().coinListContainer
+                val allCoinsList = popularCoins?.coins?.toMutableSet() ?: mutableSetOf()
+                val watchListNames = withContext(Dispatchers.Default) {
                     watchListCoinInfoDao.getWatchListCoins()
                 }
-                val setAllCoins = TreeSet<String>(popularCoins).apply {
-                    addAll(watchList)
+                val watchList = withContext(Dispatchers.IO) {
+                    watchListNames.map { async { apiService.getCoinInfo(assetSymbol = it) } }
+                        .awaitAll()
                 }
-                val fromSymbols = setAllCoins.joinToString(",")
-                val jsonContainer = apiService.getFullInfoAboutCoins(fSyms = fromSymbols)
-                val coinInfoDtoList = mapper.mapJsonContainerToListCoinInfo(jsonContainer)
-                val coinInfoDbModelList = coinInfoDtoList.map { mapper.mapDtoToDbModel(it) }
-                coinInfoDao.insertListCoinsInfo(coinInfoDbModelList)
+                allCoinsList.addAll(watchList)
+                val allCoinSymbols = allCoinsList.joinToString(",") { it.symbol }
+                val response = apiService.getCoinPrices(fSyms = allCoinSymbols)
+                if (response.isSuccessful) {
+                    val prices = response.body()
+                    val coinInfoDbModelList = allCoinsList.map { coinInfo ->
+                        prices?.get(coinInfo.symbol)?.let { pricesMap ->
+                            mapper.mapDtoToDbModel(coinInfo, pricesMap["USD"])
+                        } ?: CoinInfoDbModel(0, "", "", "", 0.0, "")
+                    }
+                    coinInfoDao.insertListCoinsInfo(coinInfoDbModelList)
+                }
             } catch (e: Exception) {
                 Log.d("loadData", "ERROR LOAD DATA " + e.message)
             }
@@ -162,9 +173,9 @@ class CoinRepositoryImpl(
         }
     }
 
-    private suspend fun getPopularCoinsListFromApi(): List<String?> {
-        return (apiService.getPopularCoinsList(limit = 50))
-            .coins?.map { it.coinName?.name } ?: listOf("BTC")
+    private suspend fun getPopularCoinsListFromApi(): List<String> {
+        val popularCoins = apiService.getPopularCoinsList().coinListContainer
+        return popularCoins?.coins?.map { it.symbol } ?: listOf("BTC")
     }
 
     private suspend fun getTargetPrices(): List<TargetPrice> {

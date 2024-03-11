@@ -1,7 +1,6 @@
 package com.baltsarak.cryptopricealert.data.worker
 
 import android.content.Context
-import android.util.Log
 import androidx.work.Constraints
 import androidx.work.CoroutineWorker
 import androidx.work.NetworkType
@@ -36,7 +35,6 @@ class PriceMonitoringWorker(
 
     private suspend fun checkPrice(targetPrice: TargetPrice) {
         val currentPrice = apiService.getCoinPrice(fSym = targetPrice.fromSymbol)
-        Log.d("doWork", currentPrice.price.toString())
 
         val isTargetReached = if (targetPrice.higherThenCurrent) {
             currentPrice.price >= targetPrice.targetPrice
