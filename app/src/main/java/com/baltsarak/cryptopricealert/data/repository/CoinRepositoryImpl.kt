@@ -16,8 +16,6 @@ import com.baltsarak.cryptopricealert.domain.CoinInfo
 import com.baltsarak.cryptopricealert.domain.CoinRepository
 import com.baltsarak.cryptopricealert.domain.TargetPrice
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 
@@ -143,17 +141,17 @@ class CoinRepositoryImpl(
     }
 
     override suspend fun loadData() {
-        while (true) {
-            try {
-                val popularCoins = apiService.getPopularCoinsList().coinListContainer
-                val allCoinsList = popularCoins?.coins?.toMutableSet() ?: mutableSetOf()
-                val watchListNames = withContext(Dispatchers.Default) {
+        try {
+            val popularCoins = apiService.getPopularCoinsList().coinList
+            val allCoinsList = popularCoins?.coins?.toMutableSet() ?: mutableSetOf()
+
+            while (true) {
+                val watchListNames = withContext(Dispatchers.IO) {
                     watchListCoinInfoDao.getWatchListCoins()
                 }
-                val watchList = withContext(Dispatchers.IO) {
-                    watchListNames.map { async { apiService.getCoinInfo(assetSymbol = it) } }
-                        .awaitAll()
-                }
+                val watchList = watchListNames
+                    .map { apiService.getCoinInfo(assetSymbol = it) }.map { it.coinInfo }
+
                 allCoinsList.addAll(watchList)
                 val allCoinSymbols = allCoinsList.joinToString(",") { it.symbol }
                 val response = apiService.getCoinPrices(fSyms = allCoinSymbols)
@@ -165,16 +163,16 @@ class CoinRepositoryImpl(
                         } ?: CoinInfoDbModel(0, "", "", "", 0.0, "")
                     }
                     coinInfoDao.insertListCoinsInfo(coinInfoDbModelList)
+                    delay(10_000)
                 }
-            } catch (e: Exception) {
-                Log.d("loadData", "ERROR LOAD DATA " + e.message)
             }
-            delay(10_000)
+        } catch (e: Exception) {
+            Log.d("loadData", "ERROR LOAD DATA " + e.message)
         }
     }
 
     private suspend fun getPopularCoinsListFromApi(): List<String> {
-        val popularCoins = apiService.getPopularCoinsList().coinListContainer
+        val popularCoins = apiService.getPopularCoinsList().coinList
         return popularCoins?.coins?.map { it.symbol } ?: listOf("BTC")
     }
 
