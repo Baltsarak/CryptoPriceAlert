@@ -1,4 +1,4 @@
-package com.baltsarak.cryptopricealert.presentation
+package com.baltsarak.cryptopricealert.presentation.fragments
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,11 +8,18 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import com.baltsarak.cryptopricealert.R
 import com.baltsarak.cryptopricealert.databinding.FragmentWatchlistBinding
 import com.baltsarak.cryptopricealert.domain.CoinInfo
+import com.baltsarak.cryptopricealert.presentation.CoinViewModel
+import com.baltsarak.cryptopricealert.presentation.MainActivity
 import com.baltsarak.cryptopricealert.presentation.adapter.CoinInfoAdapter
+import com.baltsarak.cryptopricealert.presentation.contract.CustomAction
+import com.baltsarak.cryptopricealert.presentation.contract.HasCustomAction
+import com.baltsarak.cryptopricealert.presentation.contract.HasCustomTitle
+import com.baltsarak.cryptopricealert.presentation.contract.navigator
 
-class WatchListFragment : Fragment() {
+class WatchListFragment : Fragment(), HasCustomTitle, HasCustomAction {
 
     private lateinit var viewModel: CoinViewModel
     private lateinit var adapter: CoinInfoAdapter
@@ -46,7 +53,7 @@ class WatchListFragment : Fragment() {
     private fun setupClickListener() {
         adapter.onCoinClickListener = object : CoinInfoAdapter.OnCoinClickListener {
             override fun onCoinClick(coinPriceInfo: CoinInfo) {
-                (activity as? MainActivity)?.goToCoinDetailInfo(coinPriceInfo.fromSymbol)
+                navigator().showCoinInfo(coinPriceInfo.fromSymbol)
             }
         }
     }
@@ -92,6 +99,16 @@ class WatchListFragment : Fragment() {
         }
         val itemTouchHelper = ItemTouchHelper(callback)
         itemTouchHelper.attachToRecyclerView(binding.recyclerViewWatchList)
+    }
+
+    override fun getTitleRes(): Int = R.string.watchlist
+
+    override fun getCustomAction(): CustomAction {
+        return CustomAction(
+            iconRes = R.drawable.profile,
+            textRes = R.string.profile,
+            onCustomAction = { (activity as? MainActivity)?.showAccount() }
+        )
     }
 
     override fun onDestroy() {

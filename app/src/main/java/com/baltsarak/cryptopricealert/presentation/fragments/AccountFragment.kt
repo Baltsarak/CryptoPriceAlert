@@ -1,4 +1,4 @@
-package com.baltsarak.cryptopricealert.presentation
+package com.baltsarak.cryptopricealert.presentation.fragments
 
 import android.os.Bundle
 import android.view.LayoutInflater

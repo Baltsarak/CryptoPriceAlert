@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".presentation.WatchListFragment">
+    tools:context=".presentation.fragments.WatchListFragment">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view_popular_coins"

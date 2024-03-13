@@ -1,92 +1,158 @@
 package com.baltsarak.cryptopricealert.presentation
 
+import android.graphics.Color
 import android.os.Bundle
+import android.view.MenuItem
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.DrawableCompat
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import com.baltsarak.cryptopricealert.R
 import com.baltsarak.cryptopricealert.databinding.ActivityMainBinding
+import com.baltsarak.cryptopricealert.presentation.contract.CustomAction
+import com.baltsarak.cryptopricealert.presentation.contract.HasCustomAction
+import com.baltsarak.cryptopricealert.presentation.contract.HasCustomTitle
+import com.baltsarak.cryptopricealert.presentation.contract.Navigator
+import com.baltsarak.cryptopricealert.presentation.fragments.AccountFragment
+import com.baltsarak.cryptopricealert.presentation.fragments.CoinDetailInfoFragment
+import com.baltsarak.cryptopricealert.presentation.fragments.PopularCoinsFragment
+import com.baltsarak.cryptopricealert.presentation.fragments.WatchListFragment
+import com.google.android.material.navigation.NavigationBarView.OnItemSelectedListener
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), Navigator {
+
+    private var targetCoin = "BTC"
 
     private val binding by lazy {
         ActivityMainBinding.inflate(layoutInflater)
     }
 
-    private var targetCoin = "BTC"
+    private val fragmentListener =
+        object : FragmentManager.FragmentLifecycleCallbacks() {
+            override fun onFragmentViewCreated(
+                fm: FragmentManager,
+                f: Fragment,
+                v: View,
+                savedInstanceState: Bundle?
+            ) {
+                super.onFragmentViewCreated(fm, f, v, savedInstanceState)
+                updateUi(f)
+            }
+        }
+
+    private val onItemSelectedListener: OnItemSelectedListener = OnItemSelectedListener { item ->
+        when (item.itemId) {
+            R.id.navigation_watch_list -> {
+                launchFragment(WatchListFragment())
+                true
+            }
+
+            R.id.navigation_popular -> {
+                launchFragment(PopularCoinsFragment())
+                true
+            }
+
+            R.id.navigation_cryptocurrency -> {
+                launchFragment(CoinDetailInfoFragment.newInstance(targetCoin))
+                true
+            }
+
+            R.id.navigation_profile -> {
+                launchFragment(AccountFragment())
+                true
+            }
+
+            else -> false
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-
-        binding.bottomNavigation.setOnItemSelectedListener { item ->
-            when (item.itemId) {
-                R.id.navigation_watch_list -> {
-                    supportFragmentManager.popBackStack()
-                    supportFragmentManager
-                        .beginTransaction()
-                        .replace(
-                            R.id.main_screen_fragment_container,
-                            WatchListFragment(),
-                            "WatchList"
-                        )
-                        .commit()
-                    true
-                }
-
-                R.id.navigation_popular -> {
-                    supportFragmentManager
-                        .beginTransaction()
-                        .replace(
-                            R.id.main_screen_fragment_container,
-                            PopularCoinsFragment(),
-                            "PopularCoins"
-                        )
-                        .commit()
-                    true
-                }
-
-                R.id.navigation_cryptocurrency -> {
-                    supportFragmentManager
-                        .beginTransaction()
-                        .replace(
-                            R.id.main_screen_fragment_container,
-                            CoinDetailInfoFragment.newInstance(targetCoin),
-                            "DetailInfo"
-                        )
-                        .addToBackStack(null)
-                        .commit()
-                    true
-                }
-
-                R.id.navigation_profile -> {
-                    supportFragmentManager
-                        .beginTransaction()
-                        .replace(
-                            R.id.main_screen_fragment_container,
-                            AccountFragment(),
-                            "Account"
-                        )
-                        .commit()
-                    true
-                }
-
-                else -> false
-            }
-        }
+        setSupportActionBar(binding.toolbar)
+        binding.bottomNavigation.setOnItemSelectedListener(onItemSelectedListener)
+        supportFragmentManager.registerFragmentLifecycleCallbacks(fragmentListener, false)
     }
 
-    fun goToCoinDetailInfo(fromSymbol: String) {
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressedDispatcher.onBackPressed()
+        return true
+    }
+
+    override fun showWatchList() {
+        binding.bottomNavigation.selectedItemId = R.id.navigation_watch_list
+    }
+
+    override fun showPopularCoinsList() {
+        binding.bottomNavigation.selectedItemId = R.id.navigation_popular
+    }
+
+    override fun showCoinInfo(fromSymbol: String) {
         targetCoin = fromSymbol
         binding.bottomNavigation.selectedItemId = R.id.navigation_cryptocurrency
     }
 
-    fun returnByBackStack() {
-        val previousFragment = supportFragmentManager.findFragmentByTag(
-            "PopularCoins"
-        )
-        if (previousFragment != null) {
-            binding.bottomNavigation.selectedItemId = R.id.navigation_popular
-        } else {
-            binding.bottomNavigation.selectedItemId = R.id.navigation_watch_list
+    override fun showAccount() {
+        binding.bottomNavigation.selectedItemId = R.id.navigation_profile
+    }
+
+    private fun launchFragment(fragment: Fragment) {
+        supportFragmentManager
+            .beginTransaction()
+            .addToBackStack(null)
+            .replace(R.id.main_screen_fragment_container, fragment)
+            .commit()
+    }
+
+    private fun updateUi(fragment: Fragment) {
+        binding.bottomNavigation.setOnItemSelectedListener(null)
+        binding.bottomNavigation.selectedItemId = when (fragment) {
+            is PopularCoinsFragment -> R.id.navigation_popular
+            is CoinDetailInfoFragment -> R.id.navigation_cryptocurrency
+            is AccountFragment -> R.id.navigation_profile
+            else -> R.id.navigation_watch_list
         }
+        binding.bottomNavigation.setOnItemSelectedListener(onItemSelectedListener)
+
+        if (fragment is HasCustomTitle) {
+            binding.toolbar.title = getString(fragment.getTitleRes())
+        } else {
+            binding.toolbar.title = getString(R.string.app_name)
+        }
+
+        if (supportFragmentManager.backStackEntryCount > 0) {
+            supportActionBar?.setDisplayHomeAsUpEnabled(true)
+            supportActionBar?.setDisplayShowHomeEnabled(true)
+        } else {
+            supportActionBar?.setDisplayHomeAsUpEnabled(false)
+            supportActionBar?.setDisplayShowHomeEnabled(false)
+        }
+
+        if (fragment is HasCustomAction) {
+            createCustomToolbarAction(fragment.getCustomAction())
+        } else {
+            binding.toolbar.menu.clear()
+        }
+    }
+
+    private fun createCustomToolbarAction(action: CustomAction) {
+        val iconDrawable =
+            DrawableCompat.wrap(ContextCompat.getDrawable(this, action.iconRes)!!)
+        iconDrawable.setTint(Color.WHITE)
+
+        val menuItem = binding.toolbar.menu.add(action.textRes)
+        menuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
+        menuItem.icon = iconDrawable
+        menuItem.setOnMenuItemClickListener {
+            action.onCustomAction.run()
+            return@setOnMenuItemClickListener true
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        supportFragmentManager.unregisterFragmentLifecycleCallbacks(fragmentListener)
     }
 }

@@ -1,4 +1,4 @@
-package com.baltsarak.cryptopricealert.presentation
+package com.baltsarak.cryptopricealert.presentation.fragments
 
 import android.Manifest
 import android.content.pm.PackageManager
@@ -8,7 +8,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.OnBackPressedCallback
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -17,6 +16,7 @@ import androidx.lifecycle.lifecycleScope
 import com.baltsarak.cryptopricealert.R
 import com.baltsarak.cryptopricealert.databinding.FragmentCoinDetailInfoBinding
 import com.baltsarak.cryptopricealert.domain.CoinInfo
+import com.baltsarak.cryptopricealert.presentation.CoinViewModel
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
@@ -46,7 +46,7 @@ class CoinDetailInfoFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         fromSymbol = requireArguments().getString(EXTRA_FROM_SYMBOL, EMPTY_SYMBOL)
         loadDataAndFillingView(fromSymbol)
-        setOnClickListeners()
+        setOnClickListener()
     }
 
     private fun loadDataAndFillingView(fromSymbol: String) {
@@ -93,7 +93,7 @@ class CoinDetailInfoFragment : Fragment() {
         }
     }
 
-    private fun setOnClickListeners() {
+    private fun setOnClickListener() {
         binding.buttonAdd.setOnClickListener {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 if (ContextCompat.checkSelfPermission(
@@ -112,12 +112,6 @@ class CoinDetailInfoFragment : Fragment() {
                 }
             }
         }
-        val callback = object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                (activity as? MainActivity)?.returnByBackStack()
-            }
-        }
-        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
     }
 
     private fun addCoinToWatchList() {

@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import com.baltsarak.cryptopricealert.databinding.ItemCoinListBinding
 import com.baltsarak.cryptopricealert.domain.CoinInfo
-import com.baltsarak.cryptopricealert.presentation.WatchListFragment
+import com.baltsarak.cryptopricealert.presentation.fragments.WatchListFragment
 import com.bumptech.glide.Glide
 import java.util.Collections
 

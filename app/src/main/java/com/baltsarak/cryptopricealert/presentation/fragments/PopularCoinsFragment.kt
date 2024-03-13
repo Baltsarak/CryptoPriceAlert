@@ -1,4 +1,4 @@
-package com.baltsarak.cryptopricealert.presentation
+package com.baltsarak.cryptopricealert.presentation.fragments
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,7 +9,9 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.baltsarak.cryptopricealert.databinding.FragmentPopularCoinsBinding
 import com.baltsarak.cryptopricealert.domain.CoinInfo
+import com.baltsarak.cryptopricealert.presentation.CoinViewModel
 import com.baltsarak.cryptopricealert.presentation.adapter.CoinInfoAdapter
+import com.baltsarak.cryptopricealert.presentation.contract.navigator
 import kotlinx.coroutines.launch
 
 class PopularCoinsFragment : Fragment() {
@@ -36,7 +38,7 @@ class PopularCoinsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         adapter.onCoinClickListener = object : CoinInfoAdapter.OnCoinClickListener {
             override fun onCoinClick(coinPriceInfo: CoinInfo) {
-                (activity as? MainActivity)?.goToCoinDetailInfo(coinPriceInfo.fromSymbol)
+                navigator().showCoinInfo(coinPriceInfo.fromSymbol)
             }
         }
         binding.recyclerViewPopularCoins.adapter = adapter

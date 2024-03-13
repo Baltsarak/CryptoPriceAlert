@@ -7,13 +7,25 @@
     android:background="#111518"
     tools:context=".presentation.MainActivity">
 
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="0dp"
+        android:layout_height="?android:attr/actionBarSize"
+        android:background="@color/colorPrimary"
+        app:title="Cryptocurrency"
+        app:titleTextColor="@color/white"
+        app:navigationIconTint="@color/white"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/main_screen_fragment_container"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:background="#111518"
-        android:name="com.baltsarak.cryptopricealert.presentation.WatchListFragment"
-        app:layout_constraintTop_toTopOf="parent"
+        android:name="com.baltsarak.cryptopricealert.presentation.fragments.WatchListFragment"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toTopOf="@id/bottom_navigation"

@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="#fff"
-    tools:context=".presentation.AccountFragment">
+    tools:context=".presentation.fragments.AccountFragment">
 
 <ImageView
     android:id="@+id/account_logo"
