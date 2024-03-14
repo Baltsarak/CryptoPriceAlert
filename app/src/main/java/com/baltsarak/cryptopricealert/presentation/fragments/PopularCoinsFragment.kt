@@ -7,14 +7,18 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import com.baltsarak.cryptopricealert.R
 import com.baltsarak.cryptopricealert.databinding.FragmentPopularCoinsBinding
 import com.baltsarak.cryptopricealert.domain.CoinInfo
 import com.baltsarak.cryptopricealert.presentation.CoinViewModel
 import com.baltsarak.cryptopricealert.presentation.adapter.CoinInfoAdapter
+import com.baltsarak.cryptopricealert.presentation.contract.CustomAction
+import com.baltsarak.cryptopricealert.presentation.contract.HasCustomAction
+import com.baltsarak.cryptopricealert.presentation.contract.HasCustomTitle
 import com.baltsarak.cryptopricealert.presentation.contract.navigator
 import kotlinx.coroutines.launch
 
-class PopularCoinsFragment : Fragment() {
+class PopularCoinsFragment : Fragment(), HasCustomTitle, HasCustomAction {
 
     private lateinit var viewModel: CoinViewModel
     private lateinit var adapter: CoinInfoAdapter
@@ -48,6 +52,16 @@ class PopularCoinsFragment : Fragment() {
             }
         }
     }
+
+    override fun getCustomAction(): CustomAction {
+        return CustomAction(
+            iconRes = R.drawable.search,
+            textRes = R.string.search,
+            onCustomAction = { navigator().showCoinInfo("BTC") }
+        )
+    }
+
+    override fun getTitleRes(): Int = R.string.popular
 
     override fun onDestroy() {
         _binding = null

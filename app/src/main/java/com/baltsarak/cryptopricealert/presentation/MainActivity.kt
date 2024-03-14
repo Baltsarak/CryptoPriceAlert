@@ -4,6 +4,8 @@ import android.graphics.Color
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
+import androidx.activity.OnBackPressedCallback
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
@@ -74,6 +76,18 @@ class MainActivity : AppCompatActivity(), Navigator {
         setSupportActionBar(binding.toolbar)
         binding.bottomNavigation.setOnItemSelectedListener(onItemSelectedListener)
         supportFragmentManager.registerFragmentLifecycleCallbacks(fragmentListener, false)
+
+        val callback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (supportFragmentManager.backStackEntryCount > 0) {
+                    supportFragmentManager.popBackStack()
+                } else {
+                    showExitConfirmationDialog()
+                    isEnabled = false
+                }
+            }
+        }
+        onBackPressedDispatcher.addCallback(this, callback)
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -99,11 +113,19 @@ class MainActivity : AppCompatActivity(), Navigator {
     }
 
     private fun launchFragment(fragment: Fragment) {
-        supportFragmentManager
-            .beginTransaction()
-            .addToBackStack(null)
-            .replace(R.id.main_screen_fragment_container, fragment)
-            .commit()
+        if (fragment is WatchListFragment) {
+            val firstFragmentId = supportFragmentManager.getBackStackEntryAt(0).id
+            supportFragmentManager.popBackStack(
+                firstFragmentId,
+                FragmentManager.POP_BACK_STACK_INCLUSIVE
+            )
+        } else {
+            supportFragmentManager
+                .beginTransaction()
+                .addToBackStack(null)
+                .replace(R.id.main_screen_fragment_container, fragment)
+                .commit()
+        }
     }
 
     private fun updateUi(fragment: Fragment) {
@@ -131,6 +153,7 @@ class MainActivity : AppCompatActivity(), Navigator {
         }
 
         if (fragment is HasCustomAction) {
+            binding.toolbar.menu.clear()
             createCustomToolbarAction(fragment.getCustomAction())
         } else {
             binding.toolbar.menu.clear()
@@ -149,6 +172,17 @@ class MainActivity : AppCompatActivity(), Navigator {
             action.onCustomAction.run()
             return@setOnMenuItemClickListener true
         }
+    }
+
+    private fun showExitConfirmationDialog() {
+        AlertDialog.Builder(this)
+            .setTitle("Выход")
+            .setMessage("Вы уверены, что хотите выйти?")
+            .setPositiveButton("Да") { _, _ ->
+                finish()
+            }
+            .setNegativeButton("Нет", null)
+            .show()
     }
 
     override fun onDestroy() {

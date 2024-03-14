@@ -17,13 +17,17 @@ import com.baltsarak.cryptopricealert.R
 import com.baltsarak.cryptopricealert.databinding.FragmentCoinDetailInfoBinding
 import com.baltsarak.cryptopricealert.domain.CoinInfo
 import com.baltsarak.cryptopricealert.presentation.CoinViewModel
+import com.baltsarak.cryptopricealert.presentation.contract.CustomAction
+import com.baltsarak.cryptopricealert.presentation.contract.HasCustomAction
+import com.baltsarak.cryptopricealert.presentation.contract.HasCustomTitle
+import com.baltsarak.cryptopricealert.presentation.contract.navigator
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import kotlinx.coroutines.launch
 
-class CoinDetailInfoFragment : Fragment() {
+class CoinDetailInfoFragment : Fragment(), HasCustomTitle, HasCustomAction {
 
     private lateinit var viewModel: CoinViewModel
 
@@ -120,6 +124,19 @@ class CoinDetailInfoFragment : Fragment() {
             viewModel.addCoinToWatchList(fromSymbol, targetPrice)
         }
     }
+
+    override fun getCustomAction(): CustomAction {
+        return CustomAction(
+            iconRes = R.drawable.add,
+            textRes = R.string.add,
+            onCustomAction = {
+                addCoinToWatchList()
+                navigator().showWatchList()
+            }
+        )
+    }
+
+    override fun getTitleRes(): Int = R.string.cryptocurrency
 
     override fun onDestroy() {
         _binding = null

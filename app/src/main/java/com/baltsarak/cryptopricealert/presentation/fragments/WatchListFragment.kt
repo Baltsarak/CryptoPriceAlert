@@ -12,7 +12,6 @@ import com.baltsarak.cryptopricealert.R
 import com.baltsarak.cryptopricealert.databinding.FragmentWatchlistBinding
 import com.baltsarak.cryptopricealert.domain.CoinInfo
 import com.baltsarak.cryptopricealert.presentation.CoinViewModel
-import com.baltsarak.cryptopricealert.presentation.MainActivity
 import com.baltsarak.cryptopricealert.presentation.adapter.CoinInfoAdapter
 import com.baltsarak.cryptopricealert.presentation.contract.CustomAction
 import com.baltsarak.cryptopricealert.presentation.contract.HasCustomAction
@@ -105,9 +104,9 @@ class WatchListFragment : Fragment(), HasCustomTitle, HasCustomAction {
 
     override fun getCustomAction(): CustomAction {
         return CustomAction(
-            iconRes = R.drawable.profile,
-            textRes = R.string.profile,
-            onCustomAction = { (activity as? MainActivity)?.showAccount() }
+            iconRes = R.drawable.add,
+            textRes = R.string.add,
+            onCustomAction = { navigator().showCoinInfo("BTC") }
         )
     }
 
