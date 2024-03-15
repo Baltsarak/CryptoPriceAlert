@@ -4,5 +4,5 @@ import com.baltsarak.cryptopricealert.domain.CoinRepository
 
 class GetWatchListCoinsUseCase(private val repository: CoinRepository) {
 
-    suspend operator fun invoke() = repository.getWatchListCoins()
+    operator fun invoke() = repository.getWatchListLiveData()
 }

@@ -3,6 +3,7 @@ package com.baltsarak.cryptopricealert.data.repository
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.map
 import androidx.work.ExistingWorkPolicy
 import androidx.work.WorkManager
@@ -30,6 +31,12 @@ class CoinRepositoryImpl(
     private val apiService = ApiFactory.apiService
 
     private val mapper = CoinMapper()
+
+    private val _watchListLiveData = MutableLiveData<List<CoinInfo>>()
+    override fun getWatchListLiveData(): LiveData<List<CoinInfo>> {
+        return _watchListLiveData
+    }
+
 
     override suspend fun addCoinToWatchList(
         fromSymbol: String,
@@ -73,7 +80,7 @@ class CoinRepositoryImpl(
         watchListCoinInfoDao.deleteCoinFromWatchList(fromSymbol)
     }
 
-    override suspend fun getWatchListCoins(): List<CoinInfo> {
+    private suspend fun getWatchListCoins() {
         val result = mutableListOf<CoinInfo>()
         val targetPrices = getTargetPrices()
         val watchListCoins = targetPrices
@@ -92,7 +99,7 @@ class CoinRepositoryImpl(
             )
             result.add(coinInfoEntity)
         }
-        return result
+        _watchListLiveData.value = result
     }
 
     override suspend fun getPopularCoinsList(): LiveData<List<CoinInfo>> {
@@ -163,6 +170,7 @@ class CoinRepositoryImpl(
                         } ?: CoinInfoDbModel(0, "", "", "", 0.0, "")
                     }
                     coinInfoDao.insertListCoinsInfo(coinInfoDbModelList)
+                    getWatchListCoins()
                     delay(10_000)
                 }
             }

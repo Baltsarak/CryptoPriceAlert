@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.baltsarak.cryptopricealert.R
@@ -17,6 +18,7 @@ import com.baltsarak.cryptopricealert.presentation.contract.CustomAction
 import com.baltsarak.cryptopricealert.presentation.contract.HasCustomAction
 import com.baltsarak.cryptopricealert.presentation.contract.HasCustomTitle
 import com.baltsarak.cryptopricealert.presentation.contract.navigator
+import kotlinx.coroutines.launch
 
 class WatchListFragment : Fragment(), HasCustomTitle, HasCustomAction {
 
@@ -41,9 +43,10 @@ class WatchListFragment : Fragment(), HasCustomTitle, HasCustomAction {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.recyclerViewWatchList.adapter = adapter
-        viewModel.getWatchListCoins()
-        viewModel.watchList.observe(viewLifecycleOwner) {
-            adapter.submitList(it)
+        lifecycleScope.launch {
+            viewModel.getWatchListCoins().observe(viewLifecycleOwner) {
+                adapter.submitList(it)
+            }
         }
         setupClickListener()
         setupSwipeAndMoveListener()

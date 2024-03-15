@@ -3,8 +3,6 @@ package com.baltsarak.cryptopricealert.presentation
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.baltsarak.cryptopricealert.data.repository.CoinRepositoryImpl
 import com.baltsarak.cryptopricealert.domain.CoinInfo
@@ -38,12 +36,12 @@ class CoinViewModel(application: Application) : AndroidViewModel(application) {
     private val loadDataUseCase = LoadDataUseCase(repository)
     private val startWorkerUseCase = StartWorkerUseCase(repository)
 
-    private val _watchList = MutableLiveData<List<CoinInfo>>()
-    val watchList: LiveData<List<CoinInfo>>
-        get() = _watchList
-
     suspend fun popularCoinList() =
         viewModelScope.async { getPopularCoinListUseCase() }.await()
+
+    suspend fun getWatchListCoins() =
+        viewModelScope.async { getWatchListCoinsUseCase() }.await()
+
 
     private suspend fun getCurrentCoinPrice(fromSymbol: String) =
         viewModelScope.async { getCurrentCoinPriceUseCase(fromSymbol) }.await()
@@ -79,19 +77,12 @@ class CoinViewModel(application: Application) : AndroidViewModel(application) {
     fun deleteCoinFromWatchList(fromSymbol: String) {
         viewModelScope.launch {
             deleteCoinFromWatchListUseCase(fromSymbol)
-            _watchList.value = getWatchListCoinsUseCase()
         }
     }
 
     fun loadCoinPriceHistoryInfo(fromSymbol: String) {
         viewModelScope.launch {
             loadCoinPriceHistoryInfoUseCase(fromSymbol)
-        }
-    }
-
-    fun getWatchListCoins() {
-        viewModelScope.launch {
-            _watchList.value = getWatchListCoinsUseCase()
         }
     }
 
