@@ -42,14 +42,22 @@ class WatchListFragment : Fragment(), HasCustomTitle, HasCustomAction {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.recyclerViewWatchList.visibility = View.GONE
+        binding.progressBarWatchList.visibility = View.VISIBLE
         binding.recyclerViewWatchList.adapter = adapter
+        loadData()
+        setupClickListener()
+        setupSwipeAndMoveListener()
+        binding.progressBarWatchList.visibility = View.GONE
+        binding.recyclerViewWatchList.visibility = View.VISIBLE
+    }
+
+    private fun loadData() {
         lifecycleScope.launch {
             viewModel.getWatchListCoins().observe(viewLifecycleOwner) {
                 adapter.submitList(it)
             }
         }
-        setupClickListener()
-        setupSwipeAndMoveListener()
     }
 
     private fun setupClickListener() {

@@ -43,13 +43,17 @@ class CoinDetailInfoFragment : Fragment(), HasCustomTitle, HasCustomAction {
     ): View {
         viewModel = ViewModelProvider(this)[CoinViewModel::class.java]
         _binding = FragmentCoinDetailInfoBinding.inflate(inflater, container, false)
+        fromSymbol = requireArguments().getString(EXTRA_FROM_SYMBOL, EMPTY_SYMBOL)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        fromSymbol = requireArguments().getString(EXTRA_FROM_SYMBOL, EMPTY_SYMBOL)
+        binding.priceChart.visibility = View.GONE
+        binding.progressBarPriceChart.visibility = View.VISIBLE
         loadDataAndFillingView(fromSymbol)
+        binding.progressBarPriceChart.visibility = View.GONE
+        binding.priceChart.visibility = View.VISIBLE
         setOnClickListener()
     }
 

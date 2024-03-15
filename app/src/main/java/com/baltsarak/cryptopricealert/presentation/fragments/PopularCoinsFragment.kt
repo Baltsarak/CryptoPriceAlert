@@ -40,15 +40,27 @@ class PopularCoinsFragment : Fragment(), HasCustomTitle, HasCustomAction {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        adapter.onCoinClickListener = object : CoinInfoAdapter.OnCoinClickListener {
-            override fun onCoinClick(coinPriceInfo: CoinInfo) {
-                navigator().showCoinInfo(coinPriceInfo.fromSymbol)
-            }
-        }
+        binding.recyclerViewPopularCoins.visibility = View.GONE
+        binding.progressBarPopulars.visibility = View.VISIBLE
         binding.recyclerViewPopularCoins.adapter = adapter
+        loadData()
+        setClickListener()
+        binding.progressBarPopulars.visibility = View.GONE
+        binding.recyclerViewPopularCoins.visibility = View.VISIBLE
+    }
+
+    private fun loadData() {
         lifecycleScope.launch {
             viewModel.popularCoinList().observe(viewLifecycleOwner) {
                 adapter.submitList(it)
+            }
+        }
+    }
+
+    private fun setClickListener() {
+        adapter.onCoinClickListener = object : CoinInfoAdapter.OnCoinClickListener {
+            override fun onCoinClick(coinPriceInfo: CoinInfo) {
+                navigator().showCoinInfo(coinPriceInfo.fromSymbol)
             }
         }
     }
