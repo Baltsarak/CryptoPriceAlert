@@ -23,11 +23,15 @@ class PriceMonitoringWorker(
     override suspend fun doWork(): Result {
         while (true) {
             val targetPrices = watchListCoinInfoDao.getTargetPrices()
-
-            for (targetPrice in targetPrices) {
-                if (targetPrice.targetPrice > 0) {
-                    checkPrice(targetPrice)
+            val listIsEmpty = targetPrices.all { it.targetPrice == 0.0 }
+            if (!listIsEmpty) {
+                for (targetPrice in targetPrices) {
+                    if (targetPrice.targetPrice > 0) {
+                        checkPrice(targetPrice)
+                    }
                 }
+            } else {
+                return Result.success()
             }
             delay(30_000)
         }
