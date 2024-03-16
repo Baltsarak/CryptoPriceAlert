@@ -44,7 +44,20 @@ class MainActivity : AppCompatActivity(), Navigator {
             }
         }
 
-    private val onItemSelectedListener: OnItemSelectedListener = OnItemSelectedListener { item ->
+    private var callbackOnBackPressed =
+        object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                val currentFragment =
+                    supportFragmentManager.findFragmentById(R.id.main_screen_fragment_container)
+                if (currentFragment is WatchListFragment) {
+                    showExitConfirmationDialog()
+                } else {
+                    supportFragmentManager.popBackStack()
+                }
+            }
+        }
+
+    private val onItemSelectedListener = OnItemSelectedListener { item ->
         when (item.itemId) {
             R.id.navigation_watch_list -> {
                 launchFragment(WatchListFragment())
@@ -76,18 +89,7 @@ class MainActivity : AppCompatActivity(), Navigator {
         setSupportActionBar(binding.toolbar)
         binding.bottomNavigation.setOnItemSelectedListener(onItemSelectedListener)
         supportFragmentManager.registerFragmentLifecycleCallbacks(fragmentListener, false)
-
-        val callback = object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                if (supportFragmentManager.backStackEntryCount > 0) {
-                    supportFragmentManager.popBackStack()
-                } else {
-                    showExitConfirmationDialog()
-                    isEnabled = false
-                }
-            }
-        }
-        onBackPressedDispatcher.addCallback(this, callback)
+        onBackPressedDispatcher.addCallback(this, callbackOnBackPressed)
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -113,19 +115,11 @@ class MainActivity : AppCompatActivity(), Navigator {
     }
 
     private fun launchFragment(fragment: Fragment) {
-        if (fragment is WatchListFragment) {
-            val firstFragmentId = supportFragmentManager.getBackStackEntryAt(0).id
-            supportFragmentManager.popBackStack(
-                firstFragmentId,
-                FragmentManager.POP_BACK_STACK_INCLUSIVE
-            )
-        } else {
-            supportFragmentManager
-                .beginTransaction()
-                .addToBackStack(null)
-                .replace(R.id.main_screen_fragment_container, fragment)
-                .commit()
-        }
+        supportFragmentManager
+            .beginTransaction()
+            .addToBackStack(null)
+            .replace(R.id.main_screen_fragment_container, fragment)
+            .commit()
     }
 
     private fun updateUi(fragment: Fragment) {
@@ -187,6 +181,7 @@ class MainActivity : AppCompatActivity(), Navigator {
 
     override fun onDestroy() {
         super.onDestroy()
+        callbackOnBackPressed.isEnabled = false
         supportFragmentManager.unregisterFragmentLifecycleCallbacks(fragmentListener)
     }
 }

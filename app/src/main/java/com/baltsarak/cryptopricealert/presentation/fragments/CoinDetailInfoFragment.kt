@@ -132,12 +132,11 @@ class CoinDetailInfoFragment : Fragment(), HasCustomTitle, HasCustomAction {
     override fun getCustomAction(): CustomAction {
         return CustomAction(
             iconRes = R.drawable.add,
-            textRes = R.string.add,
-            onCustomAction = {
-                addCoinToWatchList()
-                navigator().showWatchList()
-            }
-        )
+            textRes = R.string.add
+        ) {
+            addCoinToWatchList()
+            navigator().showWatchList()
+        }
     }
 
     override fun getTitleRes(): Int = R.string.cryptocurrency

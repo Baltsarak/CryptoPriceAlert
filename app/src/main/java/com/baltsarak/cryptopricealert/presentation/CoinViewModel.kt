@@ -53,16 +53,14 @@ class CoinViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.async { getCoinPriceHistoryInfoUseCase(fromSymbol) }.await()
 
     suspend fun addCoinToWatchList(fromSymbol: String, targetPrice: String) {
-        val currentPrice = getCurrentCoinPrice(fromSymbol)
-        val priceAlert = targetPrice.trim().toDoubleOrNull()
-        if (priceAlert != null && priceAlert > 0) {
-            val higherThenCurrentPrice = priceAlert > currentPrice
-            viewModelScope.launch {
+        viewModelScope.launch {
+            val currentPrice = getCurrentCoinPrice(fromSymbol)
+            val priceAlert = targetPrice.trim().toDoubleOrNull()
+            if (priceAlert != null && priceAlert > 0) {
+                val higherThenCurrentPrice = priceAlert > currentPrice
                 addCoinToWatchListUseCase(fromSymbol, priceAlert, higherThenCurrentPrice)
-            }
-        } else {
-            Log.d("addCoinToWatchList", "Неверное значение цены")
-            viewModelScope.launch {
+            } else {
+                Log.d("addCoinToWatchList", "Неверное значение цены")
                 addCoinToWatchListUseCase(fromSymbol, 0.0, false)
             }
         }
