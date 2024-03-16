@@ -7,6 +7,5 @@ import androidx.room.PrimaryKey
 data class CoinNameDbModel(
     @PrimaryKey
     val fullName: String,
-    val symbol: String,
     val imageUrl: String?
 )
