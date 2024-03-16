@@ -25,6 +25,7 @@ class CoinRepositoryImpl(
 ) : CoinRepository {
 
     private val coinInfoDao = AppDatabase.getInstance(application).coinInfoDao()
+    private val coinNamesDao = AppDatabase.getInstance(application).coinNamesDao()
     private val watchListCoinInfoDao = AppDatabase.getInstance(application).watchListCoinInfoDao()
     private val coinPriceHistoryDao = AppDatabase.getInstance(application).coinPriceHistoryDao()
 
@@ -149,6 +150,10 @@ class CoinRepositoryImpl(
 
     override suspend fun loadData() {
         try {
+            val coinNamesList =
+                mapper.mapCoinNameContainerDtoToCoinNameList(apiService.getAllCoinsList())
+                    .map { mapper.mapCoinNameDtoToDbModel(it) }
+            coinNamesDao.insertListCoinsInfo(coinNamesList)
             val popularCoins = apiService.getPopularCoinsList().coinList
             val allCoinsList = popularCoins?.coins?.toMutableSet() ?: mutableSetOf()
 
@@ -166,7 +171,7 @@ class CoinRepositoryImpl(
                     val prices = response.body()
                     val coinInfoDbModelList = allCoinsList.map { coinInfo ->
                         prices?.get(coinInfo.symbol)?.let { pricesMap ->
-                            mapper.mapDtoToDbModel(coinInfo, pricesMap["USD"])
+                            mapper.mapCoinInfoDtoToDbModel(coinInfo, pricesMap["USD"])
                         } ?: CoinInfoDbModel(0, "", "", "", 0.0, "")
                     }
                     coinInfoDao.insertListCoinsInfo(coinInfoDbModelList)

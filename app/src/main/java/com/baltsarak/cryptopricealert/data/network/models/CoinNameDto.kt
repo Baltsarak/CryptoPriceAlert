@@ -4,19 +4,12 @@ import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
 data class CoinNameDto(
-    @SerializedName("ID")
-    @Expose
-    val id: Int,
 
-    @SerializedName("SYMBOL")
+    @SerializedName("FullName")
     @Expose
-    val symbol: String,
+    val fullName: String,
 
-    @SerializedName("NAME")
-    @Expose
-    val name: String?,
-
-    @SerializedName("LOGO_URL")
+    @SerializedName("ImageUrl")
     @Expose
     val imageUrl: String?
 )

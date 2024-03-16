@@ -2,6 +2,7 @@ package com.baltsarak.cryptopricealert.data.network
 
 import com.baltsarak.cryptopricealert.data.network.models.CoinInfoContainerDto
 import com.baltsarak.cryptopricealert.data.network.models.CoinListContainerDto
+import com.baltsarak.cryptopricealert.data.network.models.CoinNameContainerDto
 import com.baltsarak.cryptopricealert.data.network.models.CoinPriceDto
 import com.baltsarak.cryptopricealert.data.network.models.DayPriceContainerDto
 import retrofit2.Response
@@ -16,6 +17,12 @@ interface ApiService {
         @Query(QUERY_PARAM_PAGE) page: Int = 1,
         @Query(QUERY_PARAM_PAGE_SIZE) pageSize: Int = 50,
     ): CoinListContainerDto
+
+    @GET
+    suspend fun getAllCoinsList(
+        @Url url: String = "https://min-api.cryptocompare.com/data/all/coinlist",
+        @Query(QUERY_PARAM_SUMMARY) summary: Boolean = true
+    ): CoinNameContainerDto
 
     @GET("asset/v1/data/by/symbol")
     suspend fun getCoinInfo(
@@ -57,6 +64,7 @@ interface ApiService {
         private const val QUERY_PARAM_PAGE = "page"
         private const val QUERY_PARAM_PAGE_SIZE = "page_size"
         private const val QUERY_PARAM_TO_DATE = "toTs"
+        private const val QUERY_PARAM_SUMMARY = "summary"
 
         private const val API_KEY = ""
         private const val CURRENCY = "USD"
