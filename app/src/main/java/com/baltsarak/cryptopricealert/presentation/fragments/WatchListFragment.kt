@@ -116,7 +116,7 @@ class WatchListFragment : Fragment(), HasCustomTitle, HasCustomAction {
         return CustomAction(
             iconRes = R.drawable.add,
             textRes = R.string.add,
-            onCustomAction = { navigator().showCoinInfo("BTC") }
+            onCustomAction = { navigator().showCoinSearch() }
         )
     }
 

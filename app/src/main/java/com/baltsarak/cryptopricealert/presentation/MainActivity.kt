@@ -137,6 +137,10 @@ class MainActivity : AppCompatActivity(), Navigator {
         binding.bottomNavigation.selectedItemId = R.id.navigation_profile
     }
 
+    override fun showCoinSearch() {
+        launchFragment(SearchCoinsFragment())
+    }
+
     private fun launchFragment(fragment: Fragment) {
         supportFragmentManager
             .beginTransaction()

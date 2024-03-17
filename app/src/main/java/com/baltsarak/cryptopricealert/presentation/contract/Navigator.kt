@@ -21,4 +21,6 @@ interface Navigator {
     fun closeSearchView()
 
     fun showAccount()
+
+    fun showCoinSearch()
 }
