@@ -1,4 +1,4 @@
-package com.baltsarak.cryptopricealert.presentation.adapter
+package com.baltsarak.cryptopricealert.presentation.adapters
 
 import androidx.recyclerview.widget.DiffUtil.ItemCallback
 import com.baltsarak.cryptopricealert.domain.CoinInfo

@@ -19,7 +19,7 @@ import com.baltsarak.cryptopricealert.data.database.entities.WatchListCoinDbMode
         WatchListCoinDbModel::class,
         DayPriceDbModel::class,
         CoinNameDbModel::class
-    ], version = 16, exportSchema = false
+    ], version = 17, exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
 

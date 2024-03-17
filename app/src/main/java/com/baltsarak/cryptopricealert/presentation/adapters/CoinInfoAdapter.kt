@@ -1,4 +1,4 @@
-package com.baltsarak.cryptopricealert.presentation.adapter
+package com.baltsarak.cryptopricealert.presentation.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

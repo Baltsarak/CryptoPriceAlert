@@ -8,6 +8,7 @@ import com.baltsarak.cryptopricealert.data.network.models.CoinNameContainerDto
 import com.baltsarak.cryptopricealert.data.network.models.CoinNameDto
 import com.baltsarak.cryptopricealert.data.network.models.DayPriceDto
 import com.baltsarak.cryptopricealert.domain.CoinInfo
+import com.baltsarak.cryptopricealert.domain.CoinName
 import com.google.gson.Gson
 
 class CoinMapper {
@@ -28,6 +29,12 @@ class CoinMapper {
         toSymbol = dbModel.toSymbol,
         targetPrice = listOf(),
         price = dbModel.price,
+        imageUrl = dbModel.imageUrl
+    )
+
+    fun mapCoinNameDbModelToEntity(dbModel: CoinNameDbModel) = CoinName(
+        fullName = dbModel.fullName,
+        symbol = dbModel.symbol,
         imageUrl = dbModel.imageUrl
     )
 
@@ -61,6 +68,7 @@ class CoinMapper {
 
     fun mapCoinNameDtoToDbModel(coinName: CoinNameDto) = CoinNameDbModel(
         fullName = coinName.fullName,
+        symbol = coinName.symbol,
         imageUrl = coinName.imageUrl
     )
 
@@ -74,8 +82,5 @@ class CoinMapper {
 //        return sdf.format(date)
 //    }
 
-    companion object {
-        const val BASE_IMAGE_URL = "https://cryptocompare.com"
-    }
 }
 

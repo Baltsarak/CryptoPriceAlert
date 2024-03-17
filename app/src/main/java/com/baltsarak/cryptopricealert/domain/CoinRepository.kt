@@ -17,6 +17,8 @@ interface CoinRepository {
 
     suspend fun getPopularCoinsList(): LiveData<List<CoinInfo>>
 
+    suspend fun getCoinNamesList(): LiveData<List<CoinName>>
+
     suspend fun getCoinInfo(fromSymbol: String): LiveData<CoinInfo>
 
     suspend fun getCurrentCoinPrice(fromSymbol: String): Double

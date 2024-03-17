@@ -9,6 +9,10 @@ data class CoinNameDto(
     @Expose
     val fullName: String,
 
+    @SerializedName("Symbol")
+    @Expose
+    val symbol: String,
+
     @SerializedName("ImageUrl")
     @Expose
     val imageUrl: String?

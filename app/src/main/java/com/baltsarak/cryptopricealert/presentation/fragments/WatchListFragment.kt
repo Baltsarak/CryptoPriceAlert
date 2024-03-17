@@ -13,7 +13,7 @@ import com.baltsarak.cryptopricealert.R
 import com.baltsarak.cryptopricealert.databinding.FragmentWatchlistBinding
 import com.baltsarak.cryptopricealert.domain.CoinInfo
 import com.baltsarak.cryptopricealert.presentation.CoinViewModel
-import com.baltsarak.cryptopricealert.presentation.adapter.CoinInfoAdapter
+import com.baltsarak.cryptopricealert.presentation.adapters.CoinInfoAdapter
 import com.baltsarak.cryptopricealert.presentation.contract.CustomAction
 import com.baltsarak.cryptopricealert.presentation.contract.HasCustomAction
 import com.baltsarak.cryptopricealert.presentation.contract.HasCustomTitle
@@ -117,7 +117,7 @@ class WatchListFragment : Fragment(), HasCustomTitle, HasCustomAction {
         return CustomAction(
             iconRes = R.drawable.add,
             textRes = R.string.add,
-            onCustomAction = { navigator().showCoinInfo("BTC") }
+            onCustomAction = { navigator().showCoinSearch() }
         )
     }
 

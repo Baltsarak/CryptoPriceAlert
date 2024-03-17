@@ -20,6 +20,7 @@ import com.baltsarak.cryptopricealert.presentation.contract.Navigator
 import com.baltsarak.cryptopricealert.presentation.fragments.AccountFragment
 import com.baltsarak.cryptopricealert.presentation.fragments.CoinDetailInfoFragment
 import com.baltsarak.cryptopricealert.presentation.fragments.PopularCoinsFragment
+import com.baltsarak.cryptopricealert.presentation.fragments.SearchCoinsFragment
 import com.baltsarak.cryptopricealert.presentation.fragments.WatchListFragment
 import com.google.android.material.navigation.NavigationBarView.OnItemSelectedListener
 
@@ -112,6 +113,10 @@ class MainActivity : AppCompatActivity(), Navigator {
 
     override fun showAccount() {
         binding.bottomNavigation.selectedItemId = R.id.navigation_profile
+    }
+
+    override fun showCoinSearch() {
+        launchFragment(SearchCoinsFragment())
     }
 
     private fun launchFragment(fragment: Fragment) {
