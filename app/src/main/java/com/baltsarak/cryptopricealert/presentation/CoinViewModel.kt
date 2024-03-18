@@ -88,7 +88,7 @@ class CoinViewModel(application: Application) : AndroidViewModel(application) {
         startWorkerUseCase()
     }
 
-    init {
+    fun loadData() {
         viewModelScope.launch {
             loadDataUseCase()
         }

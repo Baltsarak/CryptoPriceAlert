@@ -2,23 +2,16 @@ package com.baltsarak.cryptopricealert.data.mapper
 
 import com.baltsarak.cryptopricealert.data.database.entities.CoinInfoDbModel
 import com.baltsarak.cryptopricealert.data.database.entities.DayPriceDbModel
-import com.baltsarak.cryptopricealert.data.database.entities.WatchListCoinDbModel
-import com.baltsarak.cryptopricealert.data.network.models.CoinNameDto
+import com.baltsarak.cryptopricealert.data.network.models.CoinInfoDto
+import com.baltsarak.cryptopricealert.data.network.models.CoinSymbolDto
+import com.baltsarak.cryptopricealert.data.network.models.CoinSymbolsContainerDto
 import com.baltsarak.cryptopricealert.data.network.models.DayPriceDto
 import com.baltsarak.cryptopricealert.domain.CoinInfo
-import com.baltsarak.cryptopricealert.domain.TargetPrice
+import com.google.gson.Gson
 
 class CoinMapper {
 
-    fun mapTargetPriceToDbModel(targetPrice: TargetPrice) = WatchListCoinDbModel(
-        id = 0,
-        fromSymbol = targetPrice.fromSymbol,
-        targetPrice = targetPrice.targetPrice,
-        higherThenCurrent = targetPrice.higherThenCurrent,
-        position = targetPrice.position
-    )
-
-    fun mapDtoToDbModel(coin: CoinNameDto, coinPrice: Double?) = CoinInfoDbModel(
+    fun mapDtoToDbModel(coin: CoinInfoDto, coinPrice: Double?) = CoinInfoDbModel(
         id = coin.id,
         fromSymbol = coin.symbol,
         fullName = coin.name,
@@ -51,6 +44,26 @@ class CoinMapper {
         )
     }
 
+    fun mapCoinSymbolsContainerDtoToCoinSymbolsList(jsonContainer: CoinSymbolsContainerDto): List<CoinSymbolDto> {
+        val result = mutableListOf<CoinSymbolDto>()
+        val jsonObject = jsonContainer.json ?: return result
+        val coinKeySet = jsonObject.keySet()
+        for (coinKey in coinKeySet) {
+            val coinSymbol = Gson().fromJson(
+                jsonObject.getAsJsonObject(coinKey),
+                CoinSymbolDto::class.java
+            )
+            result.add(coinSymbol)
+        }
+        return result
+    }
+
+    fun listChunking(originalList: List<String>, chunkSize: Int): List<List<String>> {
+        return originalList.withIndex()
+            .groupBy { it.index / chunkSize }
+            .map { it.value.map(IndexedValue<String>::value) }
+    }
+
 //    private fun convertTimestampToTime(timestamp: Long?): String {
 //        if (timestamp == null) return ""
 //        val stamp = Timestamp(timestamp * 1000)
@@ -61,8 +74,5 @@ class CoinMapper {
 //        return sdf.format(date)
 //    }
 
-    companion object {
-        const val BASE_IMAGE_URL = "https://cryptocompare.com"
-    }
 }
 
