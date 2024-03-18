@@ -10,7 +10,7 @@ import com.baltsarak.cryptopricealert.data.database.entities.CoinNameDbModel
 @Dao
 interface CoinNamesDao {
 
-    @Query("SELECT * FROM coin_names")
+    @Query("SELECT * FROM coin_names ORDER BY fullName")
     fun getListCoinNames(): LiveData<List<CoinNameDbModel>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
