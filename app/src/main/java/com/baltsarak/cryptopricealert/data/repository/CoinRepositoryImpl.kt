@@ -3,7 +3,6 @@ package com.baltsarak.cryptopricealert.data.repository
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.map
 import androidx.work.ExistingWorkPolicy
 import androidx.work.WorkManager
@@ -34,12 +33,6 @@ class CoinRepositoryImpl(
     private val apiService = ApiFactory.apiService
 
     private val mapper = CoinMapper()
-
-    private val _watchListLiveData = MutableLiveData<List<CoinInfo>>()
-    override fun getWatchListLiveData(): LiveData<List<CoinInfo>> {
-        return _watchListLiveData
-    }
-
 
     override suspend fun addCoinToWatchList(
         fromSymbol: String,
@@ -83,26 +76,25 @@ class CoinRepositoryImpl(
         watchListCoinInfoDao.deleteCoinFromWatchList(fromSymbol)
     }
 
-    private suspend fun getWatchListCoins() {
+    override suspend fun getWatchListCoins(): List<CoinInfo> {
         val result = mutableListOf<CoinInfo>()
         val targetPrices = getTargetPrices()
         val watchListCoins = targetPrices
             .groupBy { it.fromSymbol }
-
         for (coin in watchListCoins) {
-            val coinInfoFromDb = coinInfoDao.getInfoAboutCoin(coin.key)
+            val coinInfo = coinInfoDao.getInfoAboutCoin(coin.key)
             val coinInfoEntity = CoinInfo(
-                id = coinInfoFromDb.id,
+                id = coinInfo.id,
                 fromSymbol = coin.key,
-                fullName = coinInfoFromDb.fullName,
-                toSymbol = coinInfoFromDb.toSymbol,
+                fullName = coinInfo.fullName,
+                toSymbol = coinInfo.toSymbol,
                 targetPrice = coin.value,
-                price = coinInfoFromDb.price,
-                imageUrl = coinInfoFromDb.imageUrl
+                price = coinInfo.price,
+                imageUrl = coinInfo.imageUrl
             )
             result.add(coinInfoEntity)
         }
-        _watchListLiveData.value = result
+        return result
     }
 
     override suspend fun getPopularCoinsList(): LiveData<List<CoinInfo>> {
@@ -145,7 +137,7 @@ class CoinRepositoryImpl(
         val workManager = WorkManager.getInstance(application)
         workManager.enqueueUniqueWork(
             PriceMonitoringWorker.NAME,
-            ExistingWorkPolicy.KEEP,
+            ExistingWorkPolicy.REPLACE,
             PriceMonitoringWorker.WORK_REQUEST
         )
     }
@@ -181,7 +173,6 @@ class CoinRepositoryImpl(
                             apiService.getCoinPrices(fSyms = allCoinSymbols)
                         }
                     }
-
                 deferredResponses.awaitAll().forEach { response ->
                     if (response.isSuccessful) {
                         response.body()?.let { prices ->
@@ -190,23 +181,32 @@ class CoinRepositoryImpl(
                     }
                 }
             }
-            Log.d("loadData", coinPrices.toString())
-
             val coinInfoDbModelList = coinInfoList.map { coinInfo ->
                 coinPrices[coinInfo.symbol]?.let { pricesMap ->
                     mapper.mapDtoToDbModel(coinInfo, pricesMap["USD"])
                 } ?: CoinInfoDbModel(0, "", "", "", 0.0, "")
             }
-            Log.d("loadData", coinInfoDbModelList.toString())
 
             coinInfoDao.insertListCoinsInfo(coinInfoDbModelList)
 
-//            val popularCoins = apiService.getPopularCoinsList().coinList
-//            val allCoinsList = popularCoins?.coins?.toMutableSet() ?: mutableSetOf()
-
             while (true) {
-
-                getWatchListCoins()
+                withContext(Dispatchers.IO) {
+                    val popularCoins = apiService.getPopularCoinsList().coinList
+                    val popularCoinsList = popularCoins?.coins?.map { it.symbol } ?: listOf()
+                    val watchListNames = watchListCoinInfoDao.getWatchListCoins()
+                    val allCoinsList = popularCoinsList.toMutableSet()
+                    allCoinsList.addAll(watchListNames)
+                    val names = allCoinsList.joinToString(",")
+                    val response = apiService.getCoinPrices(fSyms = names)
+                    if (response.isSuccessful) {
+                        val body = response.body()
+                        if (body != null) {
+                            for (i in body) {
+                                i.value["USD"]?.let { coinInfoDao.updatePrice(i.key, it) }
+                            }
+                        }
+                    }
+                }
                 delay(10_000)
             }
         } catch (e: Exception) {

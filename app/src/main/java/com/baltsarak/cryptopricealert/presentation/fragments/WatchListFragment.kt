@@ -54,9 +54,8 @@ class WatchListFragment : Fragment(), HasCustomTitle, HasCustomAction {
 
     private fun loadData() {
         lifecycleScope.launch {
-            viewModel.getWatchListCoins().observe(viewLifecycleOwner) {
-                adapter.submitList(it)
-            }
+            val list = viewModel.getWatchListCoins()
+            adapter.submitList(list)
         }
     }
 
