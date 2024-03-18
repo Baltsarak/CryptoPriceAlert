@@ -25,6 +25,8 @@ interface CoinRepository {
 
     suspend fun loadCoinPriceHistory(fromSymbol: String)
 
+    suspend fun loadCoinInfo(fromSymbol: String): Long
+
     suspend fun getCoinPriceHistory(fromSymbol: String): Map<Float, Float>
 
     fun startWorker()

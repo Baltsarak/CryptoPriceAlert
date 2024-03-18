@@ -3,6 +3,8 @@ package com.baltsarak.cryptopricealert.presentation
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.baltsarak.cryptopricealert.data.repository.CoinRepositoryImpl
 import com.baltsarak.cryptopricealert.domain.CoinInfo
@@ -14,6 +16,7 @@ import com.baltsarak.cryptopricealert.domain.usecases.GetCoinPriceHistoryInfoUse
 import com.baltsarak.cryptopricealert.domain.usecases.GetCurrentCoinPriceUseCase
 import com.baltsarak.cryptopricealert.domain.usecases.GetPopularCoinListUseCase
 import com.baltsarak.cryptopricealert.domain.usecases.GetWatchListCoinsUseCase
+import com.baltsarak.cryptopricealert.domain.usecases.LoadCoinInfoUseCase
 import com.baltsarak.cryptopricealert.domain.usecases.LoadCoinPriceHistoryInfoUseCase
 import com.baltsarak.cryptopricealert.domain.usecases.LoadDataUseCase
 import com.baltsarak.cryptopricealert.domain.usecases.RewriteWatchListUseCase
@@ -29,6 +32,7 @@ class CoinViewModel(application: Application) : AndroidViewModel(application) {
     private val rewriteWatchListUseCase = RewriteWatchListUseCase(repository)
     private val deleteCoinFromWatchListUseCase = DeleteCoinFromWatchListUseCase(repository)
     private val loadCoinPriceHistoryInfoUseCase = LoadCoinPriceHistoryInfoUseCase(repository)
+    private val loadCoinInfoUseCase = LoadCoinInfoUseCase(repository)
     private val getCoinPriceHistoryInfoUseCase = GetCoinPriceHistoryInfoUseCase(repository)
     private val getPopularCoinListUseCase = GetPopularCoinListUseCase(repository)
     private val getCoinNamesListUseCase = GetCoinNamesListUseCase(repository)
@@ -88,6 +92,16 @@ class CoinViewModel(application: Application) : AndroidViewModel(application) {
             loadCoinPriceHistoryInfoUseCase(fromSymbol)
         }
     }
+
+    private val _isLoaded = MutableLiveData<Long>()
+    val isLoaded:LiveData<Long>
+        get() = _isLoaded
+
+    suspend fun loadCoinInfo(fromSymbol: String)  {
+        viewModelScope.launch {
+            _isLoaded.value = loadCoinInfoUseCase(fromSymbol) }
+    }
+
 
     fun startWorker() {
         startWorkerUseCase()

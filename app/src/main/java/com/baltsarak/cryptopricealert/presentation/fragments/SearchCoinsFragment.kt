@@ -1,22 +1,21 @@
 package com.baltsarak.cryptopricealert.presentation.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import com.baltsarak.cryptopricealert.R
 import com.baltsarak.cryptopricealert.databinding.FragmentSearchCoinsBinding
 import com.baltsarak.cryptopricealert.domain.CoinName
 import com.baltsarak.cryptopricealert.presentation.CoinViewModel
 import com.baltsarak.cryptopricealert.presentation.adapters.CoinNameAdapter
-import com.baltsarak.cryptopricealert.presentation.contract.HasCustomTitle
 import com.baltsarak.cryptopricealert.presentation.contract.navigator
 import kotlinx.coroutines.launch
 
-class SearchCoinsFragment : Fragment(), HasCustomTitle {
+class SearchCoinsFragment : Fragment() {
 
     private lateinit var viewModel: CoinViewModel
     private lateinit var adapter: CoinNameAdapter
@@ -54,15 +53,20 @@ class SearchCoinsFragment : Fragment(), HasCustomTitle {
     private fun setClickListener() {
         adapter.onCoinClickListener = object : CoinNameAdapter.OnCoinClickListener {
             override fun onCoinClick(coinName: CoinName) {
-                navigator().showCoinInfo(coinName.symbol)
+                lifecycleScope.launch {
+                    viewModel.loadCoinInfo(coinName.symbol)
+                }
+                viewModel.isLoaded.observe(viewLifecycleOwner) {
+                    Log.d("isLoaded", it.toString())
+                    navigator().showCoinInfo(coinName.symbol)
+                }
             }
         }
     }
 
-    override fun getTitleRes(): Int = R.string.search
-
     override fun onDestroy() {
         super.onDestroy()
+        adapter.onCoinClickListener = null
         _binding = null
     }
 }
