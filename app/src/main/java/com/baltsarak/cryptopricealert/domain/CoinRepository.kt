@@ -9,7 +9,7 @@ interface CoinRepository {
         higherThenCurrentPrice: Boolean
     )
 
-    fun getWatchListLiveData(): LiveData<List<CoinInfo>>
+    suspend fun getWatchListCoins(): List<CoinInfo>
 
     suspend fun rewriteWatchList(watchList: List<CoinInfo>)
 

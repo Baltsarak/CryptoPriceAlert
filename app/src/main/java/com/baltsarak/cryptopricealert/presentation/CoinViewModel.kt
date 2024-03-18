@@ -48,9 +48,7 @@ class CoinViewModel(application: Application) : AndroidViewModel(application) {
     suspend fun popularCoinList() =
         viewModelScope.async { getPopularCoinListUseCase() }.await()
 
-    suspend fun getWatchListCoins() =
-        viewModelScope.async { getWatchListCoinsUseCase() }.await()
-
+    suspend fun getWatchListCoins() = getWatchListCoinsUseCase()
 
     private suspend fun getCurrentCoinPrice(fromSymbol: String) =
         viewModelScope.async { getCurrentCoinPriceUseCase(fromSymbol) }.await()
