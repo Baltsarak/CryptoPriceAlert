@@ -11,6 +11,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.ViewModelProvider
 import com.baltsarak.cryptopricealert.R
 import com.baltsarak.cryptopricealert.databinding.ActivityMainBinding
 import com.baltsarak.cryptopricealert.presentation.contract.CustomAction
@@ -31,6 +32,8 @@ class MainActivity : AppCompatActivity(), Navigator {
     private val binding by lazy {
         ActivityMainBinding.inflate(layoutInflater)
     }
+
+    private lateinit var viewModel: CoinViewModel
 
     private val fragmentListener =
         object : FragmentManager.FragmentLifecycleCallbacks() {
@@ -91,6 +94,10 @@ class MainActivity : AppCompatActivity(), Navigator {
         binding.bottomNavigation.setOnItemSelectedListener(onItemSelectedListener)
         supportFragmentManager.registerFragmentLifecycleCallbacks(fragmentListener, false)
         onBackPressedDispatcher.addCallback(this, callbackOnBackPressed)
+        viewModel = ViewModelProvider(this)[CoinViewModel::class.java]
+        if (savedInstanceState == null) {
+            viewModel.loadData()
+        }
     }
 
     override fun onSupportNavigateUp(): Boolean {

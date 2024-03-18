@@ -1,19 +1,17 @@
 package com.baltsarak.cryptopricealert.data.mapper
 
 import com.baltsarak.cryptopricealert.data.database.entities.CoinInfoDbModel
-import com.baltsarak.cryptopricealert.data.database.entities.CoinNameDbModel
 import com.baltsarak.cryptopricealert.data.database.entities.DayPriceDbModel
 import com.baltsarak.cryptopricealert.data.network.models.CoinInfoDto
-import com.baltsarak.cryptopricealert.data.network.models.CoinNameContainerDto
-import com.baltsarak.cryptopricealert.data.network.models.CoinNameDto
+import com.baltsarak.cryptopricealert.data.network.models.CoinSymbolDto
+import com.baltsarak.cryptopricealert.data.network.models.CoinSymbolsContainerDto
 import com.baltsarak.cryptopricealert.data.network.models.DayPriceDto
 import com.baltsarak.cryptopricealert.domain.CoinInfo
-import com.baltsarak.cryptopricealert.domain.CoinName
 import com.google.gson.Gson
 
 class CoinMapper {
 
-    fun mapCoinInfoDtoToDbModel(coin: CoinInfoDto, coinPrice: Double?) = CoinInfoDbModel(
+    fun mapDtoToDbModel(coin: CoinInfoDto, coinPrice: Double?) = CoinInfoDbModel(
         id = coin.id,
         fromSymbol = coin.symbol,
         fullName = coin.name,
@@ -32,12 +30,6 @@ class CoinMapper {
         imageUrl = dbModel.imageUrl
     )
 
-    fun mapCoinNameDbModelToEntity(dbModel: CoinNameDbModel) = CoinName(
-        fullName = dbModel.fullName,
-        symbol = dbModel.symbol,
-        imageUrl = dbModel.imageUrl
-    )
-
     fun mapDayPriceDtoToDbModel(fSym: String, dto: DayPriceDto): DayPriceDbModel {
         return DayPriceDbModel(
             id = 0,
@@ -52,25 +44,25 @@ class CoinMapper {
         )
     }
 
-    fun mapCoinNameContainerDtoToCoinNameList(jsonContainer: CoinNameContainerDto): List<CoinNameDto> {
-        val result = mutableListOf<CoinNameDto>()
+    fun mapCoinSymbolsContainerDtoToCoinSymbolsList(jsonContainer: CoinSymbolsContainerDto): List<CoinSymbolDto> {
+        val result = mutableListOf<CoinSymbolDto>()
         val jsonObject = jsonContainer.json ?: return result
         val coinKeySet = jsonObject.keySet()
         for (coinKey in coinKeySet) {
-            val priceName = Gson().fromJson(
+            val coinSymbol = Gson().fromJson(
                 jsonObject.getAsJsonObject(coinKey),
-                CoinNameDto::class.java
+                CoinSymbolDto::class.java
             )
-            result.add(priceName)
+            result.add(coinSymbol)
         }
         return result
     }
 
-    fun mapCoinNameDtoToDbModel(coinName: CoinNameDto) = CoinNameDbModel(
-        fullName = coinName.fullName,
-        symbol = coinName.symbol,
-        imageUrl = coinName.imageUrl
-    )
+    fun listChunking(originalList: List<String>, chunkSize: Int): List<List<String>> {
+        return originalList.withIndex()
+            .groupBy { it.index / chunkSize }
+            .map { it.value.map(IndexedValue<String>::value) }
+    }
 
 //    private fun convertTimestampToTime(timestamp: Long?): String {
 //        if (timestamp == null) return ""

@@ -12,12 +12,14 @@ import com.baltsarak.cryptopricealert.data.database.entities.CoinInfoDbModel
 import com.baltsarak.cryptopricealert.data.database.entities.WatchListCoinDbModel
 import com.baltsarak.cryptopricealert.data.mapper.CoinMapper
 import com.baltsarak.cryptopricealert.data.network.ApiFactory
+import com.baltsarak.cryptopricealert.data.network.models.CoinInfoDto
 import com.baltsarak.cryptopricealert.data.worker.PriceMonitoringWorker
 import com.baltsarak.cryptopricealert.domain.CoinInfo
-import com.baltsarak.cryptopricealert.domain.CoinName
 import com.baltsarak.cryptopricealert.domain.CoinRepository
 import com.baltsarak.cryptopricealert.domain.TargetPrice
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 
@@ -26,7 +28,6 @@ class CoinRepositoryImpl(
 ) : CoinRepository {
 
     private val coinInfoDao = AppDatabase.getInstance(application).coinInfoDao()
-    private val coinNamesDao = AppDatabase.getInstance(application).coinNamesDao()
     private val watchListCoinInfoDao = AppDatabase.getInstance(application).watchListCoinInfoDao()
     private val coinPriceHistoryDao = AppDatabase.getInstance(application).coinPriceHistoryDao()
 
@@ -112,14 +113,6 @@ class CoinRepositoryImpl(
         }
     }
 
-    override suspend fun getCoinNamesList(): LiveData<List<CoinName>> {
-        return coinNamesDao.getListCoinNames().map {
-            it.map {
-                mapper.mapCoinNameDbModelToEntity(it)
-            }
-        }
-    }
-
     override suspend fun getCoinInfo(fromSymbol: String): LiveData<CoinInfo> {
         return coinInfoDao.getLiveDataInfoAboutCoin(fromSymbol)
             .map { mapper.mapDbModelToEntity(it) }
@@ -137,13 +130,6 @@ class CoinRepositoryImpl(
         } catch (e: Exception) {
             Log.d("loadData", "ERROR LOAD DATA PRICE HISTORY " + e.message)
         }
-    }
-
-    override suspend fun loadCoinInfo(fromSymbol: String): Long {
-        val coinInfo = apiService.getCoinInfo(assetSymbol = fromSymbol).coinInfo
-        val coinPrice = apiService.getCoinPrice(fSym = fromSymbol).price
-        val coinInfoDbModel = mapper.mapCoinInfoDtoToDbModel(coinInfo, coinPrice)
-        return coinInfoDao.insertCoinInfo(coinInfoDbModel)
     }
 
     override suspend fun getCoinPriceHistory(fromSymbol: String): Map<Float, Float> {
@@ -166,36 +152,62 @@ class CoinRepositoryImpl(
 
     override suspend fun loadData() {
         try {
-            withContext(Dispatchers.IO) {
-                val coinNamesList =
-                    mapper.mapCoinNameContainerDtoToCoinNameList(apiService.getAllCoinsList())
-                        .map { mapper.mapCoinNameDtoToDbModel(it) }
-                coinNamesDao.insertListCoinsInfo(coinNamesList)
+            val container = apiService.getAllCoinsList()
+            val coinList = mapper
+                .mapCoinSymbolsContainerDtoToCoinSymbolsList(container)
+                .map { it.symbol }
+
+            val coinInfoList = withContext(Dispatchers.IO) {
+                coinList.map { coin ->
+                    async {
+                        try {
+                            apiService.getCoinInfo(assetSymbol = coin).coinInfo
+                        } catch (e: Exception) {
+                            CoinInfoDto(0, coin, null, null)
+                        }
+                    }
+                }.awaitAll()
             }
-            val popularCoins = apiService.getPopularCoinsList().coinList
-            val allCoinsList = popularCoins?.coins?.toMutableSet() ?: mutableSetOf()
+            Log.d("loadData", coinList.toString())
+
+            val chunkedCoinList = mapper.listChunking(coinList, 50)
+            val coinPrices = mutableMapOf<String, Map<String, Double>>()
+
+            withContext(Dispatchers.IO) {
+                val deferredResponses =
+                    chunkedCoinList.map { coinSymbolsList ->
+                        async {
+                            val allCoinSymbols = coinSymbolsList.joinToString(",")
+                            apiService.getCoinPrices(fSyms = allCoinSymbols)
+                        }
+                    }
+
+                deferredResponses.awaitAll().forEach { response ->
+                    if (response.isSuccessful) {
+                        response.body()?.let { prices ->
+                            coinPrices.putAll(prices)
+                        }
+                    }
+                }
+            }
+            Log.d("loadData", coinPrices.toString())
+
+            val coinInfoDbModelList = coinInfoList.map { coinInfo ->
+                coinPrices[coinInfo.symbol]?.let { pricesMap ->
+                    mapper.mapDtoToDbModel(coinInfo, pricesMap["USD"])
+                } ?: CoinInfoDbModel(0, "", "", "", 0.0, "")
+            }
+            Log.d("loadData", coinInfoDbModelList.toString())
+
+            coinInfoDao.insertListCoinsInfo(coinInfoDbModelList)
+
+//            val popularCoins = apiService.getPopularCoinsList().coinList
+//            val allCoinsList = popularCoins?.coins?.toMutableSet() ?: mutableSetOf()
 
             while (true) {
-                val watchListNames = withContext(Dispatchers.IO) {
-                    watchListCoinInfoDao.getWatchListCoins()
-                }
-                val watchList = watchListNames
-                    .map { apiService.getCoinInfo(assetSymbol = it) }.map { it.coinInfo }
 
-                allCoinsList.addAll(watchList)
-                val allCoinSymbols = allCoinsList.joinToString(",") { it.symbol }
-                val response = apiService.getCoinPrices(fSyms = allCoinSymbols)
-                if (response.isSuccessful) {
-                    val prices = response.body()
-                    val coinInfoDbModelList = allCoinsList.map { coinInfo ->
-                        prices?.get(coinInfo.symbol)?.let { pricesMap ->
-                            mapper.mapCoinInfoDtoToDbModel(coinInfo, pricesMap["USD"])
-                        } ?: CoinInfoDbModel(0, "", "", "", 0.0, "")
-                    }
-                    coinInfoDao.insertListCoinsInfo(coinInfoDbModelList)
-                    getWatchListCoins()
-                    delay(10_000)
-                }
+                getWatchListCoins()
+                delay(10_000)
             }
         } catch (e: Exception) {
             Log.d("loadData", "ERROR LOAD DATA " + e.message)
