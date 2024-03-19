@@ -6,7 +6,8 @@ import androidx.recyclerview.widget.ListAdapter
 import com.baltsarak.cryptopricealert.databinding.ItemCoinSearchListBinding
 import com.baltsarak.cryptopricealert.domain.CoinName
 
-class CoinNameAdapter : ListAdapter<CoinName, CoinNameViewHolder>(CoinNameDiffCallback) {
+class CoinNameAdapter :
+    ListAdapter<CoinName, CoinNameViewHolder>(CoinNameDiffCallback) {
 
     var onCoinClickListener: OnCoinClickListener? = null
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CoinNameViewHolder {
@@ -22,7 +23,7 @@ class CoinNameAdapter : ListAdapter<CoinName, CoinNameViewHolder>(CoinNameDiffCa
         val coin = getItem(position)
         with(holder.binding) {
             with(coin) {
-                currencyPair.text = fullName
+                currencyPair.text = coin.fullName
                 root.setOnClickListener {
                     onCoinClickListener?.onCoinClick(this)
                 }
@@ -31,6 +32,6 @@ class CoinNameAdapter : ListAdapter<CoinName, CoinNameViewHolder>(CoinNameDiffCa
     }
 
     interface OnCoinClickListener {
-        fun onCoinClick(coinName: CoinName)
+        fun onCoinClick(name: CoinName)
     }
 }

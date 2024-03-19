@@ -17,15 +17,13 @@ interface CoinRepository {
 
     suspend fun getPopularCoinsList(): LiveData<List<CoinInfo>>
 
-    suspend fun getCoinNamesList(): LiveData<List<CoinName>>
+    suspend fun getCoinsList(): List<CoinName>
 
     suspend fun getCoinInfo(fromSymbol: String): LiveData<CoinInfo>
 
     suspend fun getCurrentCoinPrice(fromSymbol: String): Double
 
     suspend fun loadCoinPriceHistory(fromSymbol: String)
-
-    suspend fun loadCoinInfo(fromSymbol: String): Long
 
     suspend fun getCoinPriceHistory(fromSymbol: String): Map<Float, Float>
 

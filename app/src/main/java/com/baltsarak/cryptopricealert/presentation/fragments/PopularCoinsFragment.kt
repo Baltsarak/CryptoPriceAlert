@@ -69,7 +69,10 @@ class PopularCoinsFragment : Fragment(), HasCustomTitle, HasCustomAction {
         return CustomAction(
             iconRes = R.drawable.search,
             textRes = R.string.search,
-            onCustomAction = { navigator().showCoinSearch()}
+            onCustomAction = {
+                navigator().showSearchCoin()
+                navigator().openSearchView()
+            }
         )
     }
 

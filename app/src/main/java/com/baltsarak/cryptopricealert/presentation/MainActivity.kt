@@ -4,9 +4,11 @@ import android.graphics.Color
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
+import android.view.animation.AlphaAnimation
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.fragment.app.Fragment
@@ -98,6 +100,7 @@ class MainActivity : AppCompatActivity(), Navigator {
         if (savedInstanceState == null) {
             viewModel.loadData()
         }
+        setClickListeners()
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -116,6 +119,13 @@ class MainActivity : AppCompatActivity(), Navigator {
     override fun showCoinInfo(fromSymbol: String) {
         targetCoin = fromSymbol
         binding.bottomNavigation.selectedItemId = R.id.navigation_cryptocurrency
+    }
+
+    override fun showSearchCoin() {
+        supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.main_screen_fragment_container, SearchCoinsFragment())
+            .commit()
     }
 
     override fun showAccount() {
@@ -177,6 +187,34 @@ class MainActivity : AppCompatActivity(), Navigator {
         menuItem.setOnMenuItemClickListener {
             action.onCustomAction.run()
             return@setOnMenuItemClickListener true
+        }
+    }
+
+    override fun openSearchView() {
+        binding.searchView.visibility = View.VISIBLE
+        val fadeIn = AlphaAnimation(0.0f, 1.0f)
+        fadeIn.duration = 600
+        binding.searchView.startAnimation(fadeIn)
+    }
+    private fun setClickListeners() {
+        binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                // TODO
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                // TODO
+                return true
+            }
+        })
+
+        binding.searchView.setOnCloseListener {
+            val fadeOut = AlphaAnimation(1.0f, 0.0f)
+            fadeOut.duration = 600
+            binding.searchView.startAnimation(fadeOut)
+            binding.searchView.visibility = View.GONE
+            true
         }
     }
 

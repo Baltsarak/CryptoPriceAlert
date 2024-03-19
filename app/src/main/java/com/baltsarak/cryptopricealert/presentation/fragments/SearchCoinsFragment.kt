@@ -1,7 +1,6 @@
 package com.baltsarak.cryptopricealert.presentation.fragments
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -44,29 +43,21 @@ class SearchCoinsFragment : Fragment() {
 
     private fun loadData() {
         lifecycleScope.launch {
-            viewModel.coinNamesList().observe(viewLifecycleOwner) {
-                adapter.submitList(it)
-            }
+            val listCoinNames = viewModel.getListCoinNames()
+            adapter.submitList(listCoinNames)
         }
     }
 
     private fun setClickListener() {
         adapter.onCoinClickListener = object : CoinNameAdapter.OnCoinClickListener {
-            override fun onCoinClick(coinName: CoinName) {
-                lifecycleScope.launch {
-                    viewModel.loadCoinInfo(coinName.symbol)
-                }
-                viewModel.isLoaded.observe(viewLifecycleOwner) {
-                    Log.d("isLoaded", it.toString())
-                    navigator().showCoinInfo(coinName.symbol)
-                }
+            override fun onCoinClick(name: CoinName) {
+                navigator().showCoinInfo(name.fromSymbol)
             }
         }
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        adapter.onCoinClickListener = null
         _binding = null
     }
 }

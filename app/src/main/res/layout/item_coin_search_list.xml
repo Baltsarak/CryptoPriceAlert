@@ -6,7 +6,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="80dp"
         android:gravity="center"
         android:background="@color/colorFragmentBackground"
         android:orientation="horizontal">
@@ -15,7 +15,7 @@
             android:id="@+id/currency_pair"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="18dp"
             android:textSize="22sp"
             android:fontFamily="@font/work_sans_regular"
             android:textColor="@color/white"
