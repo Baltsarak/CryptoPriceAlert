@@ -9,6 +9,7 @@ import com.baltsarak.cryptopricealert.domain.CoinInfo
 import com.baltsarak.cryptopricealert.domain.usecases.AddCoinToWatchListUseCase
 import com.baltsarak.cryptopricealert.domain.usecases.DeleteCoinFromWatchListUseCase
 import com.baltsarak.cryptopricealert.domain.usecases.GetCoinInfoUseCase
+import com.baltsarak.cryptopricealert.domain.usecases.GetCoinListUseCase
 import com.baltsarak.cryptopricealert.domain.usecases.GetCoinPriceHistoryInfoUseCase
 import com.baltsarak.cryptopricealert.domain.usecases.GetCurrentCoinPriceUseCase
 import com.baltsarak.cryptopricealert.domain.usecases.GetPopularCoinListUseCase
@@ -30,6 +31,7 @@ class CoinViewModel(application: Application) : AndroidViewModel(application) {
     private val loadCoinPriceHistoryInfoUseCase = LoadCoinPriceHistoryInfoUseCase(repository)
     private val getCoinPriceHistoryInfoUseCase = GetCoinPriceHistoryInfoUseCase(repository)
     private val getPopularCoinListUseCase = GetPopularCoinListUseCase(repository)
+    private val getCoinListUseCase = GetCoinListUseCase(repository)
     private val getCoinInfoUseCase = GetCoinInfoUseCase(repository)
     private val getCurrentCoinPriceUseCase = GetCurrentCoinPriceUseCase(repository)
     private val getWatchListCoinsUseCase = GetWatchListCoinsUseCase(repository)
@@ -40,6 +42,9 @@ class CoinViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.async { getPopularCoinListUseCase() }.await()
 
     suspend fun getWatchListCoins() = getWatchListCoinsUseCase()
+
+    suspend fun getListCoinNames() =
+        viewModelScope.async { getCoinListUseCase() }.await()
 
     private suspend fun getCurrentCoinPrice(fromSymbol: String) =
         viewModelScope.async { getCurrentCoinPriceUseCase(fromSymbol) }.await()

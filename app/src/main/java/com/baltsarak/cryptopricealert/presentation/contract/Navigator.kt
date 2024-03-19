@@ -14,5 +14,9 @@ interface Navigator {
 
     fun showCoinInfo(fromSymbol: String)
 
+    fun showSearchCoin()
+
+    fun openSearchView()
+
     fun showAccount()
 }

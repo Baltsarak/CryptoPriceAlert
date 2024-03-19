@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:gravity="center"
+        android:background="@color/colorFragmentBackground"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/currency_pair"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="18dp"
+            android:textSize="22sp"
+            android:fontFamily="@font/work_sans_regular"
+            android:textColor="@color/white"
+            android:layout_weight="1"
+            tools:text="BTC / USD"/>
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

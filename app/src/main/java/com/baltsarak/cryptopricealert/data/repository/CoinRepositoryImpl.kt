@@ -14,6 +14,7 @@ import com.baltsarak.cryptopricealert.data.network.ApiFactory
 import com.baltsarak.cryptopricealert.data.network.models.CoinInfoDto
 import com.baltsarak.cryptopricealert.data.worker.PriceMonitoringWorker
 import com.baltsarak.cryptopricealert.domain.CoinInfo
+import com.baltsarak.cryptopricealert.domain.CoinName
 import com.baltsarak.cryptopricealert.domain.CoinRepository
 import com.baltsarak.cryptopricealert.domain.TargetPrice
 import kotlinx.coroutines.Dispatchers
@@ -108,6 +109,10 @@ class CoinRepositoryImpl(
     override suspend fun getCoinInfo(fromSymbol: String): LiveData<CoinInfo> {
         return coinInfoDao.getLiveDataInfoAboutCoin(fromSymbol)
             .map { mapper.mapDbModelToEntity(it) }
+    }
+
+    override suspend fun getCoinsList(): List<CoinName> {
+        return coinInfoDao.getListCoins()
     }
 
     override suspend fun loadCoinPriceHistory(fromSymbol: String) {
