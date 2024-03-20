@@ -126,14 +126,6 @@ class CoinRepositoryImpl(
             Log.d("loadData", "ERROR LOAD DATA PRICE HISTORY " + e.message)
         }
     }
-
-    override suspend fun loadCoinInfo(fromSymbol: String): Long {
-        val coinInfo = apiService.getCoinInfo(assetSymbol = fromSymbol).coinInfo
-        val coinPrice = apiService.getCoinPrice(fSym = fromSymbol).price
-        val coinInfoDbModel = mapper.mapCoinInfoDtoToDbModel(coinInfo, coinPrice)
-        return coinInfoDao.insertCoinInfo(coinInfoDbModel)
-    }
-
     override suspend fun getCoinPriceHistory(fromSymbol: String): Map<Float, Float> {
         val dbModelList = coinPriceHistoryDao.getCoinsPriceHistoryList(fromSymbol)
         return dbModelList.associate { it.time.toFloat() to it.close.toFloat() }
