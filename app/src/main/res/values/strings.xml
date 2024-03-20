@@ -13,4 +13,6 @@
     <string name="account_logo">Логотип профиля</string>
     <string name="add">Добавить монету</string>
     <string name="search">Поиск монеты</string>
+    <string name="nothing"></string>
+    <string name="search_hint">Введите название монеты...</string>
 </resources>

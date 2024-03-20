@@ -32,7 +32,7 @@ class PopularCoinsFragment : Fragment(), HasCustomTitle, HasCustomAction {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        viewModel = ViewModelProvider(this)[CoinViewModel::class.java]
+        viewModel = ViewModelProvider(requireActivity())[CoinViewModel::class.java]
         adapter = CoinInfoAdapter()
         _binding = FragmentPopularCoinsBinding.inflate(inflater, container, false)
         return binding.root

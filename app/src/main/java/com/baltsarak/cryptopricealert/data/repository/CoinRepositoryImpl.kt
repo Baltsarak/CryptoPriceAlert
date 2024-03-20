@@ -7,11 +7,9 @@ import androidx.lifecycle.map
 import androidx.work.ExistingWorkPolicy
 import androidx.work.WorkManager
 import com.baltsarak.cryptopricealert.data.database.AppDatabase
-import com.baltsarak.cryptopricealert.data.database.entities.CoinInfoDbModel
 import com.baltsarak.cryptopricealert.data.database.entities.WatchListCoinDbModel
 import com.baltsarak.cryptopricealert.data.mapper.CoinMapper
 import com.baltsarak.cryptopricealert.data.network.ApiFactory
-import com.baltsarak.cryptopricealert.data.network.models.CoinInfoDto
 import com.baltsarak.cryptopricealert.data.worker.PriceMonitoringWorker
 import com.baltsarak.cryptopricealert.domain.CoinInfo
 import com.baltsarak.cryptopricealert.domain.CoinName
@@ -160,12 +158,11 @@ class CoinRepositoryImpl(
                         try {
                             apiService.getCoinInfo(assetSymbol = coin).coinInfo
                         } catch (e: Exception) {
-                            CoinInfoDto(0, coin, null, null)
+                            null
                         }
                     }
                 }.awaitAll()
             }
-            Log.d("loadData", coinList.toString())
 
             val chunkedCoinList = mapper.listChunking(coinList, 50)
             val coinPrices = mutableMapOf<String, Map<String, Double>>()
@@ -186,10 +183,10 @@ class CoinRepositoryImpl(
                     }
                 }
             }
-            val coinInfoDbModelList = coinInfoList.map { coinInfo ->
-                coinPrices[coinInfo.symbol]?.let { pricesMap ->
+            val coinInfoDbModelList = coinInfoList.mapNotNull { coinInfo ->
+                coinPrices[coinInfo?.symbol]?.let { pricesMap ->
                     mapper.mapDtoToDbModel(coinInfo, pricesMap["USD"])
-                } ?: CoinInfoDbModel(0, "", "", "", 0.0, "")
+                }
             }
 
             coinInfoDao.insertListCoinsInfo(coinInfoDbModelList)

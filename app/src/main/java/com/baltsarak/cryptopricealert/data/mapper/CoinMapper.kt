@@ -11,14 +11,20 @@ import com.google.gson.Gson
 
 class CoinMapper {
 
-    fun mapDtoToDbModel(coin: CoinInfoDto, coinPrice: Double?) = CoinInfoDbModel(
-        id = coin.id,
-        fromSymbol = coin.symbol,
-        fullName = coin.name,
-        toSymbol = "USD",
-        price = coinPrice,
-        imageUrl = coin.imageUrl
-    )
+    fun mapDtoToDbModel(coin: CoinInfoDto?, coinPrice: Double?): CoinInfoDbModel? {
+        if (coin == null) {
+            return null
+        }
+        return CoinInfoDbModel(
+            id = coin.id,
+            fromSymbol = coin.symbol,
+            fullName = coin.name,
+            toSymbol = "USD",
+            price = coinPrice,
+            imageUrl = coin.imageUrl
+        )
+    }
+
 
     fun mapDbModelToEntity(dbModel: CoinInfoDbModel) = CoinInfo(
         id = dbModel.id,
