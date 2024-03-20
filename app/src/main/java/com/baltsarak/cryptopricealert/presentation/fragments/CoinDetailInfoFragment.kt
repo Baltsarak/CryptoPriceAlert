@@ -41,7 +41,7 @@ class CoinDetailInfoFragment : Fragment(), HasCustomTitle, HasCustomAction {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        viewModel = ViewModelProvider(this)[CoinViewModel::class.java]
+        viewModel = ViewModelProvider(requireActivity())[CoinViewModel::class.java]
         _binding = FragmentCoinDetailInfoBinding.inflate(inflater, container, false)
         fromSymbol = requireArguments().getString(EXTRA_FROM_SYMBOL, EMPTY_SYMBOL)
         return binding.root

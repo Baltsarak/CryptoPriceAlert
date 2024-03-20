@@ -34,7 +34,7 @@ class WatchListFragment : Fragment(), HasCustomTitle, HasCustomAction {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        viewModel = ViewModelProvider(this)[CoinViewModel::class.java]
+        viewModel = ViewModelProvider(requireActivity())[CoinViewModel::class.java]
         adapter = CoinInfoAdapter()
         _binding = FragmentWatchlistBinding.inflate(inflater, container, false)
         return binding.root

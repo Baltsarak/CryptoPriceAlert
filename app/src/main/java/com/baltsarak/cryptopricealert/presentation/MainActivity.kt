@@ -1,21 +1,28 @@
 package com.baltsarak.cryptopricealert.presentation
 
+import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import android.view.animation.AlphaAnimation
+import android.view.inputmethod.InputMethodManager
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.baltsarak.cryptopricealert.R
 import com.baltsarak.cryptopricealert.databinding.ActivityMainBinding
+import com.baltsarak.cryptopricealert.domain.CoinName
 import com.baltsarak.cryptopricealert.presentation.contract.CustomAction
 import com.baltsarak.cryptopricealert.presentation.contract.HasCustomAction
 import com.baltsarak.cryptopricealert.presentation.contract.HasCustomTitle
@@ -26,6 +33,7 @@ import com.baltsarak.cryptopricealert.presentation.fragments.PopularCoinsFragmen
 import com.baltsarak.cryptopricealert.presentation.fragments.SearchCoinsFragment
 import com.baltsarak.cryptopricealert.presentation.fragments.WatchListFragment
 import com.google.android.material.navigation.NavigationBarView.OnItemSelectedListener
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity(), Navigator {
 
@@ -100,7 +108,7 @@ class MainActivity : AppCompatActivity(), Navigator {
         if (savedInstanceState == null) {
             viewModel.loadData()
         }
-        setClickListeners()
+        lifecycleScope.launch { setClickListeners() }
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -122,10 +130,7 @@ class MainActivity : AppCompatActivity(), Navigator {
     }
 
     override fun showSearchCoin() {
-        supportFragmentManager
-            .beginTransaction()
-            .replace(R.id.main_screen_fragment_container, SearchCoinsFragment())
-            .commit()
+        launchFragment(SearchCoinsFragment())
     }
 
     override fun showAccount() {
@@ -150,22 +155,25 @@ class MainActivity : AppCompatActivity(), Navigator {
             is PopularCoinsFragment -> R.id.navigation_popular
             is CoinDetailInfoFragment -> R.id.navigation_cryptocurrency
             is AccountFragment -> R.id.navigation_profile
-            else -> R.id.navigation_watch_list
+            is WatchListFragment -> R.id.navigation_watch_list
+            else -> binding.bottomNavigation.selectedItemId
         }
         binding.bottomNavigation.setOnItemSelectedListener(onItemSelectedListener)
 
         if (fragment is HasCustomTitle) {
             binding.toolbar.title = getString(fragment.getTitleRes())
         } else {
-            binding.toolbar.title = getString(R.string.app_name)
+            binding.toolbar.title = getString(R.string.nothing)
         }
 
-        if (supportFragmentManager.backStackEntryCount > 0) {
+        if (supportFragmentManager.backStackEntryCount > 0 && fragment !is SearchCoinsFragment) {
             supportActionBar?.setDisplayHomeAsUpEnabled(true)
             supportActionBar?.setDisplayShowHomeEnabled(true)
+            binding.searchView.visibility = View.GONE
         } else {
             supportActionBar?.setDisplayHomeAsUpEnabled(false)
             supportActionBar?.setDisplayShowHomeEnabled(false)
+            binding.searchView.visibility = View.VISIBLE
         }
 
         if (fragment is HasCustomAction) {
@@ -191,31 +199,78 @@ class MainActivity : AppCompatActivity(), Navigator {
     }
 
     override fun openSearchView() {
-        binding.searchView.visibility = View.VISIBLE
+        val searchView = binding.searchView
+        searchView.isIconified = false
+        searchView.setQuery("", false)
+        val searchIcon =
+            searchView.findViewById<View>(androidx.appcompat.R.id.search_button) as ImageView
+        var searchDrawable = searchIcon.drawable
+        searchDrawable = DrawableCompat.wrap(searchDrawable!!)
+        DrawableCompat.setTint(searchDrawable, Color.WHITE)
+        searchIcon.setImageDrawable(searchDrawable)
+
+        val searchText =
+            searchView.findViewById<View>(androidx.appcompat.R.id.search_src_text) as TextView
+        searchText.setTextColor(Color.WHITE)
+        searchText.setHintTextColor(Color.LTGRAY)
+
+        searchView.queryHint = getString(R.string.search_hint)
+
+        val typeface =
+            ResourcesCompat
+                .getFont(this, R.font.work_sans_regular)
+        searchText.typeface = typeface
+
+        val closeButton =
+            searchView.findViewById<View>(androidx.appcompat.R.id.search_close_btn) as ImageView
+        var closeDrawable = closeButton.drawable
+        closeDrawable = DrawableCompat.wrap(closeDrawable!!)
+        DrawableCompat.setTint(closeDrawable, Color.WHITE)
+        closeButton.setImageDrawable(closeDrawable)
+
         val fadeIn = AlphaAnimation(0.0f, 1.0f)
-        fadeIn.duration = 600
-        binding.searchView.startAnimation(fadeIn)
+        fadeIn.duration = 800
+        searchView.startAnimation(fadeIn)
     }
-    private fun setClickListeners() {
+
+    override fun closeSearchView() {
+        val fadeOut = AlphaAnimation(1.0f, 0.0f)
+        fadeOut.duration = 400
+        binding.searchView.startAnimation(fadeOut)
+        binding.searchView.visibility = View.GONE
+        binding.searchView.setQuery("", false)
+    }
+
+    private suspend fun setClickListeners() {
+        val listCoinNames = viewModel.getListCoinNames()
         binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                // TODO
+                val inputMethodManager =
+                    this@MainActivity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                inputMethodManager.hideSoftInputFromWindow(binding.searchView.windowToken, 0)
+                binding.searchView.clearFocus()
                 return true
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                // TODO
+                filterList(listCoinNames, newText)
                 return true
             }
         })
 
         binding.searchView.setOnCloseListener {
-            val fadeOut = AlphaAnimation(1.0f, 0.0f)
-            fadeOut.duration = 600
-            binding.searchView.startAnimation(fadeOut)
-            binding.searchView.visibility = View.GONE
+            closeSearchView()
+            supportFragmentManager.popBackStack()
             true
         }
+    }
+
+    fun filterList(list: List<CoinName>, text: String?) {
+        val filteredList = list.filter { item ->
+            item.fullName.contains(text ?: "", ignoreCase = true) ||
+                    item.fromSymbol.contains(text ?: "", ignoreCase = true)
+        }
+        viewModel.updateCoinListLiveData(filteredList)
     }
 
     private fun showExitConfirmationDialog() {

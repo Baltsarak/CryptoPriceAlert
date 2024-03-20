@@ -18,6 +18,8 @@ interface Navigator {
 
     fun openSearchView()
 
+    fun closeSearchView()
+
     fun showAccount()
 
     fun showCoinSearch()

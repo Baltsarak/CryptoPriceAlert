@@ -28,7 +28,7 @@ class SearchCoinsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        viewModel = ViewModelProvider(this)[CoinViewModel::class.java]
+        viewModel = ViewModelProvider(requireActivity())[CoinViewModel::class.java]
         adapter = CoinNameAdapter()
         _binding = FragmentSearchCoinsBinding.inflate(inflater, container, false)
         return binding.root
@@ -43,14 +43,18 @@ class SearchCoinsFragment : Fragment() {
 
     private fun loadData() {
         lifecycleScope.launch {
-            val listCoinNames = viewModel.getListCoinNames()
-            adapter.submitList(listCoinNames)
+            val coinList = viewModel.getListCoinNames()
+            adapter.submitList(coinList)
+            viewModel.coinListLiveData.observe(viewLifecycleOwner) {
+                adapter.submitList(it)
+            }
         }
     }
 
     private fun setClickListener() {
         adapter.onCoinClickListener = object : CoinNameAdapter.OnCoinClickListener {
             override fun onCoinClick(name: CoinName) {
+                navigator().closeSearchView()
                 navigator().showCoinInfo(name.fromSymbol)
             }
         }
