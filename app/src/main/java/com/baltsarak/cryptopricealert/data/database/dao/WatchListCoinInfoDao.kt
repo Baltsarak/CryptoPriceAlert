@@ -20,7 +20,7 @@ interface WatchListCoinInfoDao {
     fun getTargetPrices(): List<TargetPrice>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertCoinToWatchList(coin: WatchListCoinDbModel)
+    suspend fun insertCoinToWatchList(coin: WatchListCoinDbModel): Long
 
     @Query("SELECT COUNT(DISTINCT fromSymbol) FROM watch_list_coins")
     suspend fun getWatchListSize(): Int

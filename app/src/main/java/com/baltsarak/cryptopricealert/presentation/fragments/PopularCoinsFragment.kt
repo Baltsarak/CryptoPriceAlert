@@ -50,7 +50,7 @@ class PopularCoinsFragment : Fragment(), HasCustomTitle, HasCustomAction {
     }
 
     private fun loadData() {
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.popularCoinList().observe(viewLifecycleOwner) {
                 adapter.submitList(it)
             }

@@ -25,6 +25,7 @@ import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.launch
 
 class CoinDetailInfoFragment : Fragment(), HasCustomTitle, HasCustomAction {
@@ -58,7 +59,7 @@ class CoinDetailInfoFragment : Fragment(), HasCustomTitle, HasCustomAction {
     }
 
     private fun loadDataAndFillingView(fromSymbol: String) {
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.loadCoinPriceHistoryInfo(fromSymbol)
             viewModel.getCoinDetailInfo(fromSymbol).observe(viewLifecycleOwner) {
                 with(binding) {
@@ -73,7 +74,7 @@ class CoinDetailInfoFragment : Fragment(), HasCustomTitle, HasCustomAction {
 
     private fun settingPriceChart(coinPriceChart: LineChart, coinInfo: CoinInfo) {
         val entries = ArrayList<Entry>()
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             val coinMap = viewModel.getCoinPriceHistory(fromSymbol)
             for (data in coinMap) {
                 entries.add(Entry(data.key, data.value))
@@ -115,18 +116,18 @@ class CoinDetailInfoFragment : Fragment(), HasCustomTitle, HasCustomAction {
                         REQUEST_CODE_POST_NOTIFICATIONS
                     )
                 } else {
-                    addCoinToWatchList()
+                    viewLifecycleOwner.lifecycleScope.launch {
+                        addCoinToWatchList().await()
+                    }
                     viewModel.startWorker()
                 }
             }
         }
     }
 
-    private fun addCoinToWatchList() {
-        lifecycleScope.launch {
-            val targetPrice = binding.targetPrice.text.toString()
-            viewModel.addCoinToWatchList(fromSymbol, targetPrice)
-        }
+    private suspend fun addCoinToWatchList(): Deferred<Unit> {
+        val targetPrice = binding.targetPrice.text.toString()
+        return viewModel.addCoinToWatchList(fromSymbol, targetPrice)
     }
 
     override fun getCustomAction(): CustomAction {
@@ -134,8 +135,10 @@ class CoinDetailInfoFragment : Fragment(), HasCustomTitle, HasCustomAction {
             iconRes = R.drawable.add,
             textRes = R.string.add
         ) {
-            addCoinToWatchList()
-            navigator().showWatchList()
+            viewLifecycleOwner.lifecycleScope.launch {
+                addCoinToWatchList().await()
+                navigator().showWatchList()
+            }
         }
     }
 

@@ -7,7 +7,7 @@ interface CoinRepository {
         fromSymbol: String,
         targetPrice: Double,
         higherThenCurrentPrice: Boolean
-    )
+    ): Long
 
     suspend fun getWatchListCoins(): List<CoinInfo>
 

@@ -21,6 +21,7 @@ import com.baltsarak.cryptopricealert.domain.usecases.LoadCoinPriceHistoryInfoUs
 import com.baltsarak.cryptopricealert.domain.usecases.LoadDataUseCase
 import com.baltsarak.cryptopricealert.domain.usecases.RewriteWatchListUseCase
 import com.baltsarak.cryptopricealert.domain.usecases.StartWorkerUseCase
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
@@ -68,8 +69,8 @@ class CoinViewModel(application: Application) : AndroidViewModel(application) {
     suspend fun getCoinPriceHistory(fromSymbol: String) =
         viewModelScope.async { getCoinPriceHistoryInfoUseCase(fromSymbol) }.await()
 
-    suspend fun addCoinToWatchList(fromSymbol: String, targetPrice: String) {
-        viewModelScope.launch {
+    suspend fun addCoinToWatchList(fromSymbol: String, targetPrice: String): Deferred<Unit> {
+        return viewModelScope.async {
             val currentPrice = getCurrentCoinPrice(fromSymbol)
             val priceAlert = targetPrice.trim().toDoubleOrNull()
             if (priceAlert != null && priceAlert > 0) {

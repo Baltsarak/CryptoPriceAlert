@@ -41,9 +41,9 @@ class CoinRepositoryImpl(
         fromSymbol: String,
         targetPrice: Double,
         higherThenCurrentPrice: Boolean
-    ) {
+    ): Long {
         val size = watchListCoinInfoDao.getWatchListSize()
-        watchListCoinInfoDao.insertCoinToWatchList(
+        return watchListCoinInfoDao.insertCoinToWatchList(
             WatchListCoinDbModel(
                 0,
                 fromSymbol,
@@ -145,7 +145,7 @@ class CoinRepositoryImpl(
         val workManager = WorkManager.getInstance(application)
         workManager.enqueueUniqueWork(
             PriceMonitoringWorker.NAME,
-            ExistingWorkPolicy.REPLACE,
+            ExistingWorkPolicy.KEEP,
             PriceMonitoringWorker.WORK_REQUEST
         )
     }

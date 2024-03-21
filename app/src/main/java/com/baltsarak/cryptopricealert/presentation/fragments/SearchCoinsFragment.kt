@@ -42,7 +42,7 @@ class SearchCoinsFragment : Fragment() {
     }
 
     private fun loadData() {
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             val coinList = viewModel.getListCoinNames()
             adapter.submitList(coinList)
             viewModel.coinListLiveData.observe(viewLifecycleOwner) {

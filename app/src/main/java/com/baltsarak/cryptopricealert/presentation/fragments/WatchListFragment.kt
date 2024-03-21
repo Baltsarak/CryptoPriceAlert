@@ -53,7 +53,7 @@ class WatchListFragment : Fragment(), HasCustomTitle, HasCustomAction {
     }
 
     private fun loadData() {
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             val watchList = viewModel.getWatchListCoins()
             adapter.submitList(watchList)
             viewModel.watchListCoins.observe(viewLifecycleOwner) {
@@ -117,9 +117,12 @@ class WatchListFragment : Fragment(), HasCustomTitle, HasCustomAction {
 
     override fun getCustomAction(): CustomAction {
         return CustomAction(
-            iconRes = R.drawable.add,
+            iconRes = R.drawable.search,
             textRes = R.string.add,
-            onCustomAction = { navigator().showCoinSearch() }
+            onCustomAction = {
+                navigator().showSearchCoin()
+                navigator().openSearchView()
+            }
         )
     }
 
