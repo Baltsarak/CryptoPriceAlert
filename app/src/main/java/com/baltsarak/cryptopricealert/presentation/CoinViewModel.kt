@@ -45,6 +45,8 @@ class CoinViewModel(application: Application) : AndroidViewModel(application) {
     val coinListLiveData: LiveData<List<CoinName>>
         get() = _coinListLiveData
 
+    val watchListCoins = repository.watchListLiveData
+
     fun updateCoinListLiveData(newList: List<CoinName>) {
         _coinListLiveData.value = newList
     }
