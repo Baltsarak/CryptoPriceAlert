@@ -120,21 +120,27 @@ class CoinRepositoryImpl(
 
     override suspend fun loadCoinPriceHistory(fromSymbol: String) {
         try {
-            val dayPriceContainer =
-                apiService.getCoinPriceHistory(fSym = fromSymbol)
-            val dayPriceList = dayPriceContainer.data?.data
-            val dayPriceDbModelList = dayPriceList
-                ?.map { mapper.mapDayPriceDtoToDbModel(fromSymbol, it) } ?: listOf()
-
-            coinPriceHistoryDao.insertCoinsPriceHistoryList(dayPriceDbModelList)
+            withContext(Dispatchers.IO) {
+            val dayPriceContainer = apiService.getCoinPriceHistory(fSym = fromSymbol)
+            dayPriceContainer.data?.data?.let { dayPriceList ->
+                    val dayPriceDbModelList = dayPriceList
+                        .map { mapper.mapDayPriceDtoToDbModel(fromSymbol, it) }
+                    coinPriceHistoryDao.insertCoinsPriceHistoryList(dayPriceDbModelList)
+                }
+            } ?: Log.d("loadData", "Price history data is null for $fromSymbol")
         } catch (e: Exception) {
             Log.d("loadData", "ERROR LOAD DATA PRICE HISTORY " + e.message)
         }
     }
 
-    override suspend fun getCoinPriceHistory(fromSymbol: String): Map<Float, Float> {
-        val dbModelList = coinPriceHistoryDao.getCoinsPriceHistoryList(fromSymbol)
-        return dbModelList.associate { it.time.toFloat() to it.close.toFloat() }
+    override suspend fun getCoinPriceHistory(fromSymbol: String, period: Int): Map<Float, Float> {
+        val dbModelList = when(period) {
+            5 -> coinPriceHistoryDao.getPriceHistoryForFiveYears(fromSymbol)
+            1 -> coinPriceHistoryDao.getPriceHistoryForYear(fromSymbol)
+            0 -> coinPriceHistoryDao.getPriceHistoryForMonth(fromSymbol)
+            else -> coinPriceHistoryDao.getAllPriceHistoryCoin(fromSymbol)
+        }
+        return dbModelList.associate { it.date.toFloat() to it.price.toFloat() }
     }
 
     override suspend fun getCurrentCoinPrice(fromSymbol: String): Double {

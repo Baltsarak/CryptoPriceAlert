@@ -51,7 +51,7 @@ interface ApiService {
         @Query(QUERY_PARAM_API_KEY) apiKey: String = API_KEY,
         @Query(QUERY_PARAM_FROM_SYMBOL) fSym: String,
         @Query(QUERY_PARAM_TO_SYMBOL) tSym: String = CURRENCY,
-        @Query(QUERY_PARAM_TO_DATE) toTs: Long = YEAR_AGO
+        @Query(QUERY_PARAM_ALL_DATA) allData: Boolean = true
     ): DayPriceContainerDto
 
     companion object {
@@ -63,10 +63,9 @@ interface ApiService {
         private const val QUERY_PARAM_ASSET_SYMBOL = "asset_symbol"
         private const val QUERY_PARAM_PAGE = "page"
         private const val QUERY_PARAM_PAGE_SIZE = "page_size"
-        private const val QUERY_PARAM_TO_DATE = "toTs"
+        private const val QUERY_PARAM_ALL_DATA = "allData"
 
         private const val API_KEY = "8bb7cb65f4c4164493d302efbf9f49d779ca02b1c51d526674d578f6e2425874"
         private const val CURRENCY = "USD"
-        private val YEAR_AGO = System.currentTimeMillis() - 31556926
     }
 }

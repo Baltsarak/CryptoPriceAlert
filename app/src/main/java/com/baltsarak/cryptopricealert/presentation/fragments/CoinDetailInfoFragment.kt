@@ -15,13 +15,11 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.baltsarak.cryptopricealert.R
 import com.baltsarak.cryptopricealert.databinding.FragmentCoinDetailInfoBinding
-import com.baltsarak.cryptopricealert.domain.CoinInfo
 import com.baltsarak.cryptopricealert.presentation.CoinViewModel
 import com.baltsarak.cryptopricealert.presentation.contract.CustomAction
 import com.baltsarak.cryptopricealert.presentation.contract.HasCustomAction
 import com.baltsarak.cryptopricealert.presentation.contract.HasCustomTitle
 import com.baltsarak.cryptopricealert.presentation.contract.navigator
-import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
@@ -55,6 +53,8 @@ class CoinDetailInfoFragment : Fragment(), HasCustomTitle, HasCustomAction {
         loadDataAndFillingView(fromSymbol)
         binding.progressBarPriceChart.visibility = View.GONE
         binding.priceChart.visibility = View.VISIBLE
+        binding.radioButtonOption4.isChecked = true
+        settingPriceChart(11)
         setOnClickListener()
     }
 
@@ -65,21 +65,31 @@ class CoinDetailInfoFragment : Fragment(), HasCustomTitle, HasCustomAction {
                 with(binding) {
                     textViewCoinName.text = it.fromSymbol
                     textViewPrice.text = it.price.toString()
-                    val coinPriceChart = priceChart
-                    settingPriceChart(coinPriceChart, it)
+                    setOnCheckedChangeListener()
                 }
             }
         }
     }
 
-    private fun settingPriceChart(coinPriceChart: LineChart, coinInfo: CoinInfo) {
+    private fun setOnCheckedChangeListener() {
+        binding.radioGroup.setOnCheckedChangeListener { _, checkedId ->
+            when (checkedId) {
+                R.id.radioButtonOption1 -> settingPriceChart(0)
+                R.id.radioButtonOption2 -> settingPriceChart(1)
+                R.id.radioButtonOption3 -> settingPriceChart(5)
+                R.id.radioButtonOption4 -> settingPriceChart(11)
+            }
+        }
+    }
+
+    private fun settingPriceChart(period: Int) {
         val entries = ArrayList<Entry>()
         viewLifecycleOwner.lifecycleScope.launch {
-            val coinMap = viewModel.getCoinPriceHistory(fromSymbol)
+            val coinMap = viewModel.getCoinPriceHistory(fromSymbol, period)
             for (data in coinMap) {
                 entries.add(Entry(data.key, data.value))
             }
-            val priceHistoryDataSet = LineDataSet(entries, coinInfo.fromSymbol)
+            val priceHistoryDataSet = LineDataSet(entries, fromSymbol)
             with(priceHistoryDataSet) {
                 mode = LineDataSet.Mode.CUBIC_BEZIER
                 color = Color.WHITE
@@ -92,13 +102,13 @@ class CoinDetailInfoFragment : Fragment(), HasCustomTitle, HasCustomAction {
                     requireContext(), R.drawable.chart_gradient_fill
                 )
             }
-            with(coinPriceChart) {
+            with(binding.priceChart) {
                 axisRight.isEnabled = false
                 xAxis.isEnabled = false
                 axisLeft.textColor = Color.WHITE
                 data = LineData(priceHistoryDataSet)
             }
-            coinPriceChart.invalidate()
+            binding.priceChart.invalidate()
         }
     }
 

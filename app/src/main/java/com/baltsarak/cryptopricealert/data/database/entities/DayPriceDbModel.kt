@@ -7,9 +7,6 @@ import androidx.room.PrimaryKey
 data class DayPriceDbModel(
     @PrimaryKey(autoGenerate = true) val id: Int,
     val fromSymbol: String,
-    val time: Int,
-    val high: Double?,
-    val low: Double?,
-    val open: Double?,
-    val close: Double
+    val date: Int,
+    val price: Double
 )

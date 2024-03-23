@@ -40,12 +40,9 @@ class CoinMapper {
         return DayPriceDbModel(
             id = 0,
             fromSymbol = fSym,
-            time = dto.time
+            date = dto.date
                 ?: throw RuntimeException("DATA LOADING ERROR: price history not received"),
-            high = dto.high,
-            low = dto.low,
-            open = dto.open,
-            close = dto.close
+            price = dto.price
                 ?: throw RuntimeException("DATA LOADING ERROR: price history not received")
         )
     }
