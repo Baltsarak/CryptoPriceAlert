@@ -25,7 +25,7 @@
             android:layout_height="wrap_content"
             android:textSize="22sp"
             android:fontFamily="@font/work_sans_regular"
-            android:textColor="@color/white"
+            android:textColor="@color/silver"
             android:layout_weight="1"
             tools:text="BTC / USD"/>
 
@@ -35,7 +35,7 @@
             android:layout_height="wrap_content"
             android:textSize="20sp"
             android:fontFamily="@font/work_sans_regular"
-            android:textColor="@color/white"
+            android:textColor="@color/silver"
             android:layout_marginEnd="16dp"
             tools:text="47.673,00"/>
 

@@ -15,4 +15,8 @@
     <string name="search">Поиск монеты</string>
     <string name="nothing"></string>
     <string name="search_hint">Введите название монеты...</string>
+    <string name="month">Месяц</string>
+    <string name="year">Год</string>
+    <string name="_5_years">5лет</string>
+    <string name="all">Все</string>
 </resources>
