@@ -83,32 +83,33 @@ class CoinDetailInfoFragment : Fragment(), HasCustomTitle, HasCustomAction {
     }
 
     private fun settingPriceChart(period: Int) {
-        val entries = ArrayList<Entry>()
         viewLifecycleOwner.lifecycleScope.launch {
-            val coinMap = viewModel.getCoinPriceHistory(fromSymbol, period)
-            for (data in coinMap) {
-                entries.add(Entry(data.key, data.value))
+            val entries = ArrayList<Entry>()
+            viewModel.getCoinPriceHistory(fromSymbol, period).observe(viewLifecycleOwner) { map ->
+                map.entries.sortedBy { it.key }.forEach { (key, value) ->
+                    entries.add(Entry(key, value))
+                }
+                val priceHistoryDataSet = LineDataSet(entries, fromSymbol)
+                with(priceHistoryDataSet) {
+                    mode = LineDataSet.Mode.CUBIC_BEZIER
+                    color = Color.WHITE
+                    lineWidth = 5F
+                    setDrawValues(false)
+                    setDrawCircles(false)
+                    setDrawFilled(true)
+                    fillColor = Color.WHITE
+                    fillDrawable = ContextCompat.getDrawable(
+                        requireContext(), R.drawable.chart_gradient_fill
+                    )
+                }
+                with(binding.priceChart) {
+                    axisRight.isEnabled = false
+                    xAxis.isEnabled = false
+                    axisLeft.textColor = Color.WHITE
+                    data = LineData(priceHistoryDataSet)
+                }
+                binding.priceChart.invalidate()
             }
-            val priceHistoryDataSet = LineDataSet(entries, fromSymbol)
-            with(priceHistoryDataSet) {
-                mode = LineDataSet.Mode.CUBIC_BEZIER
-                color = Color.WHITE
-                lineWidth = 5F
-                setDrawValues(false)
-                setDrawCircles(false)
-                setDrawFilled(true)
-                fillColor = Color.WHITE
-                fillDrawable = ContextCompat.getDrawable(
-                    requireContext(), R.drawable.chart_gradient_fill
-                )
-            }
-            with(binding.priceChart) {
-                axisRight.isEnabled = false
-                xAxis.isEnabled = false
-                axisLeft.textColor = Color.WHITE
-                data = LineData(priceHistoryDataSet)
-            }
-            binding.priceChart.invalidate()
         }
     }
 

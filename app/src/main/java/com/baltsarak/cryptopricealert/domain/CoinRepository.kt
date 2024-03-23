@@ -25,7 +25,7 @@ interface CoinRepository {
 
     suspend fun loadCoinPriceHistory(fromSymbol: String)
 
-    suspend fun getCoinPriceHistory(fromSymbol: String, period: Int): Map<Float, Float>
+    suspend fun getCoinPriceHistory(fromSymbol: String, period: Int): LiveData<Map<Float, Float>>
 
     fun startWorker()
 
