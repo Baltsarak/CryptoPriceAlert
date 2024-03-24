@@ -65,7 +65,7 @@ interface ApiService {
         private const val QUERY_PARAM_PAGE_SIZE = "page_size"
         private const val QUERY_PARAM_ALL_DATA = "allData"
 
-        private const val API_KEY = "8bb7cb65f4c4164493d302efbf9f49d779ca02b1c51d526674d578f6e2425874"
+        private const val API_KEY = ""
         private const val CURRENCY = "USD"
     }
 }

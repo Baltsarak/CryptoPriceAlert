@@ -7,3 +7,13 @@ data class TargetPrice(
     val higherThenCurrent: Boolean,
     val position: Int
 )
+
+fun List<TargetPrice?>.toPriceString(): String {
+    return this.filterNotNull()
+        .filter { it.targetPrice != 0.0 }
+        .joinToString(separator = "\n") { targetPrice ->
+            val arrow = if (targetPrice.higherThenCurrent) "↑" else "↓"
+            "$arrow ${targetPrice.targetPrice}"
+        }
+}
+

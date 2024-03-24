@@ -19,4 +19,6 @@
     <string name="year">Год</string>
     <string name="_5_years">5лет</string>
     <string name="all">Все</string>
+    <string name="logo_alert">Логотип оповещения</string>
+    <string name="to_symbol">/USD</string>
 </resources>

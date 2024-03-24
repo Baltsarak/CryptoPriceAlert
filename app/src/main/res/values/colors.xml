@@ -3,10 +3,10 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="bottom_navigation_icon_color">@color/item_menu_color_selector</color>
-    <color name="bottom_navigation_text_color">@color/item_menu_color_selector</color>
+    <color name="bottom_text_color">@color/item_menu_color_selector</color>
     <color name="colorPrimary">#1c2227</color>
     <color name="colorFragmentBackground">#111518</color>
-    <color name="lavender">#e9dff3</color>
+    <color name="lavender">#eaddfa</color>
     <color name="silver">#eaeff0</color>
     <color name="gold">#eff0ea</color>
 </resources>

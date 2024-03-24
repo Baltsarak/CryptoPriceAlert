@@ -39,7 +39,7 @@ class CoinRepositoryImpl(
 
     override suspend fun addCoinToWatchList(
         fromSymbol: String,
-        targetPrice: Double,
+        targetPrice: Double?,
         higherThenCurrentPrice: Boolean
     ): Long {
         val size = watchListCoinInfoDao.getWatchListSize()
@@ -121,8 +121,8 @@ class CoinRepositoryImpl(
     override suspend fun loadCoinPriceHistory(fromSymbol: String) {
         try {
             withContext(Dispatchers.IO) {
-            val dayPriceContainer = apiService.getCoinPriceHistory(fSym = fromSymbol)
-            dayPriceContainer.data?.data?.let { dayPriceList ->
+                val dayPriceContainer = apiService.getCoinPriceHistory(fSym = fromSymbol)
+                dayPriceContainer.data?.data?.let { dayPriceList ->
                     val dayPriceDbModelList = dayPriceList
                         .map { mapper.mapDayPriceDtoToDbModel(fromSymbol, it) }
                     coinPriceHistoryDao.insertCoinsPriceHistoryList(dayPriceDbModelList)
@@ -133,14 +133,17 @@ class CoinRepositoryImpl(
         }
     }
 
-    override suspend fun getCoinPriceHistory(fromSymbol: String, period: Int): LiveData<Map<Float, Float>> {
-        val dbModelList = when(period) {
+    override suspend fun getCoinPriceHistory(
+        fromSymbol: String,
+        period: Int
+    ): LiveData<Map<Float, Float>> {
+        val dbModelList = when (period) {
             5 -> coinPriceHistoryDao.getPriceHistoryForFiveYears(fromSymbol)
             1 -> coinPriceHistoryDao.getPriceHistoryForYear(fromSymbol)
             0 -> coinPriceHistoryDao.getPriceHistoryForMonth(fromSymbol)
             else -> coinPriceHistoryDao.getAllPriceHistoryCoin(fromSymbol)
         }
-        return dbModelList.map {list ->
+        return dbModelList.map { list ->
             list.associate { it.date.toFloat() to it.price.toFloat() }
         }
     }
@@ -160,13 +163,20 @@ class CoinRepositoryImpl(
 
     override suspend fun loadData() {
         try {
-            val container = apiService.getAllCoinsList()
+            val container = withContext(Dispatchers.IO) {
+                apiService.getAllCoinsList()
+            }
             val coinList = mapper
                 .mapCoinSymbolsContainerDtoToCoinSymbolsList(container)
                 .map { it.symbol }
 
+            val listSymbols = withContext(Dispatchers.IO) {
+                coinInfoDao.getListSymbols().toSet()
+            }
+            val filteredList = coinList.filter { !listSymbols.contains(it) }
+
             val coinInfoList = withContext(Dispatchers.IO) {
-                coinList.map { coin ->
+                filteredList.map { coin ->
                     async {
                         try {
                             delay(500)
@@ -178,7 +188,7 @@ class CoinRepositoryImpl(
                 }.awaitAll()
             }
 
-            val chunkedCoinList = mapper.listChunking(coinList, 50)
+            val chunkedCoinList = mapper.listChunking(filteredList, 50)
             val coinPrices = mutableMapOf<String, Map<String, Double>>()
 
             withContext(Dispatchers.IO) {

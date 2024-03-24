@@ -17,6 +17,9 @@ interface CoinInfoDao {
     @Query("SELECT fromSymbol, fullName FROM coins_info")
     suspend fun getListCoins(): List<CoinName>
 
+    @Query("SELECT fromSymbol FROM coins_info")
+    suspend fun getListSymbols(): List<String>
+
     @Query("SELECT * FROM coins_info WHERE fromsymbol = :fSym LIMIT 1")
     fun getLiveDataInfoAboutCoin(fSym: String): LiveData<CoinInfoDbModel>
 

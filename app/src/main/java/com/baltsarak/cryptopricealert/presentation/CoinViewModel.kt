@@ -78,7 +78,7 @@ class CoinViewModel(application: Application) : AndroidViewModel(application) {
                 addCoinToWatchListUseCase(fromSymbol, priceAlert, higherThenCurrentPrice)
             } else {
                 Log.d("addCoinToWatchList", "Неверное значение цены")
-                addCoinToWatchListUseCase(fromSymbol, 0.0, false)
+                addCoinToWatchListUseCase(fromSymbol, null, false)
             }
         }
     }

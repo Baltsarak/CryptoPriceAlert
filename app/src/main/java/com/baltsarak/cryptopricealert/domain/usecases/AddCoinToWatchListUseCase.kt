@@ -6,7 +6,7 @@ class AddCoinToWatchListUseCase(private val repository: CoinRepository) {
 
     suspend operator fun invoke(
         fromSymbol: String,
-        targetPrice: Double,
+        targetPrice: Double?,
         higherThenCurrentPrice: Boolean
     ) = repository.addCoinToWatchList(fromSymbol, targetPrice, higherThenCurrentPrice)
 }

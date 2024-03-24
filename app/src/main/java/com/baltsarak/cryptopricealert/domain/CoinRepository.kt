@@ -5,7 +5,7 @@ import androidx.lifecycle.LiveData
 interface CoinRepository {
     suspend fun addCoinToWatchList(
         fromSymbol: String,
-        targetPrice: Double,
+        targetPrice: Double?,
         higherThenCurrentPrice: Boolean
     ): Long
 
