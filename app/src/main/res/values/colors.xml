@@ -9,4 +9,6 @@
     <color name="lavender">#eaddfa</color>
     <color name="silver">#eaeff0</color>
     <color name="gold">#eff0ea</color>
+    <color name="colorPriceHigher">#A8D5BA</color>
+    <color name="colorPriceLower">#F88379</color>
 </resources>

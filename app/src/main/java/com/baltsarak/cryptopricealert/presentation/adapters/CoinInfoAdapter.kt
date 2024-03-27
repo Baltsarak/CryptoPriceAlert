@@ -1,12 +1,14 @@
 package com.baltsarak.cryptopricealert.presentation.adapters
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.isVisible
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.ListAdapter
 import com.baltsarak.cryptopricealert.R
 import com.baltsarak.cryptopricealert.databinding.ItemCoinListBinding
 import com.baltsarak.cryptopricealert.domain.CoinInfo
+import com.baltsarak.cryptopricealert.domain.TargetPrice
 import com.baltsarak.cryptopricealert.domain.toPriceString
 import com.baltsarak.cryptopricealert.presentation.fragments.WatchListFragment
 import com.bumptech.glide.Glide
@@ -30,19 +32,15 @@ class CoinInfoAdapter :
         val coin = getItem(position)
         with(holder.binding) {
             currencySymbol.text = coin.fromSymbol
-            coinPrice.text = coin.price.toString()
+            currencyName.text = coin.fullName
+            "$${coin.price.toString()}".also { coinPrice.text = it }
             toSymbol.setText(R.string.to_symbol)
 
-            val targetPriceString = coin.targetPrice.toPriceString()
-            if (targetPriceString.isNotEmpty()) {
-                targetPrices.text = targetPriceString
-                targetPrices.isVisible = true
-                bellLogo.isVisible = true
-                bellLogo.setImageResource(R.drawable.bell)
-            } else {
-                targetPrices.isVisible = false
-                bellLogo.isVisible = false
-            }
+            val targetPrices = coin.targetPrice
+                .filterNotNull()
+                .filter { it.targetPrice != 0.0 }
+
+            setTargetPriceValues(targetPrices, holder)
 
             Glide.with(holder.itemView.context)
                 .load(coin.imageUrl)
@@ -50,6 +48,94 @@ class CoinInfoAdapter :
 
             root.setOnClickListener {
                 onCoinClickListener?.onCoinClick(coin)
+            }
+        }
+    }
+
+    private fun ItemCoinListBinding.setTargetPriceValues(
+        targetPrices: List<TargetPrice>,
+        holder: CoinInfoViewHolder
+    ) {
+        when (targetPrices.size) {
+            0 -> {
+                bellLogo.visibility = View.GONE
+                targetPrice1.visibility = View.GONE
+                targetPrice2.visibility = View.GONE
+                targetPriceMore.visibility = View.GONE
+            }
+
+            1 -> {
+                targetPrice1.text = targetPrices[0].toPriceString()
+                targetPrice1.setTextColor(
+                    ContextCompat.getColor(
+                        holder.itemView.context,
+                        if (targetPrices[0].higherThenCurrent)
+                            R.color.colorPriceHigher
+                        else R.color.colorPriceLower
+                    )
+                )
+                targetPrice1.visibility = View.VISIBLE
+                bellLogo.setImageResource(R.drawable.bell)
+                bellLogo.visibility = View.VISIBLE
+
+                targetPrice2.visibility = View.GONE
+                targetPriceMore.visibility = View.GONE
+            }
+
+            2 -> {
+                targetPrice1.text = targetPrices[0].toPriceString()
+                targetPrice1.setTextColor(
+                    ContextCompat.getColor(
+                        holder.itemView.context,
+                        if (targetPrices[0].higherThenCurrent)
+                            R.color.colorPriceHigher
+                        else R.color.colorPriceLower
+                    )
+                )
+                targetPrice1.visibility = View.VISIBLE
+
+                targetPrice2.text = targetPrices[1].toPriceString()
+                targetPrice2.setTextColor(
+                    ContextCompat.getColor(
+                        holder.itemView.context,
+                        if (targetPrices[1].higherThenCurrent)
+                            R.color.colorPriceHigher
+                        else R.color.colorPriceLower
+                    )
+                )
+                targetPrice2.visibility = View.VISIBLE
+                bellLogo.setImageResource(R.drawable.bell)
+                bellLogo.visibility = View.VISIBLE
+
+                targetPriceMore.visibility = View.GONE
+            }
+
+            else -> {
+                targetPrice1.text = targetPrices[0].toPriceString()
+                targetPrice1.setTextColor(
+                    ContextCompat.getColor(
+                        holder.itemView.context,
+                        if (targetPrices[0].higherThenCurrent)
+                            R.color.colorPriceHigher
+                        else R.color.colorPriceLower
+                    )
+                )
+                targetPrice1.visibility = View.VISIBLE
+
+                targetPrice2.text = targetPrices[1].toPriceString()
+                targetPrice2.setTextColor(
+                    ContextCompat.getColor(
+                        holder.itemView.context,
+                        if (targetPrices[1].higherThenCurrent)
+                            R.color.colorPriceHigher
+                        else R.color.colorPriceLower
+                    )
+                )
+                targetPrice2.visibility = View.VISIBLE
+                bellLogo.setImageResource(R.drawable.bell)
+                bellLogo.visibility = View.VISIBLE
+                targetPriceMore.text = "..."
+                targetPriceMore.visibility = View.VISIBLE
             }
         }
     }
