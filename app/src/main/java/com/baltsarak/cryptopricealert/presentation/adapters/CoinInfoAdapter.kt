@@ -3,6 +3,7 @@ package com.baltsarak.cryptopricealert.presentation.adapters
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.ListAdapter
 import com.baltsarak.cryptopricealert.R
@@ -83,27 +84,13 @@ class CoinInfoAdapter :
             }
 
             2 -> {
-                targetPrice1.text = targetPrices[0].toPriceString()
-                targetPrice1.setTextColor(
-                    ContextCompat.getColor(
-                        holder.itemView.context,
-                        if (targetPrices[0].higherThenCurrent)
-                            R.color.colorPriceHigher
-                        else R.color.colorPriceLower
-                    )
-                )
-                targetPrice1.visibility = View.VISIBLE
-
-                targetPrice2.text = targetPrices[1].toPriceString()
-                targetPrice2.setTextColor(
-                    ContextCompat.getColor(
-                        holder.itemView.context,
-                        if (targetPrices[1].higherThenCurrent)
-                            R.color.colorPriceHigher
-                        else R.color.colorPriceLower
-                    )
-                )
-                targetPrice2.visibility = View.VISIBLE
+                if (targetPrices[1].higherThenCurrent && !targetPrices[0].higherThenCurrent) {
+                    setTargetPriceData(targetPrice1, targetPrices[1])
+                    setTargetPriceData(targetPrice2, targetPrices[0])
+                } else {
+                    setTargetPriceData(targetPrice1, targetPrices[0])
+                    setTargetPriceData(targetPrice2, targetPrices[1])
+                }
                 bellLogo.setImageResource(R.drawable.bell)
                 bellLogo.visibility = View.VISIBLE
 
@@ -111,32 +98,27 @@ class CoinInfoAdapter :
             }
 
             else -> {
-                targetPrice1.text = targetPrices[0].toPriceString()
-                targetPrice1.setTextColor(
-                    ContextCompat.getColor(
-                        holder.itemView.context,
-                        if (targetPrices[0].higherThenCurrent)
-                            R.color.colorPriceHigher
-                        else R.color.colorPriceLower
-                    )
-                )
-                targetPrice1.visibility = View.VISIBLE
-
-                targetPrice2.text = targetPrices[1].toPriceString()
-                targetPrice2.setTextColor(
-                    ContextCompat.getColor(
-                        holder.itemView.context,
-                        if (targetPrices[1].higherThenCurrent)
-                            R.color.colorPriceHigher
-                        else R.color.colorPriceLower
-                    )
-                )
-                targetPrice2.visibility = View.VISIBLE
+                if (targetPrices[1].higherThenCurrent && !targetPrices[0].higherThenCurrent) {
+                    setTargetPriceData(targetPrice1, targetPrices[1])
+                    setTargetPriceData(targetPrice2, targetPrices[0])
+                } else {
+                    setTargetPriceData(targetPrice1, targetPrices[0])
+                    setTargetPriceData(targetPrice2, targetPrices[1])
+                }
                 bellLogo.setImageResource(R.drawable.bell)
                 bellLogo.visibility = View.VISIBLE
-                targetPriceMore.text = "..."
+                targetPriceMore.text = ". . ."
                 targetPriceMore.visibility = View.VISIBLE
             }
+        }
+    }
+
+    private fun setTargetPriceData(textView: TextView, targetPrice: TargetPrice) {
+        textView.apply {
+            text = targetPrice.toPriceString()
+            setTextColor(ContextCompat.getColor(context,
+                if (targetPrice.higherThenCurrent) R.color.colorPriceHigher else R.color.colorPriceLower))
+            visibility = View.VISIBLE
         }
     }
 

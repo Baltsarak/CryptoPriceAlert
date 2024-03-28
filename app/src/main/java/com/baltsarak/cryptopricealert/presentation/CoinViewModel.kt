@@ -67,7 +67,7 @@ class CoinViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.async { getCoinInfoUseCase(fromSymbol) }.await()
 
     suspend fun getCoinPriceHistory(fromSymbol: String, period: Int) =
-        viewModelScope.async { getCoinPriceHistoryInfoUseCase.invoke(fromSymbol, period) }.await()
+        viewModelScope.async {getCoinPriceHistoryInfoUseCase(fromSymbol, period)}.await()
 
     suspend fun addCoinToWatchList(fromSymbol: String, targetPrice: String): Deferred<Unit> {
         return viewModelScope.async {

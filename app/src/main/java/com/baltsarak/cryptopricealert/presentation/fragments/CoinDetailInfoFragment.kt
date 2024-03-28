@@ -34,7 +34,7 @@ class CoinDetailInfoFragment : Fragment(), HasCustomTitle, HasCustomAction {
     private val binding: FragmentCoinDetailInfoBinding
         get() = _binding ?: throw RuntimeException("FragmentCoinDetailInfoBinding is null")
 
-    lateinit var fromSymbol: String
+    private lateinit var fromSymbol: String
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -53,9 +53,9 @@ class CoinDetailInfoFragment : Fragment(), HasCustomTitle, HasCustomAction {
         loadDataAndFillingView(fromSymbol)
         binding.progressBarPriceChart.visibility = View.GONE
         binding.priceChart.visibility = View.VISIBLE
-        binding.radioButtonOption4.isChecked = true
-        settingPriceChart(11)
         setOnClickListener()
+        setOnCheckedChangeListener()
+        binding.radioButtonOption2.isChecked = true
     }
 
     private fun loadDataAndFillingView(fromSymbol: String) {
@@ -65,7 +65,6 @@ class CoinDetailInfoFragment : Fragment(), HasCustomTitle, HasCustomAction {
                 with(binding) {
                     textViewCoinName.text = it.fromSymbol
                     textViewPrice.text = it.price.toString()
-                    setOnCheckedChangeListener()
                 }
             }
         }
@@ -85,31 +84,30 @@ class CoinDetailInfoFragment : Fragment(), HasCustomTitle, HasCustomAction {
     private fun settingPriceChart(period: Int) {
         viewLifecycleOwner.lifecycleScope.launch {
             val entries = ArrayList<Entry>()
-            viewModel.getCoinPriceHistory(fromSymbol, period).observe(viewLifecycleOwner) { map ->
-                map.entries.sortedBy { it.key }.forEach { (key, value) ->
-                    entries.add(Entry(key, value))
-                }
-                val priceHistoryDataSet = LineDataSet(entries, fromSymbol)
-                with(priceHistoryDataSet) {
-                    mode = LineDataSet.Mode.CUBIC_BEZIER
-                    color = Color.WHITE
-                    lineWidth = 5F
-                    setDrawValues(false)
-                    setDrawCircles(false)
-                    setDrawFilled(true)
-                    fillColor = Color.WHITE
-                    fillDrawable = ContextCompat.getDrawable(
-                        requireContext(), R.drawable.chart_gradient_fill
-                    )
-                }
-                with(binding.priceChart) {
-                    axisRight.isEnabled = false
-                    xAxis.isEnabled = false
-                    axisLeft.textColor = Color.WHITE
-                    data = LineData(priceHistoryDataSet)
-                }
-                binding.priceChart.invalidate()
+            val map = viewModel.getCoinPriceHistory(fromSymbol, period)
+            map.entries.sortedBy { it.key }.forEach { (key, value) ->
+                entries.add(Entry(key, value))
             }
+            val priceHistoryDataSet = LineDataSet(entries, fromSymbol)
+            with(priceHistoryDataSet) {
+                mode = LineDataSet.Mode.CUBIC_BEZIER
+                color = Color.WHITE
+                lineWidth = 3F
+                setDrawValues(false)
+                setDrawCircles(false)
+                setDrawFilled(true)
+                fillColor = Color.WHITE
+                fillDrawable = ContextCompat.getDrawable(
+                    requireContext(), R.drawable.chart_gradient_fill
+                )
+            }
+            with(binding.priceChart) {
+                axisRight.isEnabled = false
+                xAxis.isEnabled = false
+                axisLeft.textColor = Color.WHITE
+                data = LineData(priceHistoryDataSet)
+            }
+            binding.priceChart.invalidate()
         }
     }
 

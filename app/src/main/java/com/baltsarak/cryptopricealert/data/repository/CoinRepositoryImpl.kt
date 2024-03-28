@@ -136,16 +136,14 @@ class CoinRepositoryImpl(
     override suspend fun getCoinPriceHistory(
         fromSymbol: String,
         period: Int
-    ): LiveData<Map<Float, Float>> {
+    ): Map<Float, Float> {
         val dbModelList = when (period) {
             5 -> coinPriceHistoryDao.getPriceHistoryForFiveYears(fromSymbol)
             1 -> coinPriceHistoryDao.getPriceHistoryForYear(fromSymbol)
             0 -> coinPriceHistoryDao.getPriceHistoryForMonth(fromSymbol)
             else -> coinPriceHistoryDao.getAllPriceHistoryCoin(fromSymbol)
         }
-        return dbModelList.map { list ->
-            list.associate { it.date.toFloat() to it.price.toFloat() }
-        }
+        return dbModelList.associate { it.date.toFloat() to it.price.toFloat() }
     }
 
     override suspend fun getCurrentCoinPrice(fromSymbol: String): Double {
