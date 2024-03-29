@@ -54,6 +54,16 @@ interface ApiService {
         @Query(QUERY_PARAM_ALL_DATA) allData: Boolean = true
     ): DayPriceContainerDto
 
+    @GET
+    suspend fun getCoinPriceHourHistory(
+        @Url url: String = "https://min-api.cryptocompare.com/data/v2/histohour",
+        @Query(QUERY_PARAM_API_KEY) apiKey: String = API_KEY,
+        @Query(QUERY_PARAM_FROM_SYMBOL) fSym: String,
+        @Query(QUERY_PARAM_TO_SYMBOL) tSym: String = CURRENCY,
+        @Query(QUERY_PARAM_LIMIT) limit: Int = LIMIT,
+        @Query(QUERY_PARAM_TO_TS) toTs: Long = WEEK_AGO,
+    ): DayPriceContainerDto
+
     companion object {
         private const val QUERY_PARAM_API_KEY = "api_key"
         private const val QUERY_PARAM_TO_SYMBOL = "tsym"
@@ -64,8 +74,12 @@ interface ApiService {
         private const val QUERY_PARAM_PAGE = "page"
         private const val QUERY_PARAM_PAGE_SIZE = "page_size"
         private const val QUERY_PARAM_ALL_DATA = "allData"
+        private const val QUERY_PARAM_LIMIT = "limit"
+        private const val QUERY_PARAM_TO_TS = "toTs"
 
         private const val API_KEY = ""
         private const val CURRENCY = "USD"
+        private const val LIMIT = 2000
+        private val WEEK_AGO = System.currentTimeMillis() - 604800
     }
 }

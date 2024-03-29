@@ -162,21 +162,25 @@ class MainActivity : AppCompatActivity(), Navigator {
             binding.toolbar.title = getString(R.string.nothing)
         }
 
-        if (supportFragmentManager.backStackEntryCount > 0 && fragment !is SearchCoinsFragment) {
-            supportActionBar?.setDisplayHomeAsUpEnabled(true)
-            supportActionBar?.setDisplayShowHomeEnabled(true)
-            binding.searchView.visibility = View.GONE
-        } else {
-            supportActionBar?.setDisplayHomeAsUpEnabled(false)
-            supportActionBar?.setDisplayShowHomeEnabled(false)
-            binding.searchView.visibility = View.VISIBLE
-        }
-
         if (fragment is HasCustomAction) {
             binding.toolbar.menu.clear()
             createCustomToolbarAction(fragment.getCustomAction())
         } else {
             binding.toolbar.menu.clear()
+        }
+
+        if (supportFragmentManager.backStackEntryCount > 0 && fragment !is SearchCoinsFragment) {
+            supportActionBar?.setDisplayHomeAsUpEnabled(true)
+            supportActionBar?.setDisplayShowHomeEnabled(true)
+            binding.searchView.visibility = View.GONE
+        } else if (supportFragmentManager.backStackEntryCount == 0) {
+            supportActionBar?.setDisplayHomeAsUpEnabled(false)
+            supportActionBar?.setDisplayShowHomeEnabled(false)
+            binding.searchView.visibility = View.GONE
+        } else {
+            supportActionBar?.setDisplayHomeAsUpEnabled(false)
+            supportActionBar?.setDisplayShowHomeEnabled(false)
+            binding.searchView.visibility = View.VISIBLE
         }
     }
 

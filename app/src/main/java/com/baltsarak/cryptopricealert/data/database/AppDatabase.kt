@@ -9,14 +9,16 @@ import com.baltsarak.cryptopricealert.data.database.dao.CoinPriceHistoryDao
 import com.baltsarak.cryptopricealert.data.database.dao.WatchListCoinInfoDao
 import com.baltsarak.cryptopricealert.data.database.entities.CoinInfoDbModel
 import com.baltsarak.cryptopricealert.data.database.entities.DayPriceDbModel
+import com.baltsarak.cryptopricealert.data.database.entities.HourPriceDbModel
 import com.baltsarak.cryptopricealert.data.database.entities.WatchListCoinDbModel
 
 @Database(
     entities = [
         CoinInfoDbModel::class,
         WatchListCoinDbModel::class,
-        DayPriceDbModel::class
-    ], version = 17, exportSchema = false
+        DayPriceDbModel::class,
+        HourPriceDbModel::class
+    ], version = 18, exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
 

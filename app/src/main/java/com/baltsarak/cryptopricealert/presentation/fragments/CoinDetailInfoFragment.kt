@@ -20,6 +20,7 @@ import com.baltsarak.cryptopricealert.presentation.contract.CustomAction
 import com.baltsarak.cryptopricealert.presentation.contract.HasCustomAction
 import com.baltsarak.cryptopricealert.presentation.contract.HasCustomTitle
 import com.baltsarak.cryptopricealert.presentation.contract.navigator
+import com.bumptech.glide.Glide
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
@@ -55,7 +56,7 @@ class CoinDetailInfoFragment : Fragment(), HasCustomTitle, HasCustomAction {
         binding.priceChart.visibility = View.VISIBLE
         setOnClickListener()
         setOnCheckedChangeListener()
-        binding.radioButtonOption2.isChecked = true
+        binding.radioButtonOption3.isChecked = true
     }
 
     private fun loadDataAndFillingView(fromSymbol: String) {
@@ -63,8 +64,12 @@ class CoinDetailInfoFragment : Fragment(), HasCustomTitle, HasCustomAction {
             viewModel.loadCoinPriceHistoryInfo(fromSymbol)
             viewModel.getCoinDetailInfo(fromSymbol).observe(viewLifecycleOwner) {
                 with(binding) {
-                    textViewCoinName.text = it.fromSymbol
-                    textViewPrice.text = it.price.toString()
+                    textViewCoinName.text = it.fullName
+                    textViewCoinSymbol.text = it.fromSymbol
+                    Glide.with(this@CoinDetailInfoFragment)
+                        .load(it.imageUrl)
+                        .into(coinLogo)
+                    "$${it.price.toString()}".also { textViewPrice.text = it }
                 }
             }
         }
@@ -73,10 +78,12 @@ class CoinDetailInfoFragment : Fragment(), HasCustomTitle, HasCustomAction {
     private fun setOnCheckedChangeListener() {
         binding.radioGroup.setOnCheckedChangeListener { _, checkedId ->
             when (checkedId) {
-                R.id.radioButtonOption1 -> settingPriceChart(0)
-                R.id.radioButtonOption2 -> settingPriceChart(1)
-                R.id.radioButtonOption3 -> settingPriceChart(5)
-                R.id.radioButtonOption4 -> settingPriceChart(11)
+                R.id.radioButtonOption1 -> settingPriceChart(DAY)
+                R.id.radioButtonOption2 -> settingPriceChart(WEEK)
+                R.id.radioButtonOption3 -> settingPriceChart(MONTH)
+                R.id.radioButtonOption4 -> settingPriceChart(YEAR)
+                R.id.radioButtonOption5 -> settingPriceChart(FIVE_YEARS)
+                R.id.radioButtonOption6 -> settingPriceChart(ALL)
             }
         }
     }
@@ -163,6 +170,12 @@ class CoinDetailInfoFragment : Fragment(), HasCustomTitle, HasCustomAction {
         private const val REQUEST_CODE_POST_NOTIFICATIONS = 11
         private const val EXTRA_FROM_SYMBOL = "fSym"
         private const val EMPTY_SYMBOL = ""
+        private const val DAY = 24
+        private const val WEEK = 7
+        private const val MONTH = 30
+        private const val YEAR = 365
+        private const val FIVE_YEARS = 5
+        private const val ALL = 111
 
         fun newInstance(fSym: String) =
             CoinDetailInfoFragment().apply {

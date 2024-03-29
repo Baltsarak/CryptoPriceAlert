@@ -128,6 +128,14 @@ class CoinRepositoryImpl(
                     coinPriceHistoryDao.insertCoinsPriceHistoryList(dayPriceDbModelList)
                 }
             } ?: Log.d("loadData", "Price history data is null for $fromSymbol")
+            withContext(Dispatchers.IO) {
+                val hourPriceContainer = apiService.getCoinPriceHourHistory(fSym = fromSymbol)
+                hourPriceContainer.data?.data?.let { hourPriceList ->
+                    val hourPriceDbModelList = hourPriceList
+                        .map { mapper.mapHourPriceDtoToDbModel(fromSymbol, it) }
+                    coinPriceHistoryDao.insertCoinsPriceHourHistoryList(hourPriceDbModelList)
+                }
+            } ?: Log.d("loadData", "Price history data is null for $fromSymbol")
         } catch (e: Exception) {
             Log.d("loadData", "ERROR LOAD DATA PRICE HISTORY " + e.message)
         }
@@ -138,9 +146,11 @@ class CoinRepositoryImpl(
         period: Int
     ): Map<Float, Float> {
         val dbModelList = when (period) {
+            24 -> coinPriceHistoryDao.getPriceHistoryForDay(fromSymbol)
+            7 -> coinPriceHistoryDao.getPriceHistoryForWeek(fromSymbol)
+            30 -> coinPriceHistoryDao.getPriceHistoryForMonth(fromSymbol)
+            365 -> coinPriceHistoryDao.getPriceHistoryForYear(fromSymbol)
             5 -> coinPriceHistoryDao.getPriceHistoryForFiveYears(fromSymbol)
-            1 -> coinPriceHistoryDao.getPriceHistoryForYear(fromSymbol)
-            0 -> coinPriceHistoryDao.getPriceHistoryForMonth(fromSymbol)
             else -> coinPriceHistoryDao.getAllPriceHistoryCoin(fromSymbol)
         }
         return dbModelList.associate { it.date.toFloat() to it.price.toFloat() }
@@ -177,7 +187,6 @@ class CoinRepositoryImpl(
                 filteredList.map { coin ->
                     async {
                         try {
-                            delay(500)
                             apiService.getCoinInfo(assetSymbol = coin).coinInfo
                         } catch (e: Exception) {
                             null

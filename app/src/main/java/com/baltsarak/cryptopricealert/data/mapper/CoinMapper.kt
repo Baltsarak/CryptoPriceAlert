@@ -2,6 +2,7 @@ package com.baltsarak.cryptopricealert.data.mapper
 
 import com.baltsarak.cryptopricealert.data.database.entities.CoinInfoDbModel
 import com.baltsarak.cryptopricealert.data.database.entities.DayPriceDbModel
+import com.baltsarak.cryptopricealert.data.database.entities.HourPriceDbModel
 import com.baltsarak.cryptopricealert.data.network.models.CoinInfoDto
 import com.baltsarak.cryptopricealert.data.network.models.CoinSymbolDto
 import com.baltsarak.cryptopricealert.data.network.models.CoinSymbolsContainerDto
@@ -25,7 +26,6 @@ class CoinMapper {
         )
     }
 
-
     fun mapDbModelToEntity(dbModel: CoinInfoDbModel) = CoinInfo(
         id = dbModel.id,
         fromSymbol = dbModel.fromSymbol,
@@ -38,6 +38,17 @@ class CoinMapper {
 
     fun mapDayPriceDtoToDbModel(fSym: String, dto: DayPriceDto): DayPriceDbModel {
         return DayPriceDbModel(
+            id = 0,
+            fromSymbol = fSym,
+            date = dto.date
+                ?: throw RuntimeException("DATA LOADING ERROR: price history not received"),
+            price = dto.price
+                ?: throw RuntimeException("DATA LOADING ERROR: price history not received")
+        )
+    }
+
+    fun mapHourPriceDtoToDbModel(fSym: String, dto: DayPriceDto): HourPriceDbModel {
+        return HourPriceDbModel(
             id = 0,
             fromSymbol = fSym,
             date = dto.date

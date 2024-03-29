@@ -1,4 +1,4 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <!-- Base application theme. -->
     <style name="Base.Theme.CryptoPriceAlert" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
@@ -12,10 +12,11 @@
 
     <style name="CustomRadioButtonStyle" parent="Widget.AppCompat.CompoundButton.RadioButton">
         <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">35dp</item>
-        <item name="android:layout_margin">18dp</item>
+        <item name="android:layout_height">32dp</item>
+        <item name="android:layout_margin">8dp</item>
         <item name="android:layout_weight">1</item>
         <item name="android:button">@null</item>
+        <item name="android:textSize">12sp</item>
         <item name="android:textColor">@color/bottom_text_color</item>
         <item name="android:fontFamily">@font/work_sans_bold</item>
         <item name="android:gravity">center</item>
