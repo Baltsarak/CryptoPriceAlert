@@ -110,7 +110,7 @@
             android:id="@+id/target_price"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp"
+            android:layout_margin="12dp"
             android:ems="10"
             android:fontFamily="@font/work_sans_bold"
             android:hint="@string/usd"
@@ -121,20 +121,27 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/price_question" />
 
-        <ImageView
+        <Button
             android:id="@+id/button_add"
-            android:layout_width="52dp"
-            android:layout_height="52dp"
-            android:layout_margin="16dp"
-            android:contentDescription="@string/description_button_add"
-            android:src="@drawable/icon_add"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="12dp"
+            style="@style/CustomButtonStyle"
+            android:background="@drawable/ripple_effect"
+            android:text="@string/add"
+            android:fontFamily="@font/work_sans_bold"
+            android:textColor="@color/black"
+            app:layout_constraintBottom_toBottomOf="@id/target_price"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/price_question" />
+            app:layout_constraintStart_toEndOf="@+id/target_price"
+            app:layout_constraintTop_toTopOf="@id/target_price" />
 
         <RadioGroup
             android:id="@+id/radio_group"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:gravity="center"
             android:orientation="horizontal"
             app:layout_constraintBottom_toTopOf="@+id/price_question"
             app:layout_constraintEnd_toEndOf="parent"

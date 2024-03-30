@@ -9,7 +9,7 @@
     <string name="description_button_add">Button for setting a price, upon reaching which an alert will be sent</string>
     <string name="usd">USD</string>
     <string name="account_logo">Profile logo</string>
-    <string name="add">Add a coin</string>
+    <string name="add_coin">Add a coin</string>
     <string name="search">Finding a coin</string>
     <string name="nothing"></string>
     <string name="search_hint">Enter the name of a coin...</string>
@@ -24,4 +24,5 @@
     <string name="btc">BTC</string>
     <string name="day">Day</string>
     <string name="week">Week</string>
+    <string name="add">ADD</string>
 </resources>

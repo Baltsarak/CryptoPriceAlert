@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.DecelerateInterpolator
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -75,15 +76,29 @@ class CoinDetailInfoFragment : Fragment(), HasCustomTitle, HasCustomAction {
         }
     }
 
+    private fun animateButton(button: View) {
+        button.scaleX = 0.7f
+        button.animate()
+            .scaleX(1f)
+            .setDuration(300)
+            .setInterpolator(DecelerateInterpolator())
+            .start()
+    }
+
     private fun setOnCheckedChangeListener() {
+        val buttonMap = mapOf(
+            R.id.radioButtonOption1 to DAY,
+            R.id.radioButtonOption2 to WEEK,
+            R.id.radioButtonOption3 to MONTH,
+            R.id.radioButtonOption4 to YEAR,
+            R.id.radioButtonOption5 to FIVE_YEARS,
+            R.id.radioButtonOption6 to ALL
+        )
+
         binding.radioGroup.setOnCheckedChangeListener { _, checkedId ->
-            when (checkedId) {
-                R.id.radioButtonOption1 -> settingPriceChart(DAY)
-                R.id.radioButtonOption2 -> settingPriceChart(WEEK)
-                R.id.radioButtonOption3 -> settingPriceChart(MONTH)
-                R.id.radioButtonOption4 -> settingPriceChart(YEAR)
-                R.id.radioButtonOption5 -> settingPriceChart(FIVE_YEARS)
-                R.id.radioButtonOption6 -> settingPriceChart(ALL)
+            buttonMap[checkedId]?.let { period ->
+                binding.radioGroup.findViewById<View>(checkedId)?.let { animateButton(it) }
+                settingPriceChart(period)
             }
         }
     }
@@ -132,6 +147,7 @@ class CoinDetailInfoFragment : Fragment(), HasCustomTitle, HasCustomAction {
                         REQUEST_CODE_POST_NOTIFICATIONS
                     )
                 } else {
+                    animateButton(binding.buttonAdd)
                     viewLifecycleOwner.lifecycleScope.launch {
                         addCoinToWatchList().await()
                     }
@@ -149,7 +165,7 @@ class CoinDetailInfoFragment : Fragment(), HasCustomTitle, HasCustomAction {
     override fun getCustomAction(): CustomAction {
         return CustomAction(
             iconRes = R.drawable.add,
-            textRes = R.string.add
+            textRes = R.string.add_coin
         ) {
             viewLifecycleOwner.lifecycleScope.launch {
                 addCoinToWatchList().await()

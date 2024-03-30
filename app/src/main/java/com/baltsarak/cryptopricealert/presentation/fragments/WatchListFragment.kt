@@ -118,7 +118,7 @@ class WatchListFragment : Fragment(), HasCustomTitle, HasCustomAction {
     override fun getCustomAction(): CustomAction {
         return CustomAction(
             iconRes = R.drawable.search,
-            textRes = R.string.add,
+            textRes = R.string.add_coin,
             onCustomAction = {
                 navigator().showSearchCoin()
                 navigator().openSearchView()
