@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.DecelerateInterpolator
+import android.widget.TextView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -16,6 +17,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.baltsarak.cryptopricealert.R
 import com.baltsarak.cryptopricealert.databinding.FragmentCoinDetailInfoBinding
+import com.baltsarak.cryptopricealert.domain.TargetPrice
+import com.baltsarak.cryptopricealert.domain.toPriceString
 import com.baltsarak.cryptopricealert.presentation.CoinViewModel
 import com.baltsarak.cryptopricealert.presentation.contract.CustomAction
 import com.baltsarak.cryptopricealert.presentation.contract.HasCustomAction
@@ -71,6 +74,7 @@ class CoinDetailInfoFragment : Fragment(), HasCustomTitle, HasCustomAction {
                         .load(it.imageUrl)
                         .into(coinLogo)
                     "$${it.price.toString()}".also { textViewPrice.text = it }
+                    showTargetPrices(it.targetPrice)
                 }
             }
         }
@@ -160,6 +164,26 @@ class CoinDetailInfoFragment : Fragment(), HasCustomTitle, HasCustomAction {
     private suspend fun addCoinToWatchList(): Deferred<Unit> {
         val targetPrice = binding.targetPrice.text.toString()
         return viewModel.addCoinToWatchList(fromSymbol, targetPrice)
+    }
+
+    private fun showTargetPrices(list: List<TargetPrice?>) {
+        val container = binding.targetPriceContainer
+        container.removeAllViews()
+        list.filterNotNull()
+            .filter { it.targetPrice != 0.0 }
+            .forEach { dataItem ->
+                val itemView = LayoutInflater.from(requireContext())
+                    .inflate(R.layout.item_target_price, container, false)
+                val itemTextView: TextView = itemView.findViewById(R.id.target_price)
+
+                itemTextView.text = dataItem.toPriceString()
+
+                val colorRes =
+                    if (dataItem.higherThenCurrent) R.color.colorPriceHigher else R.color.colorPriceLower
+                itemTextView.setTextColor(ContextCompat.getColor(requireContext(), colorRes))
+
+                container.addView(itemView)
+            }
     }
 
     override fun getCustomAction(): CustomAction {

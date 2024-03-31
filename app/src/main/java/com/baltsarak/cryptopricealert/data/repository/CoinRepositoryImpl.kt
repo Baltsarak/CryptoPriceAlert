@@ -103,15 +103,22 @@ class CoinRepositoryImpl(
 
     override suspend fun getPopularCoinsList(): LiveData<List<CoinInfo>> {
         return coinInfoDao.getListCoinsInfo(getPopularCoinsListFromApi()).map {
-            it.map {
-                mapper.mapDbModelToEntity(it)
+            it.map { coinInfo ->
+                mapper.mapDbModelToEntity(coinInfo, listOf())
             }
         }
     }
 
     override suspend fun getCoinInfo(fromSymbol: String): LiveData<CoinInfo> {
+        val targetPrices = getTargetPrice(fromSymbol)
         return coinInfoDao.getLiveDataInfoAboutCoin(fromSymbol)
-            .map { mapper.mapDbModelToEntity(it) }
+            .map { mapper.mapDbModelToEntity(it, targetPrices) }
+    }
+
+    private suspend fun getTargetPrice(fromSymbol: String): List<TargetPrice> {
+        return withContext(Dispatchers.Default) {
+            watchListCoinInfoDao.getTargetPrice(fromSymbol)
+        }
     }
 
     override suspend fun getCoinsList(): List<CoinName> {

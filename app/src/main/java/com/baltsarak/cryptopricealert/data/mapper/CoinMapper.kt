@@ -8,6 +8,7 @@ import com.baltsarak.cryptopricealert.data.network.models.CoinSymbolDto
 import com.baltsarak.cryptopricealert.data.network.models.CoinSymbolsContainerDto
 import com.baltsarak.cryptopricealert.data.network.models.DayPriceDto
 import com.baltsarak.cryptopricealert.domain.CoinInfo
+import com.baltsarak.cryptopricealert.domain.TargetPrice
 import com.google.gson.Gson
 
 class CoinMapper {
@@ -26,12 +27,12 @@ class CoinMapper {
         )
     }
 
-    fun mapDbModelToEntity(dbModel: CoinInfoDbModel) = CoinInfo(
+    fun mapDbModelToEntity(dbModel: CoinInfoDbModel, targetPrices: List<TargetPrice>) = CoinInfo(
         id = dbModel.id,
         fromSymbol = dbModel.fromSymbol,
         fullName = dbModel.fullName,
         toSymbol = dbModel.toSymbol,
-        targetPrice = listOf(),
+        targetPrice = targetPrices,
         price = dbModel.price,
         imageUrl = dbModel.imageUrl
     )

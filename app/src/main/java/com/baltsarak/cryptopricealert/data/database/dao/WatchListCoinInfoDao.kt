@@ -19,6 +19,13 @@ interface WatchListCoinInfoDao {
     )
     fun getTargetPrices(): List<TargetPrice>
 
+    @Query(
+        "SELECT id, fromSymbol, targetPrice, higherThenCurrent, position " +
+                "FROM watch_list_coins " +
+                "WHERE fromSymbol = :fSym"
+    )
+    fun getTargetPrice(fSym: String): List<TargetPrice>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertCoinToWatchList(coin: WatchListCoinDbModel): Long
 
