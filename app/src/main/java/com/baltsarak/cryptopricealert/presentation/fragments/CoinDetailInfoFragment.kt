@@ -9,7 +9,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.DecelerateInterpolator
-import android.widget.TextView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -18,7 +17,6 @@ import androidx.lifecycle.lifecycleScope
 import com.baltsarak.cryptopricealert.R
 import com.baltsarak.cryptopricealert.databinding.FragmentCoinDetailInfoBinding
 import com.baltsarak.cryptopricealert.domain.TargetPrice
-import com.baltsarak.cryptopricealert.domain.toPriceString
 import com.baltsarak.cryptopricealert.presentation.CoinViewModel
 import com.baltsarak.cryptopricealert.presentation.contract.CustomAction
 import com.baltsarak.cryptopricealert.presentation.contract.HasCustomAction
@@ -74,7 +72,7 @@ class CoinDetailInfoFragment : Fragment(), HasCustomTitle, HasCustomAction {
                         .load(it.imageUrl)
                         .into(coinLogo)
                     "$${it.price.toString()}".also { textViewPrice.text = it }
-                    showTargetPrices(it.targetPrice)
+                    it.fullName?.let { name -> showTargetPrices(it.targetPrice, name) }
                 }
             }
         }
@@ -166,24 +164,50 @@ class CoinDetailInfoFragment : Fragment(), HasCustomTitle, HasCustomAction {
         return viewModel.addCoinToWatchList(fromSymbol, targetPrice)
     }
 
-    private fun showTargetPrices(list: List<TargetPrice?>) {
-        val container = binding.targetPriceContainer
-        container.removeAllViews()
-        list.filterNotNull()
+    private fun showTargetPrices(list: List<TargetPrice?>, name: String) {
+        val (pricesIncrease, pricesDecrease) = list.filterNotNull()
+            .partition { it.higherThenCurrent }
+
+        val increaseString = pricesIncrease
             .filter { it.targetPrice != 0.0 }
-            .forEach { dataItem ->
-                val itemView = LayoutInflater.from(requireContext())
-                    .inflate(R.layout.item_target_price, container, false)
-                val itemTextView: TextView = itemView.findViewById(R.id.target_price)
+            .joinToString(separator = ", ") { it.targetPrice.toString() }
+            .let { if (it.isNotEmpty()) "$$it" else it }
 
-                itemTextView.text = dataItem.toPriceString()
+        val decreaseString = pricesDecrease
+            .filter { it.targetPrice != 0.0 }
+            .joinToString(separator = ", ") { it.targetPrice.toString() }
+            .let { if (it.isNotEmpty()) "$$it" else it }
 
-                val colorRes =
-                    if (dataItem.higherThenCurrent) R.color.colorPriceHigher else R.color.colorPriceLower
-                itemTextView.setTextColor(ContextCompat.getColor(requireContext(), colorRes))
+        with(binding) {
+            targetPriceNotificationMessage.visibility =
+                if (increaseString.isNotBlank() || decreaseString.isNotBlank()) View.VISIBLE else View.GONE
+            targetPriceName.text = name
 
-                container.addView(itemView)
-            }
+            targetPriceName.visibility = targetPriceNotificationMessage.visibility
+            targetPriceIncrease.visibility =
+                if (increaseString.isNotBlank()) View.VISIBLE else View.GONE
+            targetPriceIncreaseValue.visibility = targetPriceIncrease.visibility
+            targetPriceIncreaseValue.text = increaseString
+            targetPriceOr.visibility =
+                if (increaseString.isNotBlank() && decreaseString.isNotBlank()) View.VISIBLE else View.GONE
+            targetPriceDecrease.visibility =
+                if (decreaseString.isNotBlank()) View.VISIBLE else View.GONE
+            targetPriceDecreaseValue.visibility = targetPriceDecrease.visibility
+            targetPriceDecreaseValue.text = decreaseString
+
+            targetPriceIncreaseValue.setTextColor(
+                ContextCompat.getColor(
+                    requireContext(),
+                    R.color.colorPriceHigher
+                )
+            )
+            targetPriceDecreaseValue.setTextColor(
+                ContextCompat.getColor(
+                    requireContext(),
+                    R.color.colorPriceLower
+                )
+            )
+        }
     }
 
     override fun getCustomAction(): CustomAction {

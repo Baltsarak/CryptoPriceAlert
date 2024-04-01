@@ -180,20 +180,57 @@
             app:layout_constraintStart_toEndOf="@+id/target_price"
             app:layout_constraintTop_toTopOf="@id/target_price" />
 
-
-
-        <LinearLayout
-            android:id="@+id/target_price_container"
-            android:layout_width="0dp"
+        <com.google.android.flexbox.FlexboxLayout
+            android:id="@+id/target_price_notification_container"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="18dp"
-            android:orientation="vertical"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_margin="16dp"
+            app:flexWrap="wrap"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/button_add">
+            app:layout_constraintTop_toBottomOf="@+id/button_add">
 
-        </LinearLayout>
+            <TextView
+                android:id="@+id/target_price_notification_message"
+                style="@style/TargetPriceNotificationMessageStyle"
+                android:text="@string/target_price_notification_message" />
+
+            <TextView
+                android:id="@+id/target_price_name"
+                style="@style/TargetPriceNotificationMessageStyle" />
+
+            <TextView
+                android:id="@+id/target_price_increase"
+                style="@style/TargetPriceNotificationMessageStyle"
+                android:text="@string/target_price_increase" />
+
+            <TextView
+                android:id="@+id/target_price_increase_value"
+                style="@style/TargetPriceNotificationMessageStyle" />
+
+            <TextView
+                android:id="@+id/target_price_or"
+                style="@style/TargetPriceNotificationMessageStyle"
+                android:text="@string/or" />
+
+            <TextView
+                android:id="@+id/target_price_decrease"
+                style="@style/TargetPriceNotificationMessageStyle"
+                android:text="@string/target_price_decrease" />
+
+            <TextView
+                android:id="@+id/target_price_decrease_value"
+                style="@style/TargetPriceNotificationMessageStyle" />
+
+        </com.google.android.flexbox.FlexboxLayout>
+
+        <Space
+            android:id="@+id/space"
+            android:layout_width="0dp"
+            android:layout_height="110dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/target_price_notification_container"
+            tools:ignore="MissingConstraints" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
