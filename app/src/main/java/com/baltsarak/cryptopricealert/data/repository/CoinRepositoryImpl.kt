@@ -3,6 +3,7 @@ package com.baltsarak.cryptopricealert.data.repository
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.map
 import androidx.work.ExistingWorkPolicy
@@ -104,18 +105,29 @@ class CoinRepositoryImpl(
     override suspend fun getPopularCoinsList(): LiveData<List<CoinInfo>> {
         return coinInfoDao.getListCoinsInfo(getPopularCoinsListFromApi()).map {
             it.map { coinInfo ->
-                mapper.mapDbModelToEntity(coinInfo, listOf())
+                mapper.mapDbModelToEntity(coinInfo, null)
             }
         }
     }
 
     override suspend fun getCoinInfo(fromSymbol: String): LiveData<CoinInfo> {
-        val targetPrices = getTargetPrice(fromSymbol)
-        return coinInfoDao.getLiveDataInfoAboutCoin(fromSymbol)
-            .map { mapper.mapDbModelToEntity(it, targetPrices) }
+        val coinInfoLiveData = coinInfoDao.getLiveDataInfoAboutCoin(fromSymbol)
+        val targetPricesLiveData = getTargetPrice(fromSymbol)
+
+        return MediatorLiveData<CoinInfo>().apply {
+            fun update() {
+                val coinInfo = coinInfoLiveData.value
+                val targetPrices = targetPricesLiveData.value
+                if (coinInfo != null) {
+                    value = mapper.mapDbModelToEntity(coinInfo, targetPrices)
+                }
+            }
+            addSource(coinInfoLiveData) { update() }
+            addSource(targetPricesLiveData) { update() }
+        }
     }
 
-    private suspend fun getTargetPrice(fromSymbol: String): List<TargetPrice> {
+    private suspend fun getTargetPrice(fromSymbol: String): LiveData<List<TargetPrice>> {
         return withContext(Dispatchers.Default) {
             watchListCoinInfoDao.getTargetPrice(fromSymbol)
         }

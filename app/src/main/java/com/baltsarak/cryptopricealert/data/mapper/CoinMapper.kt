@@ -27,15 +27,16 @@ class CoinMapper {
         )
     }
 
-    fun mapDbModelToEntity(dbModel: CoinInfoDbModel, targetPrices: List<TargetPrice>) = CoinInfo(
-        id = dbModel.id,
-        fromSymbol = dbModel.fromSymbol,
-        fullName = dbModel.fullName,
-        toSymbol = dbModel.toSymbol,
-        targetPrice = targetPrices,
-        price = dbModel.price,
-        imageUrl = dbModel.imageUrl
-    )
+    fun mapDbModelToEntity(dbModel: CoinInfoDbModel, targetPrices: List<TargetPrice>?) =
+        CoinInfo(
+            id = dbModel.id,
+            fromSymbol = dbModel.fromSymbol,
+            fullName = dbModel.fullName,
+            toSymbol = dbModel.toSymbol,
+            targetPrice = targetPrices ?: listOf(),
+            price = dbModel.price,
+            imageUrl = dbModel.imageUrl
+        )
 
     fun mapDayPriceDtoToDbModel(fSym: String, dto: DayPriceDto): DayPriceDbModel {
         return DayPriceDbModel(

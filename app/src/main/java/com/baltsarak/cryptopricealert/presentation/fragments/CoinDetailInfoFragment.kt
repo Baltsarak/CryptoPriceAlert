@@ -135,35 +135,6 @@ class CoinDetailInfoFragment : Fragment(), HasCustomTitle, HasCustomAction {
         }
     }
 
-    private fun setOnClickListener() {
-        binding.buttonAdd.setOnClickListener {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                if (ContextCompat.checkSelfPermission(
-                        this.requireActivity(),
-                        Manifest.permission.POST_NOTIFICATIONS
-                    ) != PackageManager.PERMISSION_GRANTED
-                ) {
-                    ActivityCompat.requestPermissions(
-                        this.requireActivity(),
-                        arrayOf(Manifest.permission.POST_NOTIFICATIONS),
-                        REQUEST_CODE_POST_NOTIFICATIONS
-                    )
-                } else {
-                    animateButton(binding.buttonAdd)
-                    viewLifecycleOwner.lifecycleScope.launch {
-                        addCoinToWatchList().await()
-                    }
-                    viewModel.startWorker()
-                }
-            }
-        }
-    }
-
-    private suspend fun addCoinToWatchList(): Deferred<Unit> {
-        val targetPrice = binding.targetPrice.text.toString()
-        return viewModel.addCoinToWatchList(fromSymbol, targetPrice)
-    }
-
     private fun showTargetPrices(list: List<TargetPrice?>, name: String) {
         val (pricesIncrease, pricesDecrease) = list.filterNotNull()
             .partition { it.higherThenCurrent }
@@ -207,6 +178,35 @@ class CoinDetailInfoFragment : Fragment(), HasCustomTitle, HasCustomAction {
                     R.color.colorPriceLower
                 )
             )
+        }
+    }
+
+    private suspend fun addCoinToWatchList(): Deferred<Unit> {
+        val targetPrice = binding.targetPrice.text.toString()
+        return viewModel.addCoinToWatchList(fromSymbol, targetPrice)
+    }
+
+    private fun setOnClickListener() {
+        binding.buttonAdd.setOnClickListener {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                if (ContextCompat.checkSelfPermission(
+                        this.requireActivity(),
+                        Manifest.permission.POST_NOTIFICATIONS
+                    ) != PackageManager.PERMISSION_GRANTED
+                ) {
+                    ActivityCompat.requestPermissions(
+                        this.requireActivity(),
+                        arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                        REQUEST_CODE_POST_NOTIFICATIONS
+                    )
+                } else {
+                    animateButton(binding.buttonAdd)
+                    viewLifecycleOwner.lifecycleScope.launch {
+                        addCoinToWatchList().await()
+                    }
+                    viewModel.startWorker()
+                }
+            }
         }
     }
 

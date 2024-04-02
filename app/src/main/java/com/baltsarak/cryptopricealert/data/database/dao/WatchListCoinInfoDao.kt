@@ -1,5 +1,6 @@
 package com.baltsarak.cryptopricealert.data.database.dao
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -24,7 +25,7 @@ interface WatchListCoinInfoDao {
                 "FROM watch_list_coins " +
                 "WHERE fromSymbol = :fSym"
     )
-    fun getTargetPrice(fSym: String): List<TargetPrice>
+    fun getTargetPrice(fSym: String): LiveData<List<TargetPrice>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertCoinToWatchList(coin: WatchListCoinDbModel): Long
