@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.baltsarak.cryptopricealert.R
@@ -45,6 +46,10 @@ class WatchListFragment : Fragment(), HasCustomTitle, HasCustomAction {
         binding.recyclerViewWatchList.visibility = View.GONE
         binding.progressBarWatchList.visibility = View.VISIBLE
         binding.recyclerViewWatchList.adapter = adapter
+        val itemAnimator = binding.recyclerViewWatchList.itemAnimator
+        if (itemAnimator is DefaultItemAnimator) {
+            itemAnimator.supportsChangeAnimations = false
+        }
         loadData()
         setupClickListener()
         setupSwipeAndMoveListener()

@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.DefaultItemAnimator
 import com.baltsarak.cryptopricealert.R
 import com.baltsarak.cryptopricealert.databinding.FragmentPopularCoinsBinding
 import com.baltsarak.cryptopricealert.domain.CoinInfo
@@ -43,6 +44,10 @@ class PopularCoinsFragment : Fragment(), HasCustomTitle, HasCustomAction {
         binding.recyclerViewPopularCoins.visibility = View.GONE
         binding.progressBarPopulars.visibility = View.VISIBLE
         binding.recyclerViewPopularCoins.adapter = adapter
+        val itemAnimator = binding.recyclerViewPopularCoins.itemAnimator
+        if (itemAnimator is DefaultItemAnimator) {
+            itemAnimator.supportsChangeAnimations = false
+        }
         loadData()
         setClickListener()
         binding.progressBarPopulars.visibility = View.GONE

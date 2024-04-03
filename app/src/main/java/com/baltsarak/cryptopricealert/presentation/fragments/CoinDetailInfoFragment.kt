@@ -23,6 +23,7 @@ import com.baltsarak.cryptopricealert.presentation.contract.HasCustomAction
 import com.baltsarak.cryptopricealert.presentation.contract.HasCustomTitle
 import com.baltsarak.cryptopricealert.presentation.contract.navigator
 import com.bumptech.glide.Glide
+import com.github.mikephil.charting.components.LimitLine
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
@@ -38,6 +39,7 @@ class CoinDetailInfoFragment : Fragment(), HasCustomTitle, HasCustomAction {
         get() = _binding ?: throw RuntimeException("FragmentCoinDetailInfoBinding is null")
 
     private lateinit var fromSymbol: String
+    private lateinit var targetPrices: List<TargetPrice?>
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -51,29 +53,31 @@ class CoinDetailInfoFragment : Fragment(), HasCustomTitle, HasCustomAction {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.priceChart.visibility = View.GONE
+        binding.priceChart.visibility = View.INVISIBLE
         binding.progressBarPriceChart.visibility = View.VISIBLE
-        loadDataAndFillingView(fromSymbol)
-        binding.progressBarPriceChart.visibility = View.GONE
-        binding.priceChart.visibility = View.VISIBLE
-        setOnClickListener()
+        viewLifecycleOwner.lifecycleScope.launch {
+            fillingView(fromSymbol)
+            viewModel.loadCoinPriceHistoryInfo(fromSymbol)
+            settingPriceChart(MONTH)
+            binding.radioButtonOption3.isChecked = true
+            binding.progressBarPriceChart.visibility = View.GONE
+            binding.priceChart.visibility = View.VISIBLE
+        }
         setOnCheckedChangeListener()
-        binding.radioButtonOption3.isChecked = true
+        setOnClickListener()
     }
 
-    private fun loadDataAndFillingView(fromSymbol: String) {
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.loadCoinPriceHistoryInfo(fromSymbol)
-            viewModel.getCoinDetailInfo(fromSymbol).observe(viewLifecycleOwner) {
-                with(binding) {
-                    textViewCoinName.text = it.fullName
-                    textViewCoinSymbol.text = it.fromSymbol
-                    Glide.with(this@CoinDetailInfoFragment)
-                        .load(it.imageUrl)
-                        .into(coinLogo)
-                    "$${it.price.toString()}".also { textViewPrice.text = it }
-                    it.fullName?.let { name -> showTargetPrices(it.targetPrice, name) }
-                }
+    private suspend fun fillingView(fromSymbol: String) {
+        viewModel.getCoinDetailInfo(fromSymbol).observe(viewLifecycleOwner) {
+            targetPrices = it.targetPrice
+            with(binding) {
+                textViewCoinName.text = it.fullName
+                textViewCoinSymbol.text = it.fromSymbol
+                Glide.with(this@CoinDetailInfoFragment)
+                    .load(it.imageUrl)
+                    .into(coinLogo)
+                "$${it.price.toString()}".also { textViewPrice.text = it }
+                it.fullName?.let { name -> showTargetPrices(name) }
             }
         }
     }
@@ -107,13 +111,9 @@ class CoinDetailInfoFragment : Fragment(), HasCustomTitle, HasCustomAction {
 
     private fun settingPriceChart(period: Int) {
         viewLifecycleOwner.lifecycleScope.launch {
-            val entries = ArrayList<Entry>()
-            val map = viewModel.getCoinPriceHistory(fromSymbol, period)
-            map.entries.sortedBy { it.key }.forEach { (key, value) ->
-                entries.add(Entry(key, value))
-            }
-            val priceHistoryDataSet = LineDataSet(entries, fromSymbol)
-            with(priceHistoryDataSet) {
+            val priceHistory = viewModel.getCoinPriceHistory(fromSymbol, period)
+            val entries = priceHistory.entries.sortedBy { it.key }.map { Entry(it.key, it.value) }
+            val priceHistoryDataSet = LineDataSet(entries, fromSymbol).apply {
                 mode = LineDataSet.Mode.CUBIC_BEZIER
                 color = Color.WHITE
                 lineWidth = 3F
@@ -121,22 +121,38 @@ class CoinDetailInfoFragment : Fragment(), HasCustomTitle, HasCustomAction {
                 setDrawCircles(false)
                 setDrawFilled(true)
                 fillColor = Color.WHITE
-                fillDrawable = ContextCompat.getDrawable(
-                    requireContext(), R.drawable.chart_gradient_fill
-                )
+                fillDrawable =
+                    ContextCompat.getDrawable(requireContext(), R.drawable.chart_gradient_fill)
             }
+
+            val higherColor = ContextCompat.getColor(requireContext(), R.color.colorPriceHigher)
+            val lowerColor = ContextCompat.getColor(requireContext(), R.color.colorPriceLower)
+
+            val leftAxis = binding.priceChart.axisLeft
+            leftAxis.removeAllLimitLines()
+            targetPrices.filterNotNull().filter { it.targetPrice != 0.0 }.forEach {
+                val limitLine =
+                    LimitLine(it.targetPrice.toFloat(), it.targetPrice.toString()).apply {
+                        lineWidth = 1f
+                        lineColor = if (it.higherThenCurrent) higherColor else lowerColor
+                        textColor = lineColor
+                        textSize = 12f
+                    }
+                leftAxis.addLimitLine(limitLine)
+            }
+
             with(binding.priceChart) {
                 axisRight.isEnabled = false
                 xAxis.isEnabled = false
                 axisLeft.textColor = Color.WHITE
                 data = LineData(priceHistoryDataSet)
+                invalidate()
             }
-            binding.priceChart.invalidate()
         }
     }
 
-    private fun showTargetPrices(list: List<TargetPrice?>, name: String) {
-        val (pricesIncrease, pricesDecrease) = list.filterNotNull()
+    private fun showTargetPrices(name: String) {
+        val (pricesIncrease, pricesDecrease) = targetPrices.filterNotNull()
             .partition { it.higherThenCurrent }
 
         val increaseString = pricesIncrease

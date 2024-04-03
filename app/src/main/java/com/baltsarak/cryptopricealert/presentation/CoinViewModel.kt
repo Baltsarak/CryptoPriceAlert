@@ -95,10 +95,10 @@ class CoinViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun loadCoinPriceHistoryInfo(fromSymbol: String) {
-        viewModelScope.launch {
+    suspend fun loadCoinPriceHistoryInfo(fromSymbol: String) {
+        return viewModelScope.async {
             loadCoinPriceHistoryInfoUseCase(fromSymbol)
-        }
+        }.await()
     }
 
     fun startWorker() {
