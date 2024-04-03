@@ -15,6 +15,8 @@ interface CoinRepository {
 
     suspend fun deleteCoinFromWatchList(fromSymbol: String)
 
+    suspend fun deleteTargetPrice(fromSymbol: String, price: Double)
+
     suspend fun getPopularCoinsList(): LiveData<List<CoinInfo>>
 
     suspend fun getCoinsList(): List<CoinName>

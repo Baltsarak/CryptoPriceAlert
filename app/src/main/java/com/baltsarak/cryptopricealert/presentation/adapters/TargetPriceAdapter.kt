@@ -7,9 +7,11 @@ import androidx.recyclerview.widget.ListAdapter
 import com.baltsarak.cryptopricealert.R
 import com.baltsarak.cryptopricealert.databinding.ItemTargetPriceBinding
 import com.baltsarak.cryptopricealert.domain.TargetPrice
+import com.baltsarak.cryptopricealert.presentation.fragments.CoinDetailInfoFragment
 
 class TargetPriceAdapter :
-    ListAdapter<TargetPrice, TargetPriceViewHolder>(TargetPriceDiffCallback) {
+    ListAdapter<TargetPrice, TargetPriceViewHolder>(TargetPriceDiffCallback),
+    CoinDetailInfoFragment.ItemTouchHelperAdapter {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TargetPriceViewHolder {
         val binding = ItemTargetPriceBinding.inflate(
@@ -30,5 +32,11 @@ class TargetPriceAdapter :
                 if (coin.higherThenCurrent) R.color.colorPriceHigher else R.color.colorPriceLower
             price.setTextColor(ContextCompat.getColor(context, colorResId))
         }
+    }
+
+    override fun onItemDismiss(position: Int) {
+        val newList = currentList.toMutableList()
+        newList.removeAt(position)
+        submitList(newList)
     }
 }

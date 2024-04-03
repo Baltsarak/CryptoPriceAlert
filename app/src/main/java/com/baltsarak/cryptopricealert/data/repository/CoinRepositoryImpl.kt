@@ -80,6 +80,10 @@ class CoinRepositoryImpl(
         watchListCoinInfoDao.deleteCoinFromWatchList(fromSymbol)
     }
 
+    override suspend fun deleteTargetPrice(fromSymbol: String, price: Double) {
+        watchListCoinInfoDao.deleteTargetPriceFromWatchList(fromSymbol, price)
+    }
+
     override suspend fun getWatchListCoins(): List<CoinInfo> {
         val result = mutableListOf<CoinInfo>()
         val targetPrices = getTargetPrices()

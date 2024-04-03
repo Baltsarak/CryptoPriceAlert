@@ -11,6 +11,7 @@ import com.baltsarak.cryptopricealert.domain.CoinInfo
 import com.baltsarak.cryptopricealert.domain.CoinName
 import com.baltsarak.cryptopricealert.domain.usecases.AddCoinToWatchListUseCase
 import com.baltsarak.cryptopricealert.domain.usecases.DeleteCoinFromWatchListUseCase
+import com.baltsarak.cryptopricealert.domain.usecases.DeleteTargetPriceUseCase
 import com.baltsarak.cryptopricealert.domain.usecases.GetCoinInfoUseCase
 import com.baltsarak.cryptopricealert.domain.usecases.GetCoinListUseCase
 import com.baltsarak.cryptopricealert.domain.usecases.GetCoinPriceHistoryInfoUseCase
@@ -32,6 +33,7 @@ class CoinViewModel(application: Application) : AndroidViewModel(application) {
     private val addCoinToWatchListUseCase = AddCoinToWatchListUseCase(repository)
     private val rewriteWatchListUseCase = RewriteWatchListUseCase(repository)
     private val deleteCoinFromWatchListUseCase = DeleteCoinFromWatchListUseCase(repository)
+    private val deleteTargetPriceUseCase = DeleteTargetPriceUseCase(repository)
     private val loadCoinPriceHistoryInfoUseCase = LoadCoinPriceHistoryInfoUseCase(repository)
     private val getCoinPriceHistoryInfoUseCase = GetCoinPriceHistoryInfoUseCase(repository)
     private val getPopularCoinListUseCase = GetPopularCoinListUseCase(repository)
@@ -92,6 +94,12 @@ class CoinViewModel(application: Application) : AndroidViewModel(application) {
     fun deleteCoinFromWatchList(fromSymbol: String) {
         viewModelScope.launch {
             deleteCoinFromWatchListUseCase(fromSymbol)
+        }
+    }
+
+    fun deleteTargetPrice(fromSymbol: String, price: Double) {
+        viewModelScope.launch {
+            deleteTargetPriceUseCase(fromSymbol, price)
         }
     }
 
