@@ -7,9 +7,10 @@
     <string name="cryptocurrency_logo">Cryptocurrency logo</string>
     <string name="price_question">Get notified when the price reaches:</string>
     <string name="target_price_notification_message">You will receive a notification when the price</string>
-    <string name="target_price_increase">increases to</string>
+    <string name="target_price_increase">increases to:</string>
     <string name="or">or</string>
-    <string name="target_price_decrease">decreases to</string>
+    <string name="target_price_decrease">decreases to:</string>
+    <string name="or_target_price_decrease">Or decreases to:</string>
     <string name="description_button_add">
         Button for setting a price, upon reaching which an alert will be sent</string>
     <string name="usd">USD</string>
@@ -26,6 +27,7 @@
     <string name="to_symbol">/USD</string>
     <string name="bitcoin">Bitcoin</string>
     <string name="price">$46323.12</string>
+    <string name="price_with_currency">$%1$s</string>
     <string name="btc">BTC</string>
     <string name="day">Day</string>
     <string name="week">Week</string>

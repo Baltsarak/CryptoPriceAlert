@@ -205,31 +205,44 @@
                 android:text="@string/target_price_increase" />
 
             <TextView
-                android:id="@+id/target_price_increase_value"
-                style="@style/TargetPriceNotificationMessageStyle" />
-
-            <TextView
-                android:id="@+id/target_price_or"
-                style="@style/TargetPriceNotificationMessageStyle"
-                android:text="@string/or" />
-
-            <TextView
                 android:id="@+id/target_price_decrease"
                 style="@style/TargetPriceNotificationMessageStyle"
                 android:text="@string/target_price_decrease" />
 
-            <TextView
-                android:id="@+id/target_price_decrease_value"
-                style="@style/TargetPriceNotificationMessageStyle" />
-
         </com.google.android.flexbox.FlexboxLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/target_price_increase_container"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/target_price_notification_container" />
+
+        <TextView
+            android:id="@+id/or_target_price_decrease"
+            style="@style/TargetPriceNotificationMessageStyle"
+            android:layout_marginStart="16dp"
+            android:text="@string/or_target_price_decrease"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/target_price_increase_container" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/target_price_decrease_container"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/or_target_price_decrease" />
 
         <Space
             android:id="@+id/space"
             android:layout_width="0dp"
             android:layout_height="110dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/target_price_notification_container"
+            app:layout_constraintTop_toBottomOf="@id/target_price_decrease_container"
             tools:ignore="MissingConstraints" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

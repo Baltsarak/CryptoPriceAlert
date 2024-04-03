@@ -14,10 +14,13 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.baltsarak.cryptopricealert.R
 import com.baltsarak.cryptopricealert.databinding.FragmentCoinDetailInfoBinding
 import com.baltsarak.cryptopricealert.domain.TargetPrice
 import com.baltsarak.cryptopricealert.presentation.CoinViewModel
+import com.baltsarak.cryptopricealert.presentation.adapters.TargetPriceAdapter
 import com.baltsarak.cryptopricealert.presentation.contract.CustomAction
 import com.baltsarak.cryptopricealert.presentation.contract.HasCustomAction
 import com.baltsarak.cryptopricealert.presentation.contract.HasCustomTitle
@@ -152,48 +155,61 @@ class CoinDetailInfoFragment : Fragment(), HasCustomTitle, HasCustomAction {
     }
 
     private fun showTargetPrices(name: String) {
-        val (pricesIncrease, pricesDecrease) = targetPrices.filterNotNull()
+        val (pricesIncrease, pricesDecrease) = targetPrices
+            .filterNotNull()
+            .filter { it.targetPrice != 0.0 }
             .partition { it.higherThenCurrent }
-
-        val increaseString = pricesIncrease
-            .filter { it.targetPrice != 0.0 }
-            .joinToString(separator = ", ") { it.targetPrice.toString() }
-            .let { if (it.isNotEmpty()) "$$it" else it }
-
-        val decreaseString = pricesDecrease
-            .filter { it.targetPrice != 0.0 }
-            .joinToString(separator = ", ") { it.targetPrice.toString() }
-            .let { if (it.isNotEmpty()) "$$it" else it }
 
         with(binding) {
             targetPriceNotificationMessage.visibility =
-                if (increaseString.isNotBlank() || decreaseString.isNotBlank()) View.VISIBLE else View.GONE
+                if (pricesIncrease.isNotEmpty() || pricesDecrease.isNotEmpty()) View.VISIBLE else View.GONE
             targetPriceName.text = name
+            targetPriceName.visibility =
+                if (targetPriceNotificationMessage.visibility == View.VISIBLE) View.VISIBLE else View.GONE
 
-            targetPriceName.visibility = targetPriceNotificationMessage.visibility
-            targetPriceIncrease.visibility =
-                if (increaseString.isNotBlank()) View.VISIBLE else View.GONE
-            targetPriceIncreaseValue.visibility = targetPriceIncrease.visibility
-            targetPriceIncreaseValue.text = increaseString
-            targetPriceOr.visibility =
-                if (increaseString.isNotBlank() && decreaseString.isNotBlank()) View.VISIBLE else View.GONE
-            targetPriceDecrease.visibility =
-                if (decreaseString.isNotBlank()) View.VISIBLE else View.GONE
-            targetPriceDecreaseValue.visibility = targetPriceDecrease.visibility
-            targetPriceDecreaseValue.text = decreaseString
+            updateVisibilityAndSetData(
+                pricesIncrease,
+                targetPriceIncreaseContainer,
+                targetPriceIncrease,
+                true
+            )
+            updateVisibilityAndSetData(
+                pricesDecrease,
+                targetPriceDecreaseContainer,
+                targetPriceDecrease,
+                pricesIncrease.isNotEmpty()
+            )
+        }
+    }
 
-            targetPriceIncreaseValue.setTextColor(
-                ContextCompat.getColor(
-                    requireContext(),
-                    R.color.colorPriceHigher
-                )
-            )
-            targetPriceDecreaseValue.setTextColor(
-                ContextCompat.getColor(
-                    requireContext(),
-                    R.color.colorPriceLower
-                )
-            )
+    private fun updateVisibilityAndSetData(
+        prices: List<TargetPrice>,
+        container: RecyclerView,
+        textViewVisibilityView: View,
+        pricesIncreaseNotEmpty: Boolean
+    ) {
+        val adapter = (container.adapter as? TargetPriceAdapter) ?: TargetPriceAdapter()
+        if (container.layoutManager == null) {
+            container.layoutManager = LinearLayoutManager(context)
+        }
+        container.adapter = adapter
+        adapter.submitList(prices)
+
+        if (prices.isNotEmpty()) {
+            if (pricesIncreaseNotEmpty && textViewVisibilityView == binding.targetPriceDecrease) {
+                binding.orTargetPriceDecrease.visibility = View.VISIBLE
+                container.visibility = View.VISIBLE
+                textViewVisibilityView.visibility = View.GONE
+            } else {
+                textViewVisibilityView.visibility = View.VISIBLE
+                container.visibility = View.VISIBLE
+            }
+        } else {
+            textViewVisibilityView.visibility = View.GONE
+            container.visibility = View.GONE
+            if (textViewVisibilityView == binding.targetPriceDecrease) {
+                binding.orTargetPriceDecrease.visibility = View.GONE
+            }
         }
     }
 
