@@ -1,5 +1,8 @@
 package com.baltsarak.cryptopricealert.presentation.adapters
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
+import android.animation.ObjectAnimator
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -34,7 +37,7 @@ class CoinInfoAdapter :
         with(holder.binding) {
             currencySymbol.text = coin.fromSymbol
             currencyName.text = coin.fullName
-            "$${coin.price.toString()}".also { coinPrice.text = it }
+            updatePriceWithAnimation(coinPrice, "$${coin.price}")
             toSymbol.setText(R.string.to_symbol)
 
             val targetPrices = coin.targetPrice
@@ -51,6 +54,20 @@ class CoinInfoAdapter :
                 onCoinClickListener?.onCoinClick(coin)
             }
         }
+    }
+
+    private fun updatePriceWithAnimation(textView: TextView, newPrice: String) {
+        val fadeOut = ObjectAnimator.ofFloat(textView, "alpha", 1f, 0f)
+        fadeOut.duration = 170
+        fadeOut.addListener(object : AnimatorListenerAdapter() {
+            override fun onAnimationEnd(animation: Animator) {
+                textView.text = newPrice
+                val fadeIn = ObjectAnimator.ofFloat(textView, "alpha", 0f, 1f)
+                fadeIn.duration = 170
+                fadeIn.start()
+            }
+        })
+        fadeOut.start()
     }
 
     private fun ItemCoinListBinding.setTargetPriceValues(
