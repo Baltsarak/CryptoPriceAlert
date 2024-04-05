@@ -184,8 +184,8 @@ class CoinDetailInfoFragment : Fragment(), HasCustomTitle, HasCustomAction {
             targetPriceNotificationMessage.visibility =
                 if (pricesIncrease.isNotEmpty() || pricesDecrease.isNotEmpty()) View.VISIBLE else View.GONE
             targetPriceName.text = name
-            targetPriceName.visibility =
-                if (targetPriceNotificationMessage.visibility == View.VISIBLE) View.VISIBLE else View.GONE
+            targetPriceName.visibility = targetPriceNotificationMessage.visibility
+            targetPriceDeleteMessage.visibility = targetPriceNotificationMessage.visibility
 
             updateVisibilityAndSetData(
                 pricesIncrease,
