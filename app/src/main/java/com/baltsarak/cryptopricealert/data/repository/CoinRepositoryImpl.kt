@@ -1,6 +1,9 @@
 package com.baltsarak.cryptopricealert.data.repository
 
 import android.app.Application
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.Network
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
@@ -20,7 +23,10 @@ import com.baltsarak.cryptopricealert.domain.TargetPrice
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.withContext
 
 class CoinRepositoryImpl(
@@ -37,6 +43,8 @@ class CoinRepositoryImpl(
 
     private var _watchListLiveData = MutableLiveData<List<CoinInfo>>()
     val watchListLiveData: LiveData<List<CoinInfo>> = _watchListLiveData
+
+    private var networkConnected = false
 
     override suspend fun addCoinToWatchList(
         fromSymbol: String,
@@ -192,7 +200,36 @@ class CoinRepositoryImpl(
         )
     }
 
-    override suspend fun loadData() {
+    private fun networkStatusFlow(): Flow<Boolean> = callbackFlow {
+        val connectivityManager =
+            application.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val networkCallback = object : ConnectivityManager.NetworkCallback() {
+            override fun onAvailable(network: Network) {
+                super.onAvailable(network)
+                trySend(true).isSuccess
+            }
+
+            override fun onLost(network: Network) {
+                super.onLost(network)
+                trySend(false).isSuccess
+            }
+        }
+        connectivityManager.registerDefaultNetworkCallback(networkCallback)
+        awaitClose { connectivityManager.unregisterNetworkCallback(networkCallback) }
+    }
+
+    override suspend fun loadDataWithNetworkCheck() {
+        networkStatusFlow().collect { isConnected ->
+            if (isConnected) {
+                networkConnected = true
+                loadData()
+            } else {
+                networkConnected = false
+            }
+        }
+    }
+
+    private suspend fun loadData() {
         try {
             val container = withContext(Dispatchers.IO) {
                 apiService.getAllCoinsList()
@@ -245,7 +282,7 @@ class CoinRepositoryImpl(
 
             coinInfoDao.insertListCoinsInfo(coinInfoDbModelList)
 
-            while (true) {
+            while (networkConnected) {
                 withContext(Dispatchers.IO) {
                     val popularCoins = apiService.getPopularCoinsList().coinList
                     val popularCoinsList = popularCoins?.coins?.map { it.symbol } ?: listOf()
@@ -272,8 +309,12 @@ class CoinRepositoryImpl(
     }
 
     private suspend fun getPopularCoinsListFromApi(): List<String> {
-        val popularCoins = apiService.getPopularCoinsList().coinList
-        return popularCoins?.coins?.map { it.symbol } ?: listOf("BTC")
+        return try {
+            val popularCoins = apiService.getPopularCoinsList().coinList
+            popularCoins?.coins?.map { it.symbol } ?: listOf("BTC")
+        } catch (e: Exception) {
+            listOf("BTC")
+        }
     }
 
     private suspend fun getTargetPrices(): List<TargetPrice> {

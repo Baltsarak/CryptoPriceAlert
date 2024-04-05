@@ -31,5 +31,5 @@ interface CoinRepository {
 
     fun startWorker()
 
-    suspend fun loadData()
+    suspend fun loadDataWithNetworkCheck()
 }
