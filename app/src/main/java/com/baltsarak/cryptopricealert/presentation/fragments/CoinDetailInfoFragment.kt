@@ -48,6 +48,7 @@ class CoinDetailInfoFragment : Fragment(), HasCustomTitle, HasCustomAction {
 
     private lateinit var fromSymbol: String
     private lateinit var targetPrices: List<TargetPrice?>
+    private var checkedRadioButton: Int = MONTH
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -125,6 +126,7 @@ class CoinDetailInfoFragment : Fragment(), HasCustomTitle, HasCustomAction {
         )
 
         binding.radioGroup.setOnCheckedChangeListener { _, checkedId ->
+            checkedRadioButton = checkedId
             buttonMap[checkedId]?.let { period ->
                 binding.radioGroup.findViewById<View>(checkedId)?.let { animateButton(it) }
                 settingPriceChart(period)
@@ -256,6 +258,8 @@ class CoinDetailInfoFragment : Fragment(), HasCustomTitle, HasCustomAction {
                     viewLifecycleOwner.lifecycleScope.launch {
                         addCoinToWatchList().await()
                     }
+                    binding.targetPrice.setText("")
+                    settingPriceChart(definePeriod())
                     viewModel.startWorker()
                 }
             }
@@ -287,6 +291,20 @@ class CoinDetailInfoFragment : Fragment(), HasCustomTitle, HasCustomAction {
                 val item = adapter.currentList[viewHolder.adapterPosition]
                 viewModel.deleteTargetPrice(item.fromSymbol, item.targetPrice)
                 adapter.onItemDismiss(viewHolder.adapterPosition)
+                settingPriceChart(definePeriod())
+            }
+        }
+    }
+
+    private fun definePeriod(): Int {
+        return when (checkedRadioButton) {
+            R.id.radioButtonOption1 -> DAY
+            R.id.radioButtonOption2 -> WEEK
+            R.id.radioButtonOption4 -> YEAR
+            R.id.radioButtonOption5 -> FIVE_YEARS
+            R.id.radioButtonOption6 -> ALL
+            else -> {
+                MONTH
             }
         }
     }
