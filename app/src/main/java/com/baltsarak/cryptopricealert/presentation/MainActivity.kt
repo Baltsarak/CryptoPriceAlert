@@ -29,6 +29,7 @@ import com.baltsarak.cryptopricealert.presentation.contract.HasCustomTitle
 import com.baltsarak.cryptopricealert.presentation.contract.Navigator
 import com.baltsarak.cryptopricealert.presentation.fragments.AccountFragment
 import com.baltsarak.cryptopricealert.presentation.fragments.CoinDetailInfoFragment
+import com.baltsarak.cryptopricealert.presentation.fragments.NewsFragment
 import com.baltsarak.cryptopricealert.presentation.fragments.PopularCoinsFragment
 import com.baltsarak.cryptopricealert.presentation.fragments.SearchCoinsFragment
 import com.baltsarak.cryptopricealert.presentation.fragments.WatchListFragment
@@ -63,7 +64,7 @@ class MainActivity : AppCompatActivity(), Navigator {
             override fun handleOnBackPressed() {
                 val currentFragment =
                     supportFragmentManager.findFragmentById(R.id.main_screen_fragment_container)
-                if (currentFragment is WatchListFragment) {
+                if (currentFragment is NewsFragment) {
                     showExitConfirmationDialog()
                 } else {
                     supportFragmentManager.popBackStack()
@@ -73,6 +74,11 @@ class MainActivity : AppCompatActivity(), Navigator {
 
     private val onItemSelectedListener = OnItemSelectedListener { item ->
         when (item.itemId) {
+            R.id.navigation_news -> {
+                launchFragment(NewsFragment())
+                true
+            }
+
             R.id.navigation_watch_list -> {
                 launchFragment(WatchListFragment())
                 true
@@ -107,6 +113,7 @@ class MainActivity : AppCompatActivity(), Navigator {
         viewModel = ViewModelProvider(this)[CoinViewModel::class.java]
         if (savedInstanceState == null) {
             viewModel.loadData()
+            launchFragment(NewsFragment())
         }
         lifecycleScope.launch { setClickListeners() }
     }
@@ -148,6 +155,7 @@ class MainActivity : AppCompatActivity(), Navigator {
     private fun updateUi(fragment: Fragment) {
         binding.bottomNavigation.setOnItemSelectedListener(null)
         binding.bottomNavigation.selectedItemId = when (fragment) {
+            is NewsFragment -> R.id.navigation_news
             is PopularCoinsFragment -> R.id.navigation_popular
             is CoinDetailInfoFragment -> R.id.navigation_cryptocurrency
             is AccountFragment -> R.id.navigation_profile

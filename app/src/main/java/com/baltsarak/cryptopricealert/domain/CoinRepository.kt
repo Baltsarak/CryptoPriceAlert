@@ -3,6 +3,7 @@ package com.baltsarak.cryptopricealert.domain
 import androidx.lifecycle.LiveData
 import com.baltsarak.cryptopricealert.domain.entities.CoinInfo
 import com.baltsarak.cryptopricealert.domain.entities.CoinName
+import com.baltsarak.cryptopricealert.domain.entities.News
 
 interface CoinRepository {
     suspend fun addCoinToWatchList(
@@ -34,4 +35,5 @@ interface CoinRepository {
     fun startWorker()
 
     suspend fun loadDataWithNetworkCheck()
+    suspend fun getNewsList(): List<News>
 }

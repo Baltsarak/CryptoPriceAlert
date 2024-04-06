@@ -6,8 +6,10 @@ import com.baltsarak.cryptopricealert.data.database.entities.HourPriceDbModel
 import com.baltsarak.cryptopricealert.data.network.models.CoinInfoDto
 import com.baltsarak.cryptopricealert.data.network.models.CoinSymbolDto
 import com.baltsarak.cryptopricealert.data.network.models.CoinSymbolsContainerDto
+import com.baltsarak.cryptopricealert.data.network.models.CryptoNewsDto
 import com.baltsarak.cryptopricealert.data.network.models.DayPriceDto
 import com.baltsarak.cryptopricealert.domain.entities.CoinInfo
+import com.baltsarak.cryptopricealert.domain.entities.News
 import com.baltsarak.cryptopricealert.domain.entities.TargetPrice
 import com.google.gson.Gson
 
@@ -72,6 +74,16 @@ class CoinMapper {
             result.add(coinSymbol)
         }
         return result
+    }
+
+    fun mapNewsDtoToEntity(newsDto: CryptoNewsDto): News {
+        return News(
+            publishedOn = newsDto.publishedOn,
+            imageUrl = newsDto.imageUrl,
+            title = newsDto.title,
+            url = newsDto.url,
+            body = newsDto.body
+        )
     }
 
     fun listChunking(originalList: List<String>, chunkSize: Int): List<List<String>> {

@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
+        android:id="@+id/navigation_news"
+        android:icon="@drawable/news"
+        android:title="@string/news" />
+
+    <item
         android:id="@+id/navigation_watch_list"
         android:icon="@drawable/watch_list"
         android:title="@string/watchlist" />

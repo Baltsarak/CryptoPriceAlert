@@ -16,9 +16,10 @@ import com.baltsarak.cryptopricealert.data.database.entities.WatchListCoinDbMode
 import com.baltsarak.cryptopricealert.data.mapper.CoinMapper
 import com.baltsarak.cryptopricealert.data.network.ApiFactory
 import com.baltsarak.cryptopricealert.data.worker.PriceMonitoringWorker
+import com.baltsarak.cryptopricealert.domain.CoinRepository
 import com.baltsarak.cryptopricealert.domain.entities.CoinInfo
 import com.baltsarak.cryptopricealert.domain.entities.CoinName
-import com.baltsarak.cryptopricealert.domain.CoinRepository
+import com.baltsarak.cryptopricealert.domain.entities.News
 import com.baltsarak.cryptopricealert.domain.entities.TargetPrice
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -231,10 +232,6 @@ class CoinRepositoryImpl(
 
     private suspend fun loadData() {
         try {
-            val cryptoNews = withContext(Dispatchers.IO) {
-                apiService.getCryptoNews()
-            }
-            Log.d("cryptoNews", "cryptoNews $cryptoNews")
             val container = withContext(Dispatchers.IO) {
                 apiService.getAllCoinsList()
             }
@@ -309,6 +306,17 @@ class CoinRepositoryImpl(
             }
         } catch (e: Exception) {
             Log.d("loadData", "ERROR LOAD DATA " + e.message)
+        }
+    }
+
+    override suspend fun getNewsList(): List<News> {
+        return try {
+            val cryptoNews = withContext(Dispatchers.IO) {
+                apiService.getCryptoNews()
+            }
+            cryptoNews.newsList.map { mapper.mapNewsDtoToEntity(it) }
+        } catch (e: Exception) {
+            listOf()
         }
     }
 

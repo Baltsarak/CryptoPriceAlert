@@ -48,7 +48,8 @@ class NewsFragment : Fragment(), HasCustomTitle {
 
     private fun loadData() {
         viewLifecycleOwner.lifecycleScope.launch {
-
+            val news = viewModel.getNewsList()
+            adapter.submitList(news)
         }
     }
 

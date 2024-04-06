@@ -4,7 +4,7 @@
     <string name="cryptocurrency">Cryptocurrency</string>
     <string name="popular">Popular</string>
     <string name="profile">Profile</string>
-    <string name="news">Crypto News</string>
+    <string name="news">News</string>
     <string name="cryptocurrency_logo">Cryptocurrency logo</string>
     <string name="price_question">Get notified when the price reaches:</string>
     <string name="target_price_notification_message">
