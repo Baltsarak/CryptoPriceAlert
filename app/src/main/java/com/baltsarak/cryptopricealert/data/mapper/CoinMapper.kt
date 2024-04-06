@@ -7,8 +7,8 @@ import com.baltsarak.cryptopricealert.data.network.models.CoinInfoDto
 import com.baltsarak.cryptopricealert.data.network.models.CoinSymbolDto
 import com.baltsarak.cryptopricealert.data.network.models.CoinSymbolsContainerDto
 import com.baltsarak.cryptopricealert.data.network.models.DayPriceDto
-import com.baltsarak.cryptopricealert.domain.CoinInfo
-import com.baltsarak.cryptopricealert.domain.TargetPrice
+import com.baltsarak.cryptopricealert.domain.entities.CoinInfo
+import com.baltsarak.cryptopricealert.domain.entities.TargetPrice
 import com.google.gson.Gson
 
 class CoinMapper {

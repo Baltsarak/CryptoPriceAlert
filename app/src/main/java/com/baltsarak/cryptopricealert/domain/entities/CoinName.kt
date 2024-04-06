@@ -1,4 +1,4 @@
-package com.baltsarak.cryptopricealert.domain
+package com.baltsarak.cryptopricealert.domain.entities
 
 data class CoinName(
     val fromSymbol: String,

@@ -23,7 +23,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.baltsarak.cryptopricealert.R
 import com.baltsarak.cryptopricealert.databinding.FragmentCoinDetailInfoBinding
-import com.baltsarak.cryptopricealert.domain.TargetPrice
+import com.baltsarak.cryptopricealert.domain.entities.TargetPrice
 import com.baltsarak.cryptopricealert.presentation.CoinViewModel
 import com.baltsarak.cryptopricealert.presentation.adapters.TargetPriceAdapter
 import com.baltsarak.cryptopricealert.presentation.contract.CustomAction

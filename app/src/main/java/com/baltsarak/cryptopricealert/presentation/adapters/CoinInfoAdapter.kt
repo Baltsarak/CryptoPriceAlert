@@ -11,9 +11,9 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.ListAdapter
 import com.baltsarak.cryptopricealert.R
 import com.baltsarak.cryptopricealert.databinding.ItemCoinListBinding
-import com.baltsarak.cryptopricealert.domain.CoinInfo
-import com.baltsarak.cryptopricealert.domain.TargetPrice
-import com.baltsarak.cryptopricealert.domain.toPriceString
+import com.baltsarak.cryptopricealert.domain.entities.CoinInfo
+import com.baltsarak.cryptopricealert.domain.entities.TargetPrice
+import com.baltsarak.cryptopricealert.domain.entities.toPriceString
 import com.baltsarak.cryptopricealert.presentation.fragments.WatchListFragment
 import com.bumptech.glide.Glide
 import java.util.Collections

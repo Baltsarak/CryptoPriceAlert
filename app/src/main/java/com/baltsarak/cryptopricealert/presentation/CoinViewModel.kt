@@ -7,8 +7,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.baltsarak.cryptopricealert.data.repository.CoinRepositoryImpl
-import com.baltsarak.cryptopricealert.domain.CoinInfo
-import com.baltsarak.cryptopricealert.domain.CoinName
+import com.baltsarak.cryptopricealert.domain.entities.CoinInfo
+import com.baltsarak.cryptopricealert.domain.entities.CoinName
 import com.baltsarak.cryptopricealert.domain.usecases.AddCoinToWatchListUseCase
 import com.baltsarak.cryptopricealert.domain.usecases.DeleteCoinFromWatchListUseCase
 import com.baltsarak.cryptopricealert.domain.usecases.DeleteTargetPriceUseCase

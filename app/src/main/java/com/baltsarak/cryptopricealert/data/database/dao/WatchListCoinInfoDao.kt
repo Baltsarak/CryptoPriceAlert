@@ -6,7 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.baltsarak.cryptopricealert.data.database.entities.WatchListCoinDbModel
-import com.baltsarak.cryptopricealert.domain.TargetPrice
+import com.baltsarak.cryptopricealert.domain.entities.TargetPrice
 
 @Dao
 interface WatchListCoinInfoDao {

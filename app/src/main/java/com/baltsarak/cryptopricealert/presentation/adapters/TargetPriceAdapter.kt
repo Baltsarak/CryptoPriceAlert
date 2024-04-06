@@ -6,7 +6,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.ListAdapter
 import com.baltsarak.cryptopricealert.R
 import com.baltsarak.cryptopricealert.databinding.ItemTargetPriceBinding
-import com.baltsarak.cryptopricealert.domain.TargetPrice
+import com.baltsarak.cryptopricealert.domain.entities.TargetPrice
 import com.baltsarak.cryptopricealert.presentation.fragments.CoinDetailInfoFragment
 
 class TargetPriceAdapter :

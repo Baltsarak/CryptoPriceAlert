@@ -8,7 +8,7 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkerParameters
 import com.baltsarak.cryptopricealert.data.database.AppDatabase
 import com.baltsarak.cryptopricealert.data.network.ApiFactory
-import com.baltsarak.cryptopricealert.domain.TargetPrice
+import com.baltsarak.cryptopricealert.domain.entities.TargetPrice
 import kotlinx.coroutines.delay
 
 class PriceMonitoringWorker(

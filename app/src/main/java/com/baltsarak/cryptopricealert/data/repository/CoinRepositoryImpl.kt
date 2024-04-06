@@ -16,10 +16,10 @@ import com.baltsarak.cryptopricealert.data.database.entities.WatchListCoinDbMode
 import com.baltsarak.cryptopricealert.data.mapper.CoinMapper
 import com.baltsarak.cryptopricealert.data.network.ApiFactory
 import com.baltsarak.cryptopricealert.data.worker.PriceMonitoringWorker
-import com.baltsarak.cryptopricealert.domain.CoinInfo
-import com.baltsarak.cryptopricealert.domain.CoinName
+import com.baltsarak.cryptopricealert.domain.entities.CoinInfo
+import com.baltsarak.cryptopricealert.domain.entities.CoinName
 import com.baltsarak.cryptopricealert.domain.CoinRepository
-import com.baltsarak.cryptopricealert.domain.TargetPrice
+import com.baltsarak.cryptopricealert.domain.entities.TargetPrice
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll

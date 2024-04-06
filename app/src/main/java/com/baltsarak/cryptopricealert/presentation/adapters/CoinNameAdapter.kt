@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import com.baltsarak.cryptopricealert.databinding.ItemCoinSearchListBinding
-import com.baltsarak.cryptopricealert.domain.CoinName
+import com.baltsarak.cryptopricealert.domain.entities.CoinName
 
 class CoinNameAdapter :
     ListAdapter<CoinName, CoinNameViewHolder>(CoinNameDiffCallback) {

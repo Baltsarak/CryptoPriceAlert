@@ -1,6 +1,8 @@
 package com.baltsarak.cryptopricealert.domain
 
 import androidx.lifecycle.LiveData
+import com.baltsarak.cryptopricealert.domain.entities.CoinInfo
+import com.baltsarak.cryptopricealert.domain.entities.CoinName
 
 interface CoinRepository {
     suspend fun addCoinToWatchList(

@@ -1,6 +1,6 @@
 package com.baltsarak.cryptopricealert.domain.usecases
 
-import com.baltsarak.cryptopricealert.domain.CoinInfo
+import com.baltsarak.cryptopricealert.domain.entities.CoinInfo
 import com.baltsarak.cryptopricealert.domain.CoinRepository
 
 class RewriteWatchListUseCase(private val repository: CoinRepository) {
