@@ -231,6 +231,10 @@ class CoinRepositoryImpl(
 
     private suspend fun loadData() {
         try {
+            val cryptoNews = withContext(Dispatchers.IO) {
+                apiService.getCryptoNews()
+            }
+            Log.d("cryptoNews", "cryptoNews $cryptoNews")
             val container = withContext(Dispatchers.IO) {
                 apiService.getAllCoinsList()
             }

@@ -4,6 +4,7 @@ import com.baltsarak.cryptopricealert.data.network.models.CoinInfoContainerDto
 import com.baltsarak.cryptopricealert.data.network.models.CoinListContainerDto
 import com.baltsarak.cryptopricealert.data.network.models.CoinPriceDto
 import com.baltsarak.cryptopricealert.data.network.models.CoinSymbolsContainerDto
+import com.baltsarak.cryptopricealert.data.network.models.CryptoNewsListDto
 import com.baltsarak.cryptopricealert.data.network.models.DayPriceContainerDto
 import retrofit2.Response
 import retrofit2.http.GET
@@ -64,6 +65,13 @@ interface ApiService {
         @Query(QUERY_PARAM_TO_TS) toTs: Long = WEEK_AGO,
     ): DayPriceContainerDto
 
+    @GET
+    suspend fun getCryptoNews(
+        @Url url: String = "https://min-api.cryptocompare.com/data/v2/news/",
+        @Query(QUERY_PARAM_LANGUAGE) lang: String = LANGUAGE,
+        @Query(QUERY_PARAM_SORT_ORDER) sortOrder: String = SORT_ORDER
+    ): CryptoNewsListDto
+
     companion object {
         private const val QUERY_PARAM_API_KEY = "api_key"
         private const val QUERY_PARAM_TO_SYMBOL = "tsym"
@@ -76,10 +84,14 @@ interface ApiService {
         private const val QUERY_PARAM_ALL_DATA = "allData"
         private const val QUERY_PARAM_LIMIT = "limit"
         private const val QUERY_PARAM_TO_TS = "toTs"
+        private const val QUERY_PARAM_LANGUAGE = "lang"
+        private const val QUERY_PARAM_SORT_ORDER = "sortOrder"
 
         private const val API_KEY = ""
         private const val CURRENCY = "USD"
+        private const val LANGUAGE = "EN"
         private const val LIMIT = 2000
+        private const val SORT_ORDER = "1"
         private val WEEK_AGO = System.currentTimeMillis() - 604800
     }
 }
