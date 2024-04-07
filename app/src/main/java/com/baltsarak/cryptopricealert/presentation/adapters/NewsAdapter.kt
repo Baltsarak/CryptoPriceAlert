@@ -23,7 +23,11 @@ class NewsAdapter :
     override fun onBindViewHolder(holder: NewsViewHolder, position: Int) {
         val news = getItem(position)
         with(holder.binding) {
-            title.text = news.title
+            val titleText = news.title
+            if (titleText.length > 80) title.textSize = 24F
+            if (titleText.length < 55) title.textSize = 28F
+            else title.textSize = 26F
+            title.text = titleText
             body.text = news.body
             Glide.with(holder.itemView.context)
                 .load(news.imageUrl)

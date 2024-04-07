@@ -1,47 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="300dp"
+        android:layout_height="wrap_content"
         android:background="@color/colorFragmentBackground"
-        android:orientation="vertical">
+        android:padding="12dp">
+
+        <androidx.constraintlayout.helper.widget.Flow
+            android:id="@+id/flow"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:constraint_referenced_ids="image,title,body"
+            app:flow_horizontalGap="12dp"
+            app:flow_verticalGap="12dp"
+            app:flow_wrapMode="chain"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
             android:id="@+id/image"
             android:layout_width="wrap_content"
-            android:layout_height="100dp"
-            android:layout_gravity="start"
-            android:layout_marginTop="18dp"
-            android:layout_marginStart="18dp"
-            android:contentDescription="@string/image_for_news" />
+            android:layout_height="110dp"
+            android:contentDescription="@string/image_for_news"
+            tools:src="@mipmap/ic_launcher" />
 
         <TextView
             android:id="@+id/title"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_margin="12dp"
             android:fontFamily="@font/work_sans_bold"
-            android:gravity="start"
             android:textColor="@color/silver"
-            android:textSize="24sp"
+            android:textSize="26sp"
             tools:text="Title" />
 
         <TextView
             android:id="@+id/body"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
-            android:layout_marginEnd="12dp"
-            android:fontFamily="@font/work_sans_bold"
-            android:gravity="start"
+            android:fontFamily="@font/work_sans_medium"
             android:textColor="@color/silver"
             android:textSize="18sp"
             tools:text="BodyBodyBodyBodyBodyBodyBodyBodyBody" />
 
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.cardview.widget.CardView>

@@ -12,28 +12,28 @@ import retrofit2.http.Query
 import retrofit2.http.Url
 
 interface ApiService {
-    @GET("asset/v1/top/list")
+    @GET("https://data-api.cryptocompare.com/asset/v1/top/list")
     suspend fun getPopularCoinsList(
         @Query(QUERY_PARAM_API_KEY) apiKey: String = API_KEY,
         @Query(QUERY_PARAM_PAGE) page: Int = 1,
         @Query(QUERY_PARAM_PAGE_SIZE) pageSize: Int = 50,
     ): CoinListContainerDto
 
-    @GET
-    suspend fun getAllCoinsList(
-        @Url url: String = "https://min-api.cryptocompare.com/data/blockchain/list",
-        @Query(QUERY_PARAM_API_KEY) apiKey: String = API_KEY
-    ): CoinSymbolsContainerDto
-
-    @GET("asset/v1/data/by/symbol")
+    @GET("https://data-api.cryptocompare.com/asset/v1/data/by/symbol")
     suspend fun getCoinInfo(
         @Query(QUERY_PARAM_API_KEY) apiKey: String = API_KEY,
         @Query(QUERY_PARAM_ASSET_SYMBOL) assetSymbol: String
     ): CoinInfoContainerDto
 
     @GET
+    suspend fun getAllCoinsList(
+        @Url url: String = "data/blockchain/list",
+        @Query(QUERY_PARAM_API_KEY) apiKey: String = API_KEY
+    ): CoinSymbolsContainerDto
+
+    @GET
     suspend fun getCoinPrice(
-        @Url url: String = "https://min-api.cryptocompare.com/data/price",
+        @Url url: String = "data/price",
         @Query(QUERY_PARAM_API_KEY) apiKey: String = API_KEY,
         @Query(QUERY_PARAM_FROM_SYMBOL) fSym: String,
         @Query(QUERY_PARAM_TO_SYMBOLS) tSyms: String = CURRENCY
@@ -41,14 +41,14 @@ interface ApiService {
 
     @GET
     suspend fun getCoinPrices(
-        @Url url: String = "https://min-api.cryptocompare.com/data/pricemulti",
+        @Url url: String = "data/pricemulti",
         @Query(QUERY_PARAM_FROM_SYMBOLS) fSyms: String,
         @Query(QUERY_PARAM_TO_SYMBOLS) tSyms: String = CURRENCY
     ): Response<Map<String, Map<String, Double>>>
 
     @GET
     suspend fun getCoinPriceHistory(
-        @Url url: String = "https://min-api.cryptocompare.com/data/v2/histoday",
+        @Url url: String = "data/v2/histoday",
         @Query(QUERY_PARAM_API_KEY) apiKey: String = API_KEY,
         @Query(QUERY_PARAM_FROM_SYMBOL) fSym: String,
         @Query(QUERY_PARAM_TO_SYMBOL) tSym: String = CURRENCY,
@@ -57,7 +57,7 @@ interface ApiService {
 
     @GET
     suspend fun getCoinPriceHourHistory(
-        @Url url: String = "https://min-api.cryptocompare.com/data/v2/histohour",
+        @Url url: String = "data/v2/histohour",
         @Query(QUERY_PARAM_API_KEY) apiKey: String = API_KEY,
         @Query(QUERY_PARAM_FROM_SYMBOL) fSym: String,
         @Query(QUERY_PARAM_TO_SYMBOL) tSym: String = CURRENCY,
@@ -67,7 +67,7 @@ interface ApiService {
 
     @GET
     suspend fun getCryptoNews(
-        @Url url: String = "https://min-api.cryptocompare.com/data/v2/news/",
+        @Url url: String = "data/v2/news/",
         @Query(QUERY_PARAM_LANGUAGE) lang: String = LANGUAGE,
         @Query(QUERY_PARAM_SORT_ORDER) sortOrder: String = SORT_ORDER
     ): CryptoNewsListDto
@@ -91,7 +91,7 @@ interface ApiService {
         private const val CURRENCY = "USD"
         private const val LANGUAGE = "EN"
         private const val LIMIT = 2000
-        private const val SORT_ORDER = "1"
+        private const val SORT_ORDER = "top"
         private val WEEK_AGO = System.currentTimeMillis() - 604800
     }
 }

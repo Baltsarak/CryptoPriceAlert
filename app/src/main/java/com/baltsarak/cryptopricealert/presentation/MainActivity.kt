@@ -177,11 +177,11 @@ class MainActivity : AppCompatActivity(), Navigator {
             binding.toolbar.menu.clear()
         }
 
-        if (supportFragmentManager.backStackEntryCount > 0 && fragment !is SearchCoinsFragment) {
+        if (supportFragmentManager.backStackEntryCount > 1 && fragment !is SearchCoinsFragment) {
             supportActionBar?.setDisplayHomeAsUpEnabled(true)
             supportActionBar?.setDisplayShowHomeEnabled(true)
             binding.searchView.visibility = View.GONE
-        } else if (supportFragmentManager.backStackEntryCount == 0) {
+        } else if (supportFragmentManager.backStackEntryCount == 1) {
             supportActionBar?.setDisplayHomeAsUpEnabled(false)
             supportActionBar?.setDisplayShowHomeEnabled(false)
             binding.searchView.visibility = View.GONE
