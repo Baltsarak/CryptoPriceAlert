@@ -33,6 +33,7 @@ import com.baltsarak.cryptopricealert.presentation.fragments.NewsFragment
 import com.baltsarak.cryptopricealert.presentation.fragments.PopularCoinsFragment
 import com.baltsarak.cryptopricealert.presentation.fragments.SearchCoinsFragment
 import com.baltsarak.cryptopricealert.presentation.fragments.WatchListFragment
+import com.baltsarak.cryptopricealert.presentation.fragments.WebViewFragment
 import com.google.android.material.navigation.NavigationBarView.OnItemSelectedListener
 import kotlinx.coroutines.launch
 
@@ -67,7 +68,7 @@ class MainActivity : AppCompatActivity(), Navigator {
                 if (currentFragment is NewsFragment) {
                     showExitConfirmationDialog()
                 } else {
-                    supportFragmentManager.popBackStack()
+                    goBack()
                 }
             }
         }
@@ -123,6 +124,10 @@ class MainActivity : AppCompatActivity(), Navigator {
         return true
     }
 
+    override fun showWebView(url: String) {
+        launchFragment(WebViewFragment.newInstance(url))
+    }
+
     override fun showWatchList() {
         binding.bottomNavigation.selectedItemId = R.id.navigation_watch_list
     }
@@ -142,6 +147,10 @@ class MainActivity : AppCompatActivity(), Navigator {
 
     override fun showAccount() {
         binding.bottomNavigation.selectedItemId = R.id.navigation_profile
+    }
+
+    override fun goBack() {
+        supportFragmentManager.popBackStack()
     }
 
     private fun launchFragment(fragment: Fragment) {
@@ -268,7 +277,7 @@ class MainActivity : AppCompatActivity(), Navigator {
 
         binding.searchView.setOnCloseListener {
             closeSearchView()
-            supportFragmentManager.popBackStack()
+            goBack()
             true
         }
     }

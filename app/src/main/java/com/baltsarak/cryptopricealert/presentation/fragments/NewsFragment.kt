@@ -13,6 +13,7 @@ import com.baltsarak.cryptopricealert.domain.entities.News
 import com.baltsarak.cryptopricealert.presentation.CoinViewModel
 import com.baltsarak.cryptopricealert.presentation.adapters.NewsAdapter
 import com.baltsarak.cryptopricealert.presentation.contract.HasCustomTitle
+import com.baltsarak.cryptopricealert.presentation.contract.navigator
 import kotlinx.coroutines.launch
 
 class NewsFragment : Fragment(), HasCustomTitle {
@@ -48,7 +49,7 @@ class NewsFragment : Fragment(), HasCustomTitle {
 
     private fun loadData() {
         viewLifecycleOwner.lifecycleScope.launch {
-            val news = viewModel.getNewsList()
+            val news = viewModel.getNewsList().filter { it.body.length < 1000 }
             adapter.submitList(news)
         }
     }
@@ -56,7 +57,9 @@ class NewsFragment : Fragment(), HasCustomTitle {
     private fun setClickListener() {
         adapter.onNewsClickListener = object : NewsAdapter.OnNewsClickListener {
             override fun onNewsClick(news: News) {
-
+                if (news.url.isNotBlank()) {
+                    navigator().showWebView(news.url)
+                }
             }
         }
     }

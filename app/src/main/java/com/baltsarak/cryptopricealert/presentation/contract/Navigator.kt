@@ -8,6 +8,8 @@ fun Fragment.navigator(): Navigator {
 
 interface Navigator {
 
+    fun showWebView(url: String)
+
     fun showWatchList()
 
     fun showPopularCoinsList()
@@ -21,4 +23,6 @@ interface Navigator {
     fun closeSearchView()
 
     fun showAccount()
+
+    fun goBack()
 }
