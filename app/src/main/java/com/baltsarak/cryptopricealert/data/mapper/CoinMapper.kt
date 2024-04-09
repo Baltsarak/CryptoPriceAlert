@@ -12,6 +12,11 @@ import com.baltsarak.cryptopricealert.domain.entities.CoinInfo
 import com.baltsarak.cryptopricealert.domain.entities.News
 import com.baltsarak.cryptopricealert.domain.entities.TargetPrice
 import com.google.gson.Gson
+import java.sql.Timestamp
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import java.util.TimeZone
 
 class CoinMapper {
 
@@ -78,7 +83,7 @@ class CoinMapper {
 
     fun mapNewsDtoToEntity(newsDto: CryptoNewsDto): News {
         return News(
-            publishedOn = newsDto.publishedOn,
+            publishedOn = convertTimestampToTime(newsDto.publishedOn.toLong()),
             imageUrl = newsDto.imageUrl,
             title = newsDto.title,
             url = newsDto.url,
@@ -92,15 +97,14 @@ class CoinMapper {
             .map { it.value.map(IndexedValue<String>::value) }
     }
 
-//    private fun convertTimestampToTime(timestamp: Long?): String {
-//        if (timestamp == null) return ""
-//        val stamp = Timestamp(timestamp * 1000)
-//        val date = Date(stamp.time)
-//        val pattern = "HH:mm:ss"
-//        val sdf = SimpleDateFormat(pattern, Locale.getDefault())
-//        sdf.timeZone = TimeZone.getDefault()
-//        return sdf.format(date)
-//    }
-
+    private fun convertTimestampToTime(timestamp: Long?): String {
+        if (timestamp == null) return ""
+        val stamp = Timestamp(timestamp * 1000)
+        val date = Date(stamp.time)
+        val pattern = "d MMMM yyyy HH:mm:ss"
+        val sdf = SimpleDateFormat(pattern, Locale.getDefault())
+        sdf.timeZone = TimeZone.getDefault()
+        return sdf.format(date)
+    }
 }
 

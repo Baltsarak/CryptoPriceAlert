@@ -25,10 +25,10 @@ class NewsAdapter :
         with(holder.binding) {
             val titleText = news.title
             if (titleText.length > 80) title.textSize = 24F
-            if (titleText.length < 55) title.textSize = 28F
             else title.textSize = 26F
             title.text = titleText
             body.text = news.body
+            time.text = news.publishedOn
             Glide.with(holder.itemView.context)
                 .load(news.imageUrl)
                 .into(image)

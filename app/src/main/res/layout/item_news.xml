@@ -11,42 +11,61 @@
         android:background="@color/colorFragmentBackground"
         android:padding="12dp">
 
-        <androidx.constraintlayout.helper.widget.Flow
-            android:id="@+id/flow"
+        <TextView
+            android:id="@+id/time"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:constraint_referenced_ids="image,title,body"
-            app:flow_horizontalGap="12dp"
-            app:flow_verticalGap="12dp"
-            app:flow_wrapMode="chain"
+            android:fontFamily="@font/work_sans_medium"
+            android:gravity="center"
+            android:textColor="@color/silver"
+            android:textSize="12sp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintStart_toStartOf="@id/title"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="12:00:00" />
 
         <ImageView
             android:id="@+id/image"
             android:layout_width="wrap_content"
             android:layout_height="110dp"
+            android:layout_marginTop="12dp"
             android:contentDescription="@string/image_for_news"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/time"
             tools:src="@mipmap/ic_launcher" />
 
         <TextView
             android:id="@+id/title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
             android:fontFamily="@font/work_sans_bold"
             android:textColor="@color/silver"
             android:textSize="26sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/image"
+            app:layout_constraintTop_toBottomOf="@id/time"
             tools:text="Title" />
+
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/barrier"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:barrierDirection="bottom"
+            app:constraint_referenced_ids="image,title" />
 
         <TextView
             android:id="@+id/body"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
             android:fontFamily="@font/work_sans_medium"
             android:textColor="@color/silver"
             android:textSize="18sp"
-            tools:text="BodyBodyBodyBodyBodyBodyBodyBodyBody" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/barrier"
+            tools:text="Body" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
