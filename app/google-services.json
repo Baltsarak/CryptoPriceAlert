@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "510663096013",
+    "project_id": "cryptopricealert-8ec9f",
+    "storage_bucket": "cryptopricealert-8ec9f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:510663096013:android:f7beb692d21e608d679b84",
+        "android_client_info": {
+          "package_name": "com.baltsarak.cryptopricealert"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDKZN3eIXyZYrkaVtXYNH_zaA_Vil8g7oE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
