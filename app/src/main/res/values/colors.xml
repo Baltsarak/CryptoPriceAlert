@@ -11,4 +11,7 @@
     <color name="gold">#ffd700</color>
     <color name="colorPriceHigher">#A8D5BA</color>
     <color name="colorPriceLower">#F88379</color>
+    <color name="greenSea">#2C8952</color>
+    <color name="crayola">#69AF7A</color>
+    <color name="amaranth">#E52B50</color>
 </resources>
