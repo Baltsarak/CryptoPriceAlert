@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">Crypto Price Alert</string>
+    <string name="web_client_id">
+        510663096013-gssqgfii1kqhesvrm120q8h6u8l2ficf.apps.googleusercontent.com</string>
     <string name="watchlist">Watchlist</string>
     <string name="cryptocurrency">Cryptocurrency</string>
     <string name="popular">Popular</string>

@@ -1,6 +1,7 @@
 package com.baltsarak.cryptopricealert.presentation
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.view.MenuItem
@@ -35,9 +36,14 @@ import com.baltsarak.cryptopricealert.presentation.fragments.SearchCoinsFragment
 import com.baltsarak.cryptopricealert.presentation.fragments.WatchListFragment
 import com.baltsarak.cryptopricealert.presentation.fragments.WebViewFragment
 import com.google.android.material.navigation.NavigationBarView.OnItemSelectedListener
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity(), Navigator {
+
+    private lateinit var auth: FirebaseAuth
 
     private var targetCoin = "BTC"
 
@@ -107,6 +113,12 @@ class MainActivity : AppCompatActivity(), Navigator {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+
+        auth = Firebase.auth
+        if (auth.currentUser == null) {
+            startActivity(Intent(this, LoginActivity::class.java))
+        }
+
         setSupportActionBar(binding.toolbar)
         binding.bottomNavigation.setOnItemSelectedListener(onItemSelectedListener)
         supportFragmentManager.registerFragmentLifecycleCallbacks(fragmentListener, false)

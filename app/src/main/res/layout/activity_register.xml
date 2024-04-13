@@ -18,6 +18,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <ImageView
+        android:id="@+id/icon_back"
+        android:layout_width="38dp"
+        android:layout_height="38dp"
+        android:layout_marginStart="38dp"
+        android:layout_marginTop="38dp"
+        android:importantForAccessibility="no"
+        android:src="@drawable/icon_back"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/silver" />
+
     <TextView
         android:id="@+id/sign_up_title"
         android:layout_width="wrap_content"
@@ -115,8 +127,9 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="50dp"
         android:layout_marginTop="28dp"
+        android:visibility="gone"
         android:importantForAccessibility="no"
-        android:src="@drawable/icon_password"
+        android:src="@drawable/icon_important"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/icon_password" />
 
@@ -125,6 +138,7 @@
         android:layout_width="242dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="9dp"
+        android:visibility="gone"
         android:fontFamily="@font/work_sans_bold"
         android:hint="@string/repeat_password"
         android:importantForAutofill="no"

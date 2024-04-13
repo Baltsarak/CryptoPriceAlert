@@ -8,6 +8,8 @@ import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import com.baltsarak.cryptopricealert.databinding.FragmentAccountBinding
 import com.bumptech.glide.Glide
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
 
 class AccountFragment : Fragment() {
@@ -31,6 +33,10 @@ class AccountFragment : Fragment() {
         Glide.with(this)
             .load(com.baltsarak.cryptopricealert.R.drawable.user)
             .into(imageView)
+
+        binding.accountText.setOnClickListener {
+            Firebase.auth.signOut()
+        }
     }
 
     override fun onDestroy() {
