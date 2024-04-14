@@ -4,11 +4,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
+import androidx.core.widget.ImageViewCompat
 import androidx.fragment.app.Fragment
+import com.baltsarak.cryptopricealert.R
 import com.baltsarak.cryptopricealert.databinding.FragmentAccountBinding
+import com.baltsarak.cryptopricealert.presentation.contract.navigator
 import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 
 
 class AccountFragment : Fragment() {
@@ -31,23 +34,50 @@ class AccountFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val imageView: ImageView = binding.accountLogo
-        Glide.with(this)
-            .load(com.baltsarak.cryptopricealert.R.drawable.user)
-            .into(imageView)
+        auth.currentUser?.let { user ->
+            configureUserInterface(user)
+        }
+    }
+
+    private fun configureUserInterface(user: FirebaseUser) {
+        when {
+            user.isAnonymous -> configureAnonymousUser()
+            else -> configureAuthenticatedUser(user)
+        }
+        binding.exit.setOnClickListener {
+            auth.signOut()
+            navigator().goToLogin()
+        }
+    }
+
+    private fun configureAnonymousUser() {
+        binding.apply {
+            name.text = getString(R.string.anonymous)
+            accountEmail.visibility = View.GONE
+            buttonRegister.apply {
+                visibility = View.VISIBLE
+                setOnClickListener { }
+            }
+        }
+    }
+
+    private fun configureAuthenticatedUser(user: FirebaseUser) {
+        binding.apply {
+            buttonRegister.visibility = View.GONE
+            user.photoUrl?.let { url ->
+                ImageViewCompat.setImageTintList(image, null)
+                Glide.with(this@AccountFragment)
+                    .load(url)
+                    .circleCrop()
+                    .into(image)
+            }
+            accountEmail.text = user.email ?: ""
+            name.text = user.displayName ?: ""
+        }
     }
 
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
-    }
-
-    companion object {
-        fun newInstance(param1: String, param2: String) =
-            AccountFragment().apply {
-                arguments = Bundle().apply {
-
-                }
-            }
     }
 }

@@ -20,7 +20,7 @@
     <string name="description_button_add">
         Button for setting a price, upon reaching which an alert will be sent</string>
     <string name="usd">USD</string>
-    <string name="account_logo">Profile logo</string>
+    <string name="account_picture">Profile picture</string>
     <string name="add_coin">Add a coin</string>
     <string name="search">Finding a coin</string>
     <string name="nothing"></string>
@@ -44,11 +44,14 @@
     <string name="email">Email</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
-    <string name="register">Continue</string>
+    <string name="register">Register</string>
+    <string name="continue_register">Continue</string>
     <string name="login">Login</string>
     <string name="login_with_google">Login with Google</string>
     <string name="anonymous_login">Anonymous login</string>
     <string name="sign_up_by_email">Sign up by Email</string>
     <string name="don_t_have_account_yet">Don\'t have account yet?</string>
     <string name="repeat_password">Repeat password</string>
+    <string name="exit">Exit</string>
+    <string name="anonymous">Anonymous</string>
 </resources>

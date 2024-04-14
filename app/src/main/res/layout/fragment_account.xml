@@ -1,29 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorFragmentBackground"
     android:orientation="vertical"
-    android:background="#fff"
     tools:context=".presentation.fragments.AccountFragment">
 
-<ImageView
-    android:id="@+id/account_logo"
-    android:layout_width="match_parent"
-    android:layout_height="300dp"
-    android:layout_margin="16dp"
-    android:src="@drawable/user"
-    android:contentDescription="@string/account_logo"
-    />
+    <ImageView
+        android:id="@+id/exit"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_margin="36dp"
+        android:contentDescription="@string/exit"
+        android:src="@drawable/icon_exit"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/silver" />
+
+    <ImageView
+        android:id="@+id/image"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_margin="42dp"
+        android:contentDescription="@string/account_picture"
+        android:src="@drawable/incognito"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/silver" />
 
     <TextView
-        android:id="@+id/account_text"
-        android:layout_width="match_parent"
+        android:id="@+id/name"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="28sp"
-        android:textSize="24sp"
+        android:layout_marginStart="38dp"
         android:fontFamily="@font/work_sans_bold"
-        android:text="Здесь будет ваш профиль..."
-        android:textColor="#000" />
+        android:textColor="@color/silver"
+        android:textSize="34sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/image"
+        tools:text="Username" />
 
-</LinearLayout>
+    <TextView
+        android:id="@+id/account_email"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="110dp"
+        android:fontFamily="@font/work_sans_bold"
+        android:textColor="@color/silver"
+        android:textSize="14sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/name"
+        tools:text="Email" />
+
+    <Button
+        android:id="@+id/button_register"
+        style="@style/CustomButtonStyle"
+        android:layout_width="268dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="48dp"
+        android:background="@drawable/ripple_effect"
+        android:fontFamily="@font/work_sans_bold"
+        android:text="@string/register"
+        android:textColor="@color/black"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/name" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -25,4 +25,6 @@ interface Navigator {
     fun showAccount()
 
     fun goBack()
+
+    fun goToLogin()
 }

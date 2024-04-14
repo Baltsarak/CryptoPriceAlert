@@ -12,11 +12,9 @@ import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.baltsarak.cryptopricealert.databinding.ActivityLoginBinding
 import com.baltsarak.cryptopricealert.presentation.sign_in.GoogleAuthUiClient
-import com.baltsarak.cryptopricealert.presentation.sign_in.SignInViewModel
 import com.google.android.gms.auth.api.identity.Identity
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
@@ -47,17 +45,12 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         auth = FirebaseAuth.getInstance()
-        val viewModel = ViewModelProvider(this)[SignInViewModel::class.java]
         onBackPressedDispatcher.addCallback(this, callback)
-
         googleSignInLauncher =
             registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result ->
                 if (result.resultCode == Activity.RESULT_OK) {
                     lifecycleScope.launch {
-                        val signInResult = googleAuthUiClient.signInWithIntent(
-                            intent = result.data ?: return@launch
-                        )
-                        viewModel.onSignInResult(signInResult)
+                        googleAuthUiClient.signInWithIntent(intent = result.data ?: return@launch)
                         navigateToMain()
                     }
                 }

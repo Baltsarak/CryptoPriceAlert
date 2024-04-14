@@ -120,13 +120,16 @@ class MainActivity : AppCompatActivity(), Navigator {
         loginLauncher = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
         ) { result ->
-            if (result.resultCode != RESULT_OK) { finish() }
+            if (result.resultCode != RESULT_OK) {
+                finish()
+            } else {
+                launchFragment(NewsFragment())
+            }
         }
 
         auth = Firebase.auth
         if (auth.currentUser == null) {
-            val loginIntent = Intent(this, LoginActivity::class.java)
-            loginLauncher.launch(loginIntent)
+            goToLogin()
         }
 
         setSupportActionBar(binding.toolbar)
@@ -169,6 +172,11 @@ class MainActivity : AppCompatActivity(), Navigator {
 
     override fun showAccount() {
         binding.bottomNavigation.selectedItemId = R.id.navigation_profile
+    }
+
+    override fun goToLogin() {
+        val loginIntent = Intent(this, LoginActivity::class.java)
+        loginLauncher.launch(loginIntent)
     }
 
     override fun goBack() {

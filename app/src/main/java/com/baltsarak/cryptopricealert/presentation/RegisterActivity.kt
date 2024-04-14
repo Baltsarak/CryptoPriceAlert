@@ -10,7 +10,9 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.baltsarak.cryptopricealert.databinding.ActivityRegisterBinding
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.userProfileChangeRequest
+import com.google.firebase.firestore.FirebaseFirestore
 
 class RegisterActivity : AppCompatActivity() {
 
@@ -66,7 +68,11 @@ class RegisterActivity : AppCompatActivity() {
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     Toast.makeText(this, "Registration successful", Toast.LENGTH_SHORT).show()
-                    saveUserToDatabase(email, userName)
+                    val user = task.result?.user
+                    user?.let {
+                        updateUserProfile(it, userName)
+                        saveUserData(it.uid, userName, email)
+                    }
                     startActivity(Intent(this, MainActivity::class.java))
                     finish()
                 } else {
@@ -76,13 +82,32 @@ class RegisterActivity : AppCompatActivity() {
             }
     }
 
-    private fun saveUserToDatabase(email: String, userName: String) {
-        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
-        val userInfo = hashMapOf("email" to email, "username" to userName)
+    private fun updateUserProfile(user: FirebaseUser, fullName: String) {
+        val profileUpdates = userProfileChangeRequest {
+            displayName = fullName
+        }
+        user.updateProfile(profileUpdates)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Log.d("FirebaseAuth", "User profile updated.")
+                } else {
+                    Log.e("FirebaseAuth", "Error updating profile", task.exception)
+                }
+            }
+    }
 
-        FirebaseDatabase.getInstance().reference.child("Users").child(userId).setValue(userInfo)
-            .addOnFailureListener {
-                Log.w("FirebaseAuth", "Failed to save user info", it)
+    private fun saveUserData(uid: String, fullName: String, email: String) {
+        val db = FirebaseFirestore.getInstance()
+        val userInfo = hashMapOf(
+            "fullName" to fullName,
+            "email" to email
+        )
+        db.collection("users").document(uid).set(userInfo)
+            .addOnSuccessListener {
+                Log.d("FirebaseAuth", "DocumentSnapshot successfully written!")
+            }
+            .addOnFailureListener { e ->
+                Log.e("FirebaseAuth", "Error writing document", e)
             }
     }
 }
