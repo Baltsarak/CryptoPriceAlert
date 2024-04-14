@@ -11,6 +11,8 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
@@ -44,6 +46,7 @@ import kotlinx.coroutines.launch
 class MainActivity : AppCompatActivity(), Navigator {
 
     private lateinit var auth: FirebaseAuth
+    private lateinit var loginLauncher: ActivityResultLauncher<Intent>
 
     private var targetCoin = "BTC"
 
@@ -114,9 +117,16 @@ class MainActivity : AppCompatActivity(), Navigator {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
+        loginLauncher = registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) { result ->
+            if (result.resultCode != RESULT_OK) { finish() }
+        }
+
         auth = Firebase.auth
         if (auth.currentUser == null) {
-            startActivity(Intent(this, LoginActivity::class.java))
+            val loginIntent = Intent(this, LoginActivity::class.java)
+            loginLauncher.launch(loginIntent)
         }
 
         setSupportActionBar(binding.toolbar)
@@ -304,12 +314,12 @@ class MainActivity : AppCompatActivity(), Navigator {
 
     private fun showExitConfirmationDialog() {
         AlertDialog.Builder(this)
-            .setTitle("Выход")
-            .setMessage("Вы уверены, что хотите выйти?")
-            .setPositiveButton("Да") { _, _ ->
+            .setTitle("Exit")
+            .setMessage("Are you sure you want to exit?")
+            .setPositiveButton("Yes") { _, _ ->
                 finish()
             }
-            .setNegativeButton("Нет", null)
+            .setNegativeButton("No", null)
             .show()
     }
 
