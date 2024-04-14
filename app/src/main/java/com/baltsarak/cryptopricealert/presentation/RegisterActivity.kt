@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -64,16 +65,13 @@ class RegisterActivity : AppCompatActivity() {
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
-                    Toast.makeText(this, "Registration successful!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Registration successful", Toast.LENGTH_SHORT).show()
                     saveUserToDatabase(email, userName)
                     startActivity(Intent(this, MainActivity::class.java))
                     finish()
                 } else {
-                    Toast.makeText(
-                        this,
-                        "Registration failed: ${task.exception?.message}",
-                        Toast.LENGTH_LONG
-                    ).show()
+                    Log.w("FirebaseAuth", "Registration:failure", task.exception)
+                    Toast.makeText(this, "Registration failed", Toast.LENGTH_LONG).show()
                 }
             }
     }
@@ -84,8 +82,7 @@ class RegisterActivity : AppCompatActivity() {
 
         FirebaseDatabase.getInstance().reference.child("Users").child(userId).setValue(userInfo)
             .addOnFailureListener {
-                Toast.makeText(this, "Failed to save user info: ${it.message}", Toast.LENGTH_SHORT)
-                    .show()
+                Log.w("FirebaseAuth", "Failed to save user info", it)
             }
     }
 }

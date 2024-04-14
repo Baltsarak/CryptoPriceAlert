@@ -3,6 +3,7 @@ package com.baltsarak.cryptopricealert.presentation
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
@@ -64,9 +65,7 @@ class LoginActivity : AppCompatActivity() {
         binding.signUpByEmail.setOnClickListener {
             startActivity(Intent(this, RegisterActivity::class.java))
         }
-        binding.buttonLogin.setOnClickListener {
-            loginUserByEmail()
-        }
+        binding.buttonLogin.setOnClickListener { loginUserByEmail() }
         binding.buttonLoginWithGoogle.setOnClickListener {
             lifecycleScope.launch {
                 val signInIntent = googleAuthUiClient.signIn() ?: return@launch
@@ -74,7 +73,7 @@ class LoginActivity : AppCompatActivity() {
                 googleSignInLauncher.launch(intentSenderRequest)
             }
         }
-        binding.buttonAnonymousLogin.setOnClickListener { }
+        binding.buttonAnonymousLogin.setOnClickListener { signInAnonymously() }
     }
 
     private fun loginUserByEmail() {
@@ -92,10 +91,22 @@ class LoginActivity : AppCompatActivity() {
             if (task.isSuccessful) {
                 navigateToMain()
             } else {
-                Toast.makeText(this, "Login failed: ${task.exception?.message}", Toast.LENGTH_LONG)
-                    .show()
+                Log.w("FirebaseAuth", "Login:failure", task.exception)
+                Toast.makeText(this, "Login failed", Toast.LENGTH_LONG).show()
             }
         }
+    }
+
+    private fun signInAnonymously() {
+        auth.signInAnonymously()
+            .addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
+                    navigateToMain()
+                } else {
+                    Log.w("FirebaseAuth", "signInAnonymously:failure", task.exception)
+                    Toast.makeText(baseContext, "Login failed", Toast.LENGTH_SHORT).show()
+                }
+            }
     }
 
     private fun navigateToMain() {
