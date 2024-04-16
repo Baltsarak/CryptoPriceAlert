@@ -9,6 +9,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.baltsarak.cryptopricealert.databinding.ActivityRegisterBinding
+import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.userProfileChangeRequest
@@ -60,7 +61,34 @@ class RegisterActivity : AppCompatActivity() {
             return
         }
 
-        createUserWithEmail(email, password, userName)
+        val currentUser = auth.currentUser
+        if (currentUser != null && currentUser.isAnonymous) {
+            linkAnonymousAccountToEmail(email, password, userName)
+        } else {
+            createUserWithEmail(email, password, userName)
+        }
+    }
+
+    private fun linkAnonymousAccountToEmail(email: String, password: String, userName: String) {
+        val credential = EmailAuthProvider.getCredential(email, password)
+        auth.currentUser?.linkWithCredential(credential)?.addOnCompleteListener(this) { task ->
+            if (task.isSuccessful) {
+                Toast.makeText(
+                    this,
+                    "Account linked and registration successful",
+                    Toast.LENGTH_SHORT
+                ).show()
+                val user = task.result?.user
+                user?.let {
+                    updateUserProfile(it, userName)
+                    saveUserData(it.uid, userName, email)
+                }
+                navigateToMain()
+            } else {
+                Log.w("FirebaseAuth", "Link with credential:failure", task.exception)
+                Toast.makeText(this, "Failed to link account", Toast.LENGTH_LONG).show()
+            }
+        }
     }
 
     private fun createUserWithEmail(email: String, password: String, userName: String) {
@@ -73,8 +101,7 @@ class RegisterActivity : AppCompatActivity() {
                         updateUserProfile(it, userName)
                         saveUserData(it.uid, userName, email)
                     }
-                    startActivity(Intent(this, MainActivity::class.java))
-                    finish()
+                    navigateToMain()
                 } else {
                     Log.w("FirebaseAuth", "Registration:failure", task.exception)
                     Toast.makeText(this, "Registration failed", Toast.LENGTH_LONG).show()
@@ -109,5 +136,10 @@ class RegisterActivity : AppCompatActivity() {
             .addOnFailureListener { e ->
                 Log.e("FirebaseAuth", "Error writing document", e)
             }
+    }
+
+    private fun navigateToMain() {
+        startActivity(Intent(this, MainActivity::class.java))
+        finish()
     }
 }

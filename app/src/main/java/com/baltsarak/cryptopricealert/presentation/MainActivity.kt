@@ -179,6 +179,11 @@ class MainActivity : AppCompatActivity(), Navigator {
         loginLauncher.launch(loginIntent)
     }
 
+    override fun goToRegister() {
+        val registerIntent = Intent(this, RegisterActivity::class.java)
+        startActivity(registerIntent)
+    }
+
     override fun goBack() {
         supportFragmentManager.popBackStack()
     }

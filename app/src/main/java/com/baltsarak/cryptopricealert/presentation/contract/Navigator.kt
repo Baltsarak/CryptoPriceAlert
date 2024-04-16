@@ -27,4 +27,6 @@ interface Navigator {
     fun goBack()
 
     fun goToLogin()
+
+    fun goToRegister()
 }

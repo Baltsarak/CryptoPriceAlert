@@ -56,7 +56,7 @@ class AccountFragment : Fragment() {
             accountEmail.visibility = View.GONE
             buttonRegister.apply {
                 visibility = View.VISIBLE
-                setOnClickListener { }
+                setOnClickListener { navigator().goToRegister() }
             }
         }
     }
