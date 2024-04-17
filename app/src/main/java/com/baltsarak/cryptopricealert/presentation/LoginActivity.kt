@@ -1,8 +1,10 @@
 package com.baltsarak.cryptopricealert.presentation
 
+import android.accounts.OperationCanceledException
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
@@ -14,7 +16,12 @@ import com.baltsarak.cryptopricealert.R
 import com.baltsarak.cryptopricealert.databinding.ActivityLoginBinding
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.Identity
+import com.google.firebase.FirebaseNetworkException
+import com.google.firebase.FirebaseTooManyRequestsException
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.firebase.auth.FirebaseAuthInvalidUserException
+import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.GoogleAuthProvider
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
@@ -42,8 +49,8 @@ class LoginActivity : AppCompatActivity() {
                     lifecycleScope.launch {
                         result.data?.let {
                             signInWithIntent(it)
+                            navigateToMain()
                         } ?: showError("Sign-in intent is null")
-                        navigateToMain()
                     }
                 }
                 binding.progressBar.visibility = View.GONE
@@ -66,8 +73,10 @@ class LoginActivity : AppCompatActivity() {
                 val signInIntent = oneTapClient.beginSignIn(buildSignInRequest()).await()
                 val intentSender = signInIntent.pendingIntent.intentSender
                 googleSignInLauncher.launch(IntentSenderRequest.Builder(intentSender).build())
+            } catch (e: OperationCanceledException) {
+                showError("Google sign-in was canceled by the user", e)
             } catch (e: Exception) {
-                showError("Google sign-in failed")
+                showError("Google sign-in failed", e)
             } finally {
                 binding.progressBar.visibility = View.GONE
             }
@@ -79,8 +88,12 @@ class LoginActivity : AppCompatActivity() {
             val credential = oneTapClient.getSignInCredentialFromIntent(intent)
             val googleCredentials = GoogleAuthProvider.getCredential(credential.googleIdToken, null)
             auth.signInWithCredential(googleCredentials).await()
+        } catch (e: FirebaseAuthUserCollisionException) {
+            showError("This account is already linked with another sign-in method.", e)
+        } catch (e: FirebaseNetworkException) {
+            showError("Network error. Check your connection and try again.", e)
         } catch (e: Exception) {
-            showError("Google sign-in failed: ${e.localizedMessage}")
+            showError("Google sign-in failed. Please try again.", e)
         }
     }
 
@@ -112,7 +125,26 @@ class LoginActivity : AppCompatActivity() {
             if (task.isSuccessful) {
                 navigateToMain()
             } else {
-                showError("Login failed: ${task.exception?.message}")
+                task.exception?.let { e ->
+                    when (e) {
+                        is FirebaseAuthInvalidUserException -> showError(
+                            "User not found. Check the email address or register",
+                            e
+                        )
+
+                        is FirebaseAuthInvalidCredentialsException -> showError(
+                            "Invalid credentials. Please check your email and password",
+                            e
+                        )
+
+                        is FirebaseNetworkException -> showError(
+                            "Network error. Check your internet connection and try again",
+                            e
+                        )
+
+                        else -> showError("Login failed", e)
+                    }
+                }
             }
         }
     }
@@ -124,7 +156,21 @@ class LoginActivity : AppCompatActivity() {
             if (task.isSuccessful) {
                 navigateToMain()
             } else {
-                showError("Anonymous login failed: ${task.exception?.message}")
+                task.exception?.let { e ->
+                    when (e) {
+                        is FirebaseNetworkException -> showError(
+                            "Network error. Please check your connection and try again.",
+                            e
+                        )
+
+                        is FirebaseTooManyRequestsException -> showError(
+                            "Too many requests to server. Please try again later.",
+                            e
+                        )
+
+                        else -> showError("Anonymous login failed. Please try again", e)
+                    }
+                }
             }
         }
     }
@@ -138,7 +184,8 @@ class LoginActivity : AppCompatActivity() {
         finish()
     }
 
-    private fun showError(message: String) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    private fun showError(message: String, exception: Exception? = null) {
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+        Log.w("FirebaseAuth", message, exception)
     }
 }
