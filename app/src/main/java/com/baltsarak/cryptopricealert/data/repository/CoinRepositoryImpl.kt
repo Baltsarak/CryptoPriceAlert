@@ -21,6 +21,8 @@ import com.baltsarak.cryptopricealert.domain.entities.CoinInfo
 import com.baltsarak.cryptopricealert.domain.entities.CoinName
 import com.baltsarak.cryptopricealert.domain.entities.News
 import com.baltsarak.cryptopricealert.domain.entities.TargetPrice
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -38,6 +40,8 @@ class CoinRepositoryImpl(
     private val watchListCoinInfoDao = AppDatabase.getInstance(application).watchListCoinInfoDao()
     private val coinPriceHistoryDao = AppDatabase.getInstance(application).coinPriceHistoryDao()
 
+    private val remoteDatabase = FirebaseFirestore.getInstance()
+
     private val apiService = ApiFactory.apiService
 
     private val mapper = CoinMapper()
@@ -53,6 +57,9 @@ class CoinRepositoryImpl(
         higherThenCurrentPrice: Boolean
     ): Long {
         val size = watchListCoinInfoDao.getWatchListSize()
+        withContext(Dispatchers.IO) {
+            addToRemoteDatabase(fromSymbol, targetPrice, higherThenCurrentPrice, size + 1)
+        }
         return watchListCoinInfoDao.insertCoinToWatchList(
             WatchListCoinDbModel(
                 0,
@@ -62,6 +69,35 @@ class CoinRepositoryImpl(
                 size + 1
             )
         )
+    }
+
+    private fun addToRemoteDatabase(
+        fromSymbol: String,
+        targetPrice: Double?,
+        higherThenCurrent: Boolean,
+        position: Int
+    ) {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
+        if (userId == null) {
+            Log.e("Firestore", "User not authenticated")
+            return
+        }
+
+        val newItem = hashMapOf(
+            "fromSymbol" to fromSymbol,
+            "targetPrice" to targetPrice,
+            "higherThenCurrent" to higherThenCurrent,
+            "position" to position
+        )
+
+        remoteDatabase.collection("users").document(userId).collection("watchList")
+            .add(newItem)
+            .addOnSuccessListener { documentReference ->
+                Log.i("Firestore", "DocumentSnapshot added with ID: ${documentReference.id}")
+            }
+            .addOnFailureListener { e ->
+                Log.w("Firestore", "Error adding document", e)
+            }
     }
 
     override suspend fun rewriteWatchList(watchList: List<CoinInfo>) {
