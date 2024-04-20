@@ -75,8 +75,13 @@ class CoinRepositoryImpl(
         )
     }
 
+    override suspend fun addWatchListToLocalDatabase() {
+        val watchList = remoteDatabaseService.getWatchListFromRemoteDatabase()
+        watchList.forEach { watchListCoinInfoDao.insertCoinToWatchList(it) }
+    }
+
     override suspend fun rewriteWatchList(watchList: List<CoinInfo>) {
-        val listCoinDbModel = watchList.flatMapIndexed() { index, coinInfo ->
+        val listCoinDbModel = watchList.flatMapIndexed { index, coinInfo ->
             coinInfo.targetPrice.map { targetPrice ->
                 targetPrice?.let {
                     WatchListCoinDbModel(
@@ -101,6 +106,10 @@ class CoinRepositoryImpl(
         withContext(Dispatchers.IO) {
             remoteDatabaseService.deleteCoinFromRemoteDatabase(fromSymbol)
         }
+    }
+
+    override suspend fun deleteAllFromWatchList() {
+        watchListCoinInfoDao.deleteAllFromWatchList()
     }
 
     override suspend fun deleteTargetPrice(fromSymbol: String, price: Double) {

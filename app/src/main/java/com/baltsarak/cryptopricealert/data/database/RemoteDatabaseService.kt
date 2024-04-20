@@ -1,9 +1,11 @@
 package com.baltsarak.cryptopricealert.data.database
 
 import android.util.Log
+import com.baltsarak.cryptopricealert.data.database.entities.WatchListCoinDbModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
+import kotlinx.coroutines.tasks.await
 
 class RemoteDatabaseService {
     private val remoteDatabase = FirebaseFirestore.getInstance()
@@ -37,23 +39,31 @@ class RemoteDatabaseService {
             }
     }
 
-    fun getWatchListFromRemoteDatabase() {
+    suspend fun getWatchListFromRemoteDatabase(): List<WatchListCoinDbModel> {
         val userId = FirebaseAuth.getInstance().currentUser?.uid
         if (userId == null) {
             Log.e("Firestore", "User not authenticated")
-            return
+            return emptyList()
         }
 
-        remoteDatabase.collection("users").document(userId).collection("watchList")
-            .get()
-            .addOnSuccessListener { documents ->
-                for (document in documents) {
-                    Log.i("Firestore", "${document.id} => ${document.data}")
+        return try {
+            remoteDatabase.collection("users").document(userId).collection("watchList")
+                .get()
+                .await()
+                .documents
+                .map { document ->
+                    WatchListCoinDbModel(
+                        id = 0,
+                        fromSymbol = document.getString("fromSymbol") ?: "",
+                        targetPrice = document.getDouble("targetPrice"),
+                        higherThenCurrent = document.getBoolean("higherThenCurrent"),
+                        position = document.getLong("position")?.toInt() ?: 0
+                    )
                 }
-            }
-            .addOnFailureListener { exception ->
-                Log.w("Firestore", "Error getting documents: ", exception)
-            }
+        } catch (e: Exception) {
+            Log.w("Firestore", "Error getting documents: ", e)
+            emptyList()
+        }
     }
 
     fun deleteTargetPriceFromRemoteDatabase(fromSymbol: String, price: Double) {

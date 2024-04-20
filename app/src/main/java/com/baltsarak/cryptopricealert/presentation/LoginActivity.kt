@@ -11,6 +11,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.baltsarak.cryptopricealert.R
 import com.baltsarak.cryptopricealert.databinding.ActivityLoginBinding
@@ -32,12 +33,13 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var googleSignInLauncher: ActivityResultLauncher<IntentSenderRequest>
     private val oneTapClient by lazy { Identity.getSignInClient(this) }
     private val binding by lazy { ActivityLoginBinding.inflate(layoutInflater) }
+    private lateinit var viewModel: CoinViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         auth = FirebaseAuth.getInstance()
-
+        viewModel = ViewModelProvider(this)[CoinViewModel::class.java]
         setupGoogleSignIn()
         setupListeners()
     }
@@ -49,6 +51,7 @@ class LoginActivity : AppCompatActivity() {
                     lifecycleScope.launch {
                         result.data?.let {
                             signInWithIntent(it)
+                            viewModel.getAndAddCoinToLocalDatabase()
                             navigateToMain()
                         } ?: showError("Sign-in intent is null")
                     }
@@ -123,6 +126,7 @@ class LoginActivity : AppCompatActivity() {
         auth.signInWithEmailAndPassword(email, password).addOnCompleteListener { task ->
             binding.progressBar.visibility = View.GONE
             if (task.isSuccessful) {
+                viewModel.getAndAddCoinToLocalDatabase()
                 navigateToMain()
             } else {
                 task.exception?.let { e ->
@@ -154,6 +158,7 @@ class LoginActivity : AppCompatActivity() {
         auth.signInAnonymously().addOnCompleteListener { task ->
             binding.progressBar.visibility = View.GONE
             if (task.isSuccessful) {
+                viewModel.deleteAllFromWatchList()
                 navigateToMain()
             } else {
                 task.exception?.let { e ->

@@ -10,8 +10,10 @@ import com.baltsarak.cryptopricealert.data.repository.CoinRepositoryImpl
 import com.baltsarak.cryptopricealert.domain.entities.CoinInfo
 import com.baltsarak.cryptopricealert.domain.entities.CoinName
 import com.baltsarak.cryptopricealert.domain.usecases.AddCoinToWatchListUseCase
+import com.baltsarak.cryptopricealert.domain.usecases.DeleteAllFromWatchListUseCase
 import com.baltsarak.cryptopricealert.domain.usecases.DeleteCoinFromWatchListUseCase
 import com.baltsarak.cryptopricealert.domain.usecases.DeleteTargetPriceUseCase
+import com.baltsarak.cryptopricealert.domain.usecases.GetAndAddCoinToLocalDatabaseUseCase
 import com.baltsarak.cryptopricealert.domain.usecases.GetCoinInfoUseCase
 import com.baltsarak.cryptopricealert.domain.usecases.GetCoinListUseCase
 import com.baltsarak.cryptopricealert.domain.usecases.GetCoinPriceHistoryInfoUseCase
@@ -34,9 +36,12 @@ class CoinViewModel(application: Application) : AndroidViewModel(application) {
     private val addCoinToWatchListUseCase = AddCoinToWatchListUseCase(repository)
     private val rewriteWatchListUseCase = RewriteWatchListUseCase(repository)
     private val deleteCoinFromWatchListUseCase = DeleteCoinFromWatchListUseCase(repository)
+    private val deleteAllFromWatchListUseCase = DeleteAllFromWatchListUseCase(repository)
     private val deleteTargetPriceUseCase = DeleteTargetPriceUseCase(repository)
     private val loadCoinPriceHistoryInfoUseCase = LoadCoinPriceHistoryInfoUseCase(repository)
     private val getCoinPriceHistoryInfoUseCase = GetCoinPriceHistoryInfoUseCase(repository)
+    private val getAndAddCoinToLocalDatabaseUseCase =
+        GetAndAddCoinToLocalDatabaseUseCase(repository)
     private val getPopularCoinListUseCase = GetPopularCoinListUseCase(repository)
     private val getCoinListUseCase = GetCoinListUseCase(repository)
     private val getNewsListUseCase = GetNewsListUseCase(repository)
@@ -62,6 +67,17 @@ class CoinViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.async { getPopularCoinListUseCase() }.await()
 
     suspend fun getWatchListCoins() = getWatchListCoinsUseCase()
+
+    fun getAndAddCoinToLocalDatabase() {
+        viewModelScope.launch {
+            deleteAllFromWatchListUseCase()
+            getAndAddCoinToLocalDatabaseUseCase()
+        }
+    }
+
+    fun deleteAllFromWatchList() {
+        viewModelScope.launch { deleteAllFromWatchListUseCase() }
+    }
 
     suspend fun getListCoinNames() =
         viewModelScope.async { getCoinListUseCase() }.await()

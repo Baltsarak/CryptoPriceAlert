@@ -12,11 +12,15 @@ interface CoinRepository {
         higherThenCurrentPrice: Boolean
     ): Long
 
+    suspend fun addWatchListToLocalDatabase()
+
     suspend fun getWatchListCoins(): List<CoinInfo>
 
     suspend fun rewriteWatchList(watchList: List<CoinInfo>)
 
     suspend fun deleteCoinFromWatchList(fromSymbol: String)
+
+    suspend fun deleteAllFromWatchList()
 
     suspend fun deleteTargetPrice(fromSymbol: String, price: Double)
 
