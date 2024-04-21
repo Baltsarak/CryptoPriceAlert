@@ -99,6 +99,10 @@ class CoinRepositoryImpl(
                 watchListCoinInfoDao.insertCoinToWatchList(it)
             }
         }
+        withContext(Dispatchers.IO) {
+            remoteDatabaseService.deleteAllFromRemoteDatabase()
+            remoteDatabaseService.sendWatchListToRemoteDatabase(getTargetPrices())
+        }
     }
 
     override suspend fun deleteCoinFromWatchList(fromSymbol: String) {
