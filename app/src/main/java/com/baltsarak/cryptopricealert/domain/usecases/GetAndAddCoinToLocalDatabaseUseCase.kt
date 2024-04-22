@@ -4,5 +4,5 @@ import com.baltsarak.cryptopricealert.domain.CoinRepository
 
 class GetAndAddCoinToLocalDatabaseUseCase(private val repository: CoinRepository) {
 
-    suspend operator fun invoke() = repository.addWatchListToLocalDatabase()
+    suspend operator fun invoke() = repository.loadingWatchlistAndStartWorker()
 }

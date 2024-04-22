@@ -75,9 +75,10 @@ class CoinRepositoryImpl(
         )
     }
 
-    override suspend fun addWatchListToLocalDatabase() {
+    override suspend fun loadingWatchlistAndStartWorker() {
         val watchList = remoteDatabaseService.getWatchListFromRemoteDatabase()
         watchList.forEach { watchListCoinInfoDao.insertCoinToWatchList(it) }
+        startWorker()
     }
 
     override suspend fun rewriteWatchList(watchList: List<CoinInfo>) {
@@ -264,6 +265,10 @@ class CoinRepositoryImpl(
 
     private suspend fun loadData() {
         try {
+            withContext(Dispatchers.IO) {
+                deleteAllFromWatchList()
+                loadingWatchlistAndStartWorker()
+            }
             val container = withContext(Dispatchers.IO) {
                 apiService.getAllCoinsList()
             }

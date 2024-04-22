@@ -12,7 +12,7 @@ interface CoinRepository {
         higherThenCurrentPrice: Boolean
     ): Long
 
-    suspend fun addWatchListToLocalDatabase()
+    suspend fun loadingWatchlistAndStartWorker()
 
     suspend fun getWatchListCoins(): List<CoinInfo>
 
