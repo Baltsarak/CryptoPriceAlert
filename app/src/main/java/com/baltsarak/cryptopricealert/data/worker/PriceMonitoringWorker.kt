@@ -1,5 +1,6 @@
 package com.baltsarak.cryptopricealert.data.worker
 
+import android.app.Application
 import android.content.Context
 import androidx.work.Constraints
 import androidx.work.CoroutineWorker
@@ -8,6 +9,7 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkerParameters
 import com.baltsarak.cryptopricealert.data.database.AppDatabase
 import com.baltsarak.cryptopricealert.data.network.ApiFactory
+import com.baltsarak.cryptopricealert.data.repository.CoinRepositoryImpl
 import com.baltsarak.cryptopricealert.domain.entities.TargetPrice
 import kotlinx.coroutines.delay
 
@@ -16,6 +18,7 @@ class PriceMonitoringWorker(
     workerParameters: WorkerParameters
 ) : CoroutineWorker(context, workerParameters) {
 
+    private val repository = CoinRepositoryImpl(context as Application)
     private val apiService = ApiFactory.apiService
     private val watchListCoinInfoDao =
         AppDatabase.getInstance(context).watchListCoinInfoDao()
@@ -48,7 +51,7 @@ class PriceMonitoringWorker(
 
         if (isTargetReached) {
             showNotification(targetPrice)
-            watchListCoinInfoDao.deleteTargetPriceFromWatchList(
+            repository.deleteTargetPrice(
                 targetPrice.fromSymbol,
                 targetPrice.targetPrice
             )

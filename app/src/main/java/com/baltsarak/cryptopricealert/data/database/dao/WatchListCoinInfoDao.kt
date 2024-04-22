@@ -20,6 +20,9 @@ interface WatchListCoinInfoDao {
     )
     fun getTargetPrices(): List<TargetPrice>
 
+    @Query("SELECT COUNT(*) FROM watch_list_coins WHERE fromSymbol = :fSym")
+    fun countTargetPrices(fSym: String): Int
+
     @Query(
         "SELECT id, fromSymbol, targetPrice, higherThenCurrent, position " +
                 "FROM watch_list_coins " +
@@ -38,7 +41,10 @@ interface WatchListCoinInfoDao {
                 "SET targetPrice = null AND higherThenCurrent = null " +
                 "WHERE fromSymbol = :fSym AND targetPrice = :tPrice"
     )
-    suspend fun deleteTargetPriceFromWatchList(fSym: String, tPrice: Double)
+    suspend fun zeroingTargetPrice(fSym: String, tPrice: Double)
+
+    @Query("DELETE FROM watch_list_coins WHERE fromSymbol = :fSym AND targetPrice = :tPrice")
+    suspend fun deleteTargetPrice(fSym: String, tPrice: Double)
 
     @Query("DELETE FROM watch_list_coins WHERE fromsymbol = :fSym")
     suspend fun deleteCoinFromWatchList(fSym: String)

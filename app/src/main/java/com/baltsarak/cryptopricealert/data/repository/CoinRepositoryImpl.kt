@@ -115,8 +115,12 @@ class CoinRepositoryImpl(
     }
 
     override suspend fun deleteTargetPrice(fromSymbol: String, price: Double) {
-        watchListCoinInfoDao.deleteTargetPriceFromWatchList(fromSymbol, price)
         withContext(Dispatchers.IO) {
+            if (watchListCoinInfoDao.countTargetPrices(fromSymbol) > 1) {
+                watchListCoinInfoDao.deleteTargetPrice(fromSymbol, price)
+            } else {
+                watchListCoinInfoDao.zeroingTargetPrice(fromSymbol, price)
+            }
             rewriteWatchListInRemoteDatabase()
         }
     }
