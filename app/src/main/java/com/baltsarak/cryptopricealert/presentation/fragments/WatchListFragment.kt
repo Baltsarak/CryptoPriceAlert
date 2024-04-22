@@ -108,6 +108,11 @@ class WatchListFragment : Fragment(), HasCustomTitle, HasCustomAction {
                 return true
             }
 
+            override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
+                super.clearView(recyclerView, viewHolder)
+                    viewModel.rewriteWatchListInRemoteDatabase()
+            }
+
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 adapter.onItemDismiss(viewHolder.adapterPosition)
                 val item = adapter.currentList[viewHolder.adapterPosition]

@@ -23,6 +23,7 @@ import com.baltsarak.cryptopricealert.domain.usecases.GetPopularCoinListUseCase
 import com.baltsarak.cryptopricealert.domain.usecases.GetWatchListCoinsUseCase
 import com.baltsarak.cryptopricealert.domain.usecases.LoadCoinPriceHistoryInfoUseCase
 import com.baltsarak.cryptopricealert.domain.usecases.LoadDataUseCase
+import com.baltsarak.cryptopricealert.domain.usecases.RewriteWatchListInRemoteDatabaseUseCase
 import com.baltsarak.cryptopricealert.domain.usecases.RewriteWatchListUseCase
 import com.baltsarak.cryptopricealert.domain.usecases.StartWorkerUseCase
 import kotlinx.coroutines.Deferred
@@ -35,6 +36,8 @@ class CoinViewModel(application: Application) : AndroidViewModel(application) {
 
     private val addCoinToWatchListUseCase = AddCoinToWatchListUseCase(repository)
     private val rewriteWatchListUseCase = RewriteWatchListUseCase(repository)
+    private val rewriteWatchListInRemoteDatabaseUseCase =
+        RewriteWatchListInRemoteDatabaseUseCase(repository)
     private val deleteCoinFromWatchListUseCase = DeleteCoinFromWatchListUseCase(repository)
     private val deleteAllFromWatchListUseCase = DeleteAllFromWatchListUseCase(repository)
     private val deleteTargetPriceUseCase = DeleteTargetPriceUseCase(repository)
@@ -106,9 +109,11 @@ class CoinViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun rewriteWatchList(newList: List<CoinInfo>) {
-        viewModelScope.launch {
-            rewriteWatchListUseCase(newList)
-        }
+        viewModelScope.launch { rewriteWatchListUseCase(newList) }
+    }
+
+    fun rewriteWatchListInRemoteDatabase() {
+        viewModelScope.launch { rewriteWatchListInRemoteDatabaseUseCase() }
     }
 
     fun deleteCoinFromWatchList(fromSymbol: String) {

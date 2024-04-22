@@ -18,6 +18,8 @@ interface CoinRepository {
 
     suspend fun rewriteWatchList(watchList: List<CoinInfo>)
 
+    suspend fun rewriteWatchListInRemoteDatabase()
+
     suspend fun deleteCoinFromWatchList(fromSymbol: String)
 
     suspend fun deleteAllFromWatchList()

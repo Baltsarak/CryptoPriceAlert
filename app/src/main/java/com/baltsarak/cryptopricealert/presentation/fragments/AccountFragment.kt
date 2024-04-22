@@ -49,8 +49,8 @@ class AccountFragment : Fragment() {
             else -> configureAuthenticatedUser(user)
         }
         binding.exit.setOnClickListener {
-            auth.signOut()
             viewModel.deleteAllFromWatchList()
+            auth.signOut()
             navigator().goToLogin()
         }
     }

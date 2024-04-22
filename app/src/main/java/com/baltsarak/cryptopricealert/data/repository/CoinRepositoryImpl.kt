@@ -99,17 +99,15 @@ class CoinRepositoryImpl(
                 watchListCoinInfoDao.insertCoinToWatchList(it)
             }
         }
-        withContext(Dispatchers.IO) {
-            remoteDatabaseService.deleteAllFromRemoteDatabase()
-            remoteDatabaseService.sendWatchListToRemoteDatabase(getTargetPrices())
-        }
+    }
+
+    override suspend fun rewriteWatchListInRemoteDatabase() {
+        remoteDatabaseService.deleteAllFromRemoteDatabase()
+        remoteDatabaseService.sendWatchListToRemoteDatabase(getTargetPrices())
     }
 
     override suspend fun deleteCoinFromWatchList(fromSymbol: String) {
         watchListCoinInfoDao.deleteCoinFromWatchList(fromSymbol)
-        withContext(Dispatchers.IO) {
-            remoteDatabaseService.deleteCoinFromRemoteDatabase(fromSymbol)
-        }
     }
 
     override suspend fun deleteAllFromWatchList() {
@@ -119,7 +117,7 @@ class CoinRepositoryImpl(
     override suspend fun deleteTargetPrice(fromSymbol: String, price: Double) {
         watchListCoinInfoDao.deleteTargetPriceFromWatchList(fromSymbol, price)
         withContext(Dispatchers.IO) {
-            remoteDatabaseService.deleteTargetPriceFromRemoteDatabase(fromSymbol, price)
+            rewriteWatchListInRemoteDatabase()
         }
     }
 

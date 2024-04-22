@@ -5,7 +5,6 @@ import com.baltsarak.cryptopricealert.data.database.entities.WatchListCoinDbMode
 import com.baltsarak.cryptopricealert.domain.entities.TargetPrice
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.QuerySnapshot
 import kotlinx.coroutines.tasks.await
 
 class RemoteDatabaseService {
@@ -99,62 +98,6 @@ class RemoteDatabaseService {
         } catch (e: Exception) {
             Log.w("Firestore", "Error getting documents: ", e)
             emptyList()
-        }
-    }
-
-    fun deleteTargetPriceFromRemoteDatabase(fromSymbol: String, price: Double) {
-        remoteDatabase.collection("watchList")
-            .whereEqualTo("fromSymbol", fromSymbol)
-            .whereEqualTo("targetPrice", price)
-            .get()
-            .addOnSuccessListener { documents ->
-                for (document in documents) {
-                    remoteDatabase.collection("watchList").document(document.id)
-                        .update(
-                            mapOf(
-                                "targetPrice" to null,
-                                "higherThenCurrent" to null
-                            )
-                        )
-                        .addOnSuccessListener {
-                            Log.i("Firestore", "Document successfully updated")
-                        }
-                        .addOnFailureListener { e ->
-                            Log.w("Firestore", "Error updating document", e)
-                        }
-                }
-            }
-            .addOnFailureListener { exception ->
-                Log.w("Firestore", "Error getting documents: ", exception)
-            }
-    }
-
-    fun deleteCoinFromRemoteDatabase(fSym: String) {
-        remoteDatabase.collection("watch_list")
-            .whereEqualTo("fromSymbol", fSym)
-            .get()
-            .addOnSuccessListener { documents ->
-                if (documents.isEmpty) {
-                    Log.i("Firestore", "No documents found with fromSymbol = $fSym")
-                } else {
-                    deleteDocuments(documents)
-                }
-            }
-            .addOnFailureListener { exception ->
-                Log.w("Firestore", "Error getting documents: ", exception)
-            }
-    }
-
-    private fun deleteDocuments(documents: QuerySnapshot) {
-        for (document in documents) {
-            remoteDatabase.collection("watch_list").document(document.id)
-                .delete()
-                .addOnSuccessListener {
-                    Log.i("Firestore", "Document successfully deleted!")
-                }
-                .addOnFailureListener { e ->
-                    Log.w("Firestore", "Error deleting document", e)
-                }
         }
     }
 
