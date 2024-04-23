@@ -1,9 +1,6 @@
 package com.baltsarak.cryptopricealert.presentation.fragments
 
 import android.Manifest
-import android.animation.Animator
-import android.animation.AnimatorListenerAdapter
-import android.animation.ObjectAnimator
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Build
@@ -12,7 +9,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.DecelerateInterpolator
-import android.widget.TextView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -86,24 +82,10 @@ class CoinDetailInfoFragment : Fragment(), HasCustomTitle, HasCustomAction {
                 Glide.with(this@CoinDetailInfoFragment)
                     .load(it.imageUrl)
                     .into(coinLogo)
-                updatePriceWithAnimation(textViewPrice, "$${it.price.toString()}")
+                "$${it.price.toString()}".also { price -> textViewPrice.text = price }
                 it.fullName?.let { name -> showTargetPrices(name) }
             }
         }
-    }
-
-    private fun updatePriceWithAnimation(textView: TextView, newPrice: String) {
-        val fadeOut = ObjectAnimator.ofFloat(textView, "alpha", 1f, 0f)
-        fadeOut.duration = 300
-        fadeOut.addListener(object : AnimatorListenerAdapter() {
-            override fun onAnimationEnd(animation: Animator) {
-                textView.text = newPrice
-                val fadeIn = ObjectAnimator.ofFloat(textView, "alpha", 0f, 1f)
-                fadeIn.duration = 300
-                fadeIn.start()
-            }
-        })
-        fadeOut.start()
     }
 
     private fun animateButton(button: View) {

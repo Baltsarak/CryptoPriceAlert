@@ -96,21 +96,21 @@
             android:textColor="@color/silver"
             android:textSize="12sp"
             app:layout_constraintBottom_toTopOf="@id/target_price_more"
-            app:layout_constraintStart_toStartOf="@id/target_price_1"
+            app:layout_constraintEnd_toEndOf="@id/target_price_1"
             app:layout_constraintTop_toBottomOf="@id/target_price_1"
-            tools:text="473.67" />
+            tools:text="47333.67" />
 
         <TextView
             android:id="@+id/target_price_more"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="15dp"
+            android:layout_marginEnd="5dp"
             android:fontFamily="@font/work_sans_regular"
             android:includeFontPadding="false"
             android:textColor="@color/silver"
-            android:textSize="10sp"
+            android:textSize="11sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/target_price_2"
+            app:layout_constraintEnd_toEndOf="@+id/target_price_2"
             app:layout_constraintTop_toBottomOf="@id/target_price_2"
             tools:text=". . ." />
 

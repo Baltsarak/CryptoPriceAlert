@@ -17,9 +17,16 @@
             android:layout_height="40dp"
             android:layout_margin="24dp"
             android:contentDescription="@string/cryptocurrency_logo"
-            app:layout_constraintStart_toEndOf="@id/text_view_coin_to_symbol"
+            app:layout_constraintStart_toEndOf="@id/barrier"
             app:layout_constraintTop_toTopOf="parent"
             tools:src="@mipmap/ic_launcher" />
+
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/barrier"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:barrierDirection="end"
+            app:constraint_referenced_ids="text_view_coin_name,text_view_coin_to_symbol" />
 
         <TextView
             android:id="@+id/text_view_coin_name"
