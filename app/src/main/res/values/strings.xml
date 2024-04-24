@@ -21,8 +21,8 @@
         Button for setting a price, upon reaching which an alert will be sent</string>
     <string name="usd">USD</string>
     <string name="account_picture">Profile picture</string>
-    <string name="add_coin">Add a coin</string>
-    <string name="search">Finding a coin</string>
+    <string name="add_coin">Add coin to watchlist</string>
+    <string name="search">Find a coin</string>
     <string name="nothing"></string>
     <string name="search_hint">Enter the name of a coin...</string>
     <string name="month">Month</string>
@@ -54,4 +54,7 @@
     <string name="repeat_password">Repeat password</string>
     <string name="exit">Exit</string>
     <string name="anonymous">Anonymous</string>
+    <string name="watch_list_hint">Here will be a list of coins that you choose for observation</string>
+    <string name="watch_list_delete_hint">Swipe left to delete coin</string>
+    <string name="Register_message">Register to be able to recover your account and access your watchlist from other devices</string>
 </resources>

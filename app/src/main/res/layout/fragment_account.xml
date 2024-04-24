@@ -54,6 +54,20 @@
         app:layout_constraintTop_toBottomOf="@id/name"
         tools:text="Email" />
 
+    <TextView
+        android:id="@+id/register_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="22dp"
+        android:fontFamily="@font/work_sans_regular"
+        android:gravity="center"
+        android:text="@string/Register_message"
+        android:textColor="@color/silver"
+        android:textSize="22sp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/button_register"
+        app:layout_constraintStart_toStartOf="parent" />
+
     <Button
         android:id="@+id/button_register"
         style="@style/CustomButtonStyle"

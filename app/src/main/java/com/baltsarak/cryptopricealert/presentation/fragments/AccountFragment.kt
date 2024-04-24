@@ -10,13 +10,14 @@ import androidx.lifecycle.ViewModelProvider
 import com.baltsarak.cryptopricealert.R
 import com.baltsarak.cryptopricealert.databinding.FragmentAccountBinding
 import com.baltsarak.cryptopricealert.presentation.CoinViewModel
+import com.baltsarak.cryptopricealert.presentation.contract.HasCustomTitle
 import com.baltsarak.cryptopricealert.presentation.contract.navigator
 import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 
 
-class AccountFragment : Fragment() {
+class AccountFragment : Fragment(), HasCustomTitle {
 
     private lateinit var auth: FirebaseAuth
     private lateinit var viewModel: CoinViewModel
@@ -59,6 +60,7 @@ class AccountFragment : Fragment() {
         binding.apply {
             name.text = getString(R.string.anonymous)
             accountEmail.visibility = View.GONE
+            registerMessage.visibility = View.VISIBLE
             buttonRegister.apply {
                 visibility = View.VISIBLE
                 setOnClickListener { navigator().goToRegister() }
@@ -80,6 +82,8 @@ class AccountFragment : Fragment() {
             name.text = user.displayName ?: ""
         }
     }
+
+    override fun getTitleRes(): Int = R.string.profile
 
     override fun onDestroy() {
         super.onDestroy()

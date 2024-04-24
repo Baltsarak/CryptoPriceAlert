@@ -60,9 +60,14 @@ class WatchListFragment : Fragment(), HasCustomTitle, HasCustomAction {
     private fun loadData() {
         viewLifecycleOwner.lifecycleScope.launch {
             val watchList = viewModel.getWatchListCoins()
-            adapter.submitList(watchList)
-            viewModel.watchListCoins.observe(viewLifecycleOwner) {
-                adapter.submitList(it)
+            if (watchList.isEmpty()) {
+                binding.recyclerViewWatchList.visibility = View.GONE
+                binding.textHint.visibility = View.VISIBLE
+            } else {
+                adapter.submitList(watchList)
+                viewModel.watchListCoins.observe(viewLifecycleOwner) {
+                    adapter.submitList(it)
+                }
             }
         }
     }
@@ -108,9 +113,12 @@ class WatchListFragment : Fragment(), HasCustomTitle, HasCustomAction {
                 return true
             }
 
-            override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
+            override fun clearView(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder
+            ) {
                 super.clearView(recyclerView, viewHolder)
-                    viewModel.rewriteWatchListInRemoteDatabase()
+                viewModel.rewriteWatchListInRemoteDatabase()
             }
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
@@ -128,7 +136,7 @@ class WatchListFragment : Fragment(), HasCustomTitle, HasCustomAction {
     override fun getCustomAction(): CustomAction {
         return CustomAction(
             iconRes = R.drawable.search,
-            textRes = R.string.add_coin,
+            textRes = R.string.search,
             onCustomAction = {
                 navigator().showSearchCoin()
                 navigator().openSearchView()
