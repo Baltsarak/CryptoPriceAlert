@@ -236,16 +236,22 @@ class CoinDetailInfoFragment : Fragment(), HasCustomTitle, HasCustomAction {
                         REQUEST_CODE_POST_NOTIFICATIONS
                     )
                 } else {
-                    animateButton(binding.buttonAdd)
-                    viewLifecycleOwner.lifecycleScope.launch {
-                        addCoinToWatchList().await()
-                    }
-                    binding.targetPrice.setText("")
-                    settingPriceChart(definePeriod())
-                    viewModel.startWorker()
+                    addToWatchListAndStartWorker()
                 }
+            } else {
+                addToWatchListAndStartWorker()
             }
         }
+    }
+
+    private fun addToWatchListAndStartWorker() {
+        animateButton(binding.buttonAdd)
+        viewLifecycleOwner.lifecycleScope.launch {
+            addCoinToWatchList().await()
+        }
+        binding.targetPrice.setText("")
+        settingPriceChart(definePeriod())
+        viewModel.startWorker()
     }
 
     private fun setupSwipeListener() {

@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "510663096013",
+    "firebase_url": "https://cryptopricealert-8ec9f-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "cryptopricealert-8ec9f",
+    "storage_bucket": "cryptopricealert-8ec9f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:510663096013:android:f7beb692d21e608d679b84",
+        "android_client_info": {
+          "package_name": "com.baltsarak.cryptopricealert"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "510663096013-f9l6t86c7scc8h5g2e0i41fvi5j60tdg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.baltsarak.cryptopricealert",
+            "certificate_hash": "22e46ddea39e8d6ef9c17a4fa04173d48035da85"
+          }
+        },
+        {
+          "client_id": "510663096013-gssqgfii1kqhesvrm120q8h6u8l2ficf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDKZN3eIXyZYrkaVtXYNH_zaA_Vil8g7oE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "510663096013-gssqgfii1kqhesvrm120q8h6u8l2ficf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
