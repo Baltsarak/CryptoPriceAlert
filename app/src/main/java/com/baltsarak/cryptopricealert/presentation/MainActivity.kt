@@ -326,7 +326,7 @@ class MainActivity : AppCompatActivity(), Navigator {
     }
 
     private fun showExitConfirmationDialog() {
-        AlertDialog.Builder(this)
+        AlertDialog.Builder(this, R.style.AlertDialogStyle)
             .setTitle("Exit")
             .setMessage("Are you sure you want to exit?")
             .setPositiveButton("Yes") { _, _ ->
