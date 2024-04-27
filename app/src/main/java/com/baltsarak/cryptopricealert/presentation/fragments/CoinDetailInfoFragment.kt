@@ -117,43 +117,54 @@ class CoinDetailInfoFragment : Fragment(), HasCustomTitle, HasCustomAction {
     }
 
     private fun settingPriceChart(period: Int) {
+        binding.priceChart.setNoDataText("")
         viewLifecycleOwner.lifecycleScope.launch {
             val priceHistory = viewModel.getCoinPriceHistory(fromSymbol, period)
-            val entries = priceHistory.entries.sortedBy { it.key }.map { Entry(it.key, it.value) }
-            val priceHistoryDataSet = LineDataSet(entries, fromSymbol).apply {
-                mode = LineDataSet.Mode.CUBIC_BEZIER
-                color = Color.WHITE
-                lineWidth = 3F
-                setDrawValues(false)
-                setDrawCircles(false)
-                setDrawFilled(true)
-                fillColor = Color.WHITE
-                fillDrawable =
-                    ContextCompat.getDrawable(requireContext(), R.drawable.chart_gradient_fill)
-            }
+            if (priceHistory.isEmpty()) {
+                binding.priceChart.visibility = View.GONE
+                binding.radioGroup.visibility = View.INVISIBLE
+            } else {
+                val entries =
+                    priceHistory.entries.sortedBy { it.key }.map { Entry(it.key, it.value) }
+                val priceHistoryDataSet = LineDataSet(entries, fromSymbol).apply {
+                    mode = LineDataSet.Mode.CUBIC_BEZIER
+                    color = Color.WHITE
+                    lineWidth = 3F
+                    setDrawValues(false)
+                    setDrawCircles(false)
+                    setDrawFilled(true)
+                    fillColor = Color.WHITE
+                    fillDrawable =
+                        ContextCompat.getDrawable(requireContext(), R.drawable.chart_gradient_fill)
+                }
 
-            val higherColor = ContextCompat.getColor(requireContext(), R.color.colorPriceHigher)
-            val lowerColor = ContextCompat.getColor(requireContext(), R.color.colorPriceLower)
+                val higherColor = ContextCompat.getColor(requireContext(), R.color.colorPriceHigher)
+                val lowerColor = ContextCompat.getColor(requireContext(), R.color.colorPriceLower)
 
-            val leftAxis = binding.priceChart.axisLeft
-            leftAxis.removeAllLimitLines()
-            targetPrices.filterNotNull().filter { it.targetPrice != 0.0 }.forEach {
-                val limitLine =
-                    LimitLine(it.targetPrice.toFloat(), it.targetPrice.toString()).apply {
-                        lineWidth = 1f
-                        lineColor = if (it.higherThenCurrent) higherColor else lowerColor
-                        textColor = lineColor
-                        textSize = 12f
-                    }
-                leftAxis.addLimitLine(limitLine)
-            }
+                val leftAxis = binding.priceChart.axisLeft
+                leftAxis.setDrawGridLines(false)
+                leftAxis.removeAllLimitLines()
+                targetPrices.filterNotNull().filter { it.targetPrice != 0.0 }.forEach {
+                    val limitLine =
+                        LimitLine(it.targetPrice.toFloat(), it.targetPrice.toString()).apply {
+                            lineWidth = 1f
+                            lineColor = if (it.higherThenCurrent) higherColor else lowerColor
+                            textColor = lineColor
+                            textSize = 12f
+                        }
+                    leftAxis.addLimitLine(limitLine)
+                }
 
-            with(binding.priceChart) {
-                axisRight.isEnabled = false
-                xAxis.isEnabled = false
-                axisLeft.textColor = Color.WHITE
-                data = LineData(priceHistoryDataSet)
-                invalidate()
+                with(binding.priceChart) {
+                    axisRight.isEnabled = false
+                    xAxis.isEnabled = false
+                    axisLeft.textColor = Color.WHITE
+                    data = LineData(priceHistoryDataSet)
+                    description.isEnabled = false
+                    legend.isEnabled = false
+                    marker = InfoMarkerView(requireContext(), R.layout.marker_view)
+                    invalidate()
+                }
             }
         }
     }
@@ -246,6 +257,7 @@ class CoinDetailInfoFragment : Fragment(), HasCustomTitle, HasCustomAction {
 
     private fun addToWatchListAndStartWorker() {
         animateButton(binding.buttonAdd)
+        navigator().hideKeyboard()
         viewLifecycleOwner.lifecycleScope.launch {
             addCoinToWatchList().await()
         }

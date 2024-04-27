@@ -22,6 +22,8 @@ interface Navigator {
 
     fun closeSearchView()
 
+    fun hideKeyboard()
+
     fun showAccount()
 
     fun goBack()

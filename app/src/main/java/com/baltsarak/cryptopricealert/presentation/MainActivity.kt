@@ -336,6 +336,14 @@ class MainActivity : AppCompatActivity(), Navigator {
             .show()
     }
 
+    override fun hideKeyboard() {
+        val view = this.currentFocus
+        view?.let {
+            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(it.windowToken, 0)
+        }
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         callbackOnBackPressed.isEnabled = false
