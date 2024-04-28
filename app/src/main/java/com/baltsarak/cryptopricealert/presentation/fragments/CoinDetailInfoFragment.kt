@@ -129,7 +129,13 @@ class CoinDetailInfoFragment : Fragment(), HasCustomTitle, HasCustomAction {
                 val priceHistoryDataSet = LineDataSet(entries, fromSymbol).apply {
                     mode = LineDataSet.Mode.CUBIC_BEZIER
                     color = Color.WHITE
-                    lineWidth = 3F
+                    lineWidth = if (period == DAY || period == MONTH) {
+                        3f
+                    } else {
+                        2f
+                    }
+                    isHighlightEnabled = true
+                    highlightLineWidth = 1f
                     setDrawValues(false)
                     setDrawCircles(false)
                     setDrawFilled(true)
@@ -162,7 +168,7 @@ class CoinDetailInfoFragment : Fragment(), HasCustomTitle, HasCustomAction {
                     data = LineData(priceHistoryDataSet)
                     description.isEnabled = false
                     legend.isEnabled = false
-                    marker = InfoMarkerView(requireContext(), R.layout.marker_view)
+                    marker = InfoMarkerView(requireContext(), R.layout.marker_view, this)
                     invalidate()
                 }
             }
