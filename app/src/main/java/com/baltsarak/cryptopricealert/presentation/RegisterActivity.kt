@@ -81,7 +81,7 @@ class RegisterActivity : AppCompatActivity() {
                     updateUserProfile(it, userName)
                     saveUserData(it.uid, userName, email)
                 }
-                navigateToMain()
+                navigateToMain(true)
             } else {
                 errorProcessing(task)
             }
@@ -103,7 +103,7 @@ class RegisterActivity : AppCompatActivity() {
                         saveUserData(it.uid, userName, email)
                     }
                     viewModel.deleteAllFromWatchList()
-                    navigateToMain()
+                    navigateToMain(false)
                 } else {
                     errorProcessing(task)
                 }
@@ -150,9 +150,12 @@ class RegisterActivity : AppCompatActivity() {
         Log.w("FirebaseAuth", message, task.exception)
     }
 
-    private fun navigateToMain() {
+    private fun navigateToMain(showProfile: Boolean) {
         val intent = Intent(this, MainActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        intent.apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            putExtra("SHOW_PROFILE", showProfile)
+        }
         startActivity(intent)
         finish()
     }

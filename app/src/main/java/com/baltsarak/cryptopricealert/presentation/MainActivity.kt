@@ -54,7 +54,9 @@ class MainActivity : AppCompatActivity(), Navigator {
         ActivityMainBinding.inflate(layoutInflater)
     }
 
-    private lateinit var viewModel: CoinViewModel
+    private val viewModel: CoinViewModel by lazy {
+        ViewModelProvider(this)[CoinViewModel::class.java]
+    }
 
     private val fragmentListener =
         object : FragmentManager.FragmentLifecycleCallbacks() {
@@ -116,7 +118,28 @@ class MainActivity : AppCompatActivity(), Navigator {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+        setupActivityResultLauncher()
+        initializeAuth()
+        setSupportActionBar(binding.toolbar)
+        binding.bottomNavigation.setOnItemSelectedListener(onItemSelectedListener)
+        supportFragmentManager.registerFragmentLifecycleCallbacks(fragmentListener, false)
+        onBackPressedDispatcher.addCallback(this, callbackOnBackPressed)
+        if (savedInstanceState == null) {
+            viewModel.loadData()
+            launchFragment(NewsFragment())
+        }
+        handleIntent()
+        lifecycleScope.launch { setClickListeners() }
+    }
 
+    private fun initializeAuth() {
+        auth = Firebase.auth
+        if (auth.currentUser == null) {
+            goToLogin()
+        }
+    }
+
+    private fun setupActivityResultLauncher() {
         loginLauncher = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
         ) { result ->
@@ -126,22 +149,15 @@ class MainActivity : AppCompatActivity(), Navigator {
                 launchFragment(NewsFragment())
             }
         }
+    }
 
-        auth = Firebase.auth
-        if (auth.currentUser == null) {
-            goToLogin()
+    private fun handleIntent() {
+        intent?.getStringExtra("COIN_SYMBOL")?.let {
+            showCoinInfo(it)
         }
-
-        setSupportActionBar(binding.toolbar)
-        binding.bottomNavigation.setOnItemSelectedListener(onItemSelectedListener)
-        supportFragmentManager.registerFragmentLifecycleCallbacks(fragmentListener, false)
-        onBackPressedDispatcher.addCallback(this, callbackOnBackPressed)
-        viewModel = ViewModelProvider(this)[CoinViewModel::class.java]
-        if (savedInstanceState == null) {
-            viewModel.loadData()
-            launchFragment(NewsFragment())
+        if (intent?.getBooleanExtra("SHOW_PROFILE", false) == true) {
+            launchFragment(AccountFragment())
         }
-        lifecycleScope.launch { setClickListeners() }
     }
 
     override fun onSupportNavigateUp(): Boolean {

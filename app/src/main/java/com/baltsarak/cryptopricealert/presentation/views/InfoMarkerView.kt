@@ -1,4 +1,4 @@
-package com.baltsarak.cryptopricealert.presentation.fragments
+package com.baltsarak.cryptopricealert.presentation.views
 
 import android.content.Context
 import android.widget.TextView

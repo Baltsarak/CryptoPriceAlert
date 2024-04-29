@@ -26,6 +26,7 @@ import com.baltsarak.cryptopricealert.presentation.contract.CustomAction
 import com.baltsarak.cryptopricealert.presentation.contract.HasCustomAction
 import com.baltsarak.cryptopricealert.presentation.contract.HasCustomTitle
 import com.baltsarak.cryptopricealert.presentation.contract.navigator
+import com.baltsarak.cryptopricealert.presentation.views.InfoMarkerView
 import com.bumptech.glide.Glide
 import com.github.mikephil.charting.components.LimitLine
 import com.github.mikephil.charting.data.Entry

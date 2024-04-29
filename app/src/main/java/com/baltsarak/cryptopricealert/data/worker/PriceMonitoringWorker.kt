@@ -64,7 +64,7 @@ class PriceMonitoringWorker(
         notificationHelper.sendNotification(
             targetPrice.id,
             "Price Alert",
-            "Цена ${targetPrice.fromSymbol} достигла: ${targetPrice.targetPrice}"
+            targetPrice
         )
     }
 
