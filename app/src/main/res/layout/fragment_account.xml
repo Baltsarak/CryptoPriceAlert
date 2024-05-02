@@ -9,17 +9,6 @@
     tools:context=".presentation.fragments.AccountFragment">
 
     <ImageView
-        android:id="@+id/exit"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:layout_margin="36dp"
-        android:contentDescription="@string/exit"
-        android:src="@drawable/icon_exit"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:tint="@color/silver" />
-
-    <ImageView
         android:id="@+id/image"
         android:layout_width="100dp"
         android:layout_height="100dp"

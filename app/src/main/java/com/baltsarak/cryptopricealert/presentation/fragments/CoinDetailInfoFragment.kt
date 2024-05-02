@@ -318,7 +318,7 @@ class CoinDetailInfoFragment : Fragment(), HasCustomTitle, HasCustomAction {
 
     override fun getCustomAction(): CustomAction {
         return CustomAction(
-            iconRes = R.drawable.add,
+            iconRes = R.drawable.icon_add,
             textRes = R.string.add_coin
         ) {
             viewLifecycleOwner.lifecycleScope.launch {

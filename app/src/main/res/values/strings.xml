@@ -22,6 +22,7 @@
     <string name="usd">USD</string>
     <string name="account_picture">Profile picture</string>
     <string name="add_coin">Add coin to watchlist</string>
+    <string name="log_out">Log out</string>
     <string name="search">Find a coin</string>
     <string name="nothing"></string>
     <string name="search_hint">Enter the name of a coin...</string>

@@ -10,6 +10,8 @@ import androidx.lifecycle.ViewModelProvider
 import com.baltsarak.cryptopricealert.R
 import com.baltsarak.cryptopricealert.databinding.FragmentAccountBinding
 import com.baltsarak.cryptopricealert.presentation.CoinViewModel
+import com.baltsarak.cryptopricealert.presentation.contract.CustomAction
+import com.baltsarak.cryptopricealert.presentation.contract.HasCustomAction
 import com.baltsarak.cryptopricealert.presentation.contract.HasCustomTitle
 import com.baltsarak.cryptopricealert.presentation.contract.navigator
 import com.bumptech.glide.Glide
@@ -17,7 +19,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 
 
-class AccountFragment : Fragment(), HasCustomTitle {
+class AccountFragment : Fragment(), HasCustomTitle, HasCustomAction {
 
     private lateinit var auth: FirebaseAuth
     private lateinit var viewModel: CoinViewModel
@@ -49,11 +51,6 @@ class AccountFragment : Fragment(), HasCustomTitle {
             user.isAnonymous -> configureAnonymousUser()
             else -> configureAuthenticatedUser(user)
         }
-        binding.exit.setOnClickListener {
-            viewModel.deleteAllFromWatchList()
-            auth.signOut()
-            navigator().goToLogin()
-        }
     }
 
     private fun configureAnonymousUser() {
@@ -84,6 +81,17 @@ class AccountFragment : Fragment(), HasCustomTitle {
     }
 
     override fun getTitleRes(): Int = R.string.profile
+
+    override fun getCustomAction(): CustomAction {
+        return CustomAction(
+            iconRes = R.drawable.icon_exit,
+            textRes = R.string.log_out
+        ) {
+            viewModel.deleteAllFromWatchList()
+            auth.signOut()
+            navigator().goToLogin()
+        }
+    }
 
     override fun onDestroy() {
         super.onDestroy()
