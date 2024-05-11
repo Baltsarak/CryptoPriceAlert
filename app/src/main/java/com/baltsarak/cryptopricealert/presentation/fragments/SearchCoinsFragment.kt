@@ -9,14 +9,14 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.baltsarak.cryptopricealert.databinding.FragmentSearchCoinsBinding
 import com.baltsarak.cryptopricealert.domain.entities.CoinName
-import com.baltsarak.cryptopricealert.presentation.CoinViewModel
 import com.baltsarak.cryptopricealert.presentation.adapters.CoinNameAdapter
 import com.baltsarak.cryptopricealert.presentation.contract.navigator
+import com.baltsarak.cryptopricealert.presentation.models.CoinListsViewModel
 import kotlinx.coroutines.launch
 
 class SearchCoinsFragment : Fragment() {
 
-    private lateinit var viewModel: CoinViewModel
+    private lateinit var viewModel: CoinListsViewModel
     private lateinit var adapter: CoinNameAdapter
 
     private var _binding: FragmentSearchCoinsBinding? = null
@@ -28,7 +28,7 @@ class SearchCoinsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        viewModel = ViewModelProvider(requireActivity())[CoinViewModel::class.java]
+        viewModel = ViewModelProvider(requireActivity())[CoinListsViewModel::class.java]
         adapter = CoinNameAdapter()
         _binding = FragmentSearchCoinsBinding.inflate(inflater, container, false)
         return binding.root

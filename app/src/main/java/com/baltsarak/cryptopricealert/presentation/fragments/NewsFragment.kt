@@ -10,15 +10,15 @@ import androidx.lifecycle.lifecycleScope
 import com.baltsarak.cryptopricealert.R
 import com.baltsarak.cryptopricealert.databinding.FragmentNewsBinding
 import com.baltsarak.cryptopricealert.domain.entities.News
-import com.baltsarak.cryptopricealert.presentation.CoinViewModel
 import com.baltsarak.cryptopricealert.presentation.adapters.NewsAdapter
 import com.baltsarak.cryptopricealert.presentation.contract.HasCustomTitle
 import com.baltsarak.cryptopricealert.presentation.contract.navigator
+import com.baltsarak.cryptopricealert.presentation.models.NewsViewModel
 import kotlinx.coroutines.launch
 
 class NewsFragment : Fragment(), HasCustomTitle {
 
-    private lateinit var viewModel: CoinViewModel
+    private lateinit var viewModel: NewsViewModel
     private lateinit var adapter: NewsAdapter
 
     private var _binding: FragmentNewsBinding? = null
@@ -30,7 +30,7 @@ class NewsFragment : Fragment(), HasCustomTitle {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        viewModel = ViewModelProvider(requireActivity())[CoinViewModel::class.java]
+        viewModel = ViewModelProvider(requireActivity())[NewsViewModel::class.java]
         adapter = NewsAdapter()
         _binding = FragmentNewsBinding.inflate(inflater, container, false)
         return binding.root

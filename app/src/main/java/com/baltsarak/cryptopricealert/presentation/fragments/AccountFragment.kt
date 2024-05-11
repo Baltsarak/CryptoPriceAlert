@@ -9,11 +9,11 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.baltsarak.cryptopricealert.R
 import com.baltsarak.cryptopricealert.databinding.FragmentAccountBinding
-import com.baltsarak.cryptopricealert.presentation.CoinViewModel
 import com.baltsarak.cryptopricealert.presentation.contract.CustomAction
 import com.baltsarak.cryptopricealert.presentation.contract.HasCustomAction
 import com.baltsarak.cryptopricealert.presentation.contract.HasCustomTitle
 import com.baltsarak.cryptopricealert.presentation.contract.navigator
+import com.baltsarak.cryptopricealert.presentation.models.WatchListViewModel
 import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -22,7 +22,7 @@ import com.google.firebase.auth.FirebaseUser
 class AccountFragment : Fragment(), HasCustomTitle, HasCustomAction {
 
     private lateinit var auth: FirebaseAuth
-    private lateinit var viewModel: CoinViewModel
+    private lateinit var viewModel: WatchListViewModel
 
     private var _binding: FragmentAccountBinding? = null
     private val binding: FragmentAccountBinding
@@ -34,7 +34,7 @@ class AccountFragment : Fragment(), HasCustomTitle, HasCustomAction {
         savedInstanceState: Bundle?
     ): View {
         auth = FirebaseAuth.getInstance()
-        viewModel = ViewModelProvider(requireActivity())[CoinViewModel::class.java]
+        viewModel = ViewModelProvider(requireActivity())[WatchListViewModel::class.java]
         _binding = FragmentAccountBinding.inflate(inflater, container, false)
         return binding.root
     }

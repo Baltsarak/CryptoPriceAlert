@@ -20,12 +20,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.baltsarak.cryptopricealert.R
 import com.baltsarak.cryptopricealert.databinding.FragmentCoinDetailInfoBinding
 import com.baltsarak.cryptopricealert.domain.entities.TargetPrice
-import com.baltsarak.cryptopricealert.presentation.CoinViewModel
 import com.baltsarak.cryptopricealert.presentation.adapters.TargetPriceAdapter
 import com.baltsarak.cryptopricealert.presentation.contract.CustomAction
 import com.baltsarak.cryptopricealert.presentation.contract.HasCustomAction
 import com.baltsarak.cryptopricealert.presentation.contract.HasCustomTitle
 import com.baltsarak.cryptopricealert.presentation.contract.navigator
+import com.baltsarak.cryptopricealert.presentation.models.CoinDetailsViewModel
 import com.baltsarak.cryptopricealert.presentation.views.InfoMarkerView
 import com.bumptech.glide.Glide
 import com.github.mikephil.charting.components.LimitLine
@@ -37,7 +37,7 @@ import kotlinx.coroutines.launch
 
 class CoinDetailInfoFragment : Fragment(), HasCustomTitle, HasCustomAction {
 
-    private lateinit var viewModel: CoinViewModel
+    private lateinit var viewModel: CoinDetailsViewModel
 
     private var _binding: FragmentCoinDetailInfoBinding? = null
     private val binding: FragmentCoinDetailInfoBinding
@@ -51,7 +51,7 @@ class CoinDetailInfoFragment : Fragment(), HasCustomTitle, HasCustomAction {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        viewModel = ViewModelProvider(requireActivity())[CoinViewModel::class.java]
+        viewModel = ViewModelProvider(requireActivity())[CoinDetailsViewModel::class.java]
         _binding = FragmentCoinDetailInfoBinding.inflate(inflater, container, false)
         fromSymbol = requireArguments().getString(EXTRA_FROM_SYMBOL, EMPTY_SYMBOL)
         return binding.root

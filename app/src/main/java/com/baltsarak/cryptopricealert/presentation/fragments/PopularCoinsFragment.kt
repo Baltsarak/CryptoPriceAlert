@@ -11,17 +11,17 @@ import androidx.recyclerview.widget.DefaultItemAnimator
 import com.baltsarak.cryptopricealert.R
 import com.baltsarak.cryptopricealert.databinding.FragmentPopularCoinsBinding
 import com.baltsarak.cryptopricealert.domain.entities.CoinInfo
-import com.baltsarak.cryptopricealert.presentation.CoinViewModel
 import com.baltsarak.cryptopricealert.presentation.adapters.CoinInfoAdapter
 import com.baltsarak.cryptopricealert.presentation.contract.CustomAction
 import com.baltsarak.cryptopricealert.presentation.contract.HasCustomAction
 import com.baltsarak.cryptopricealert.presentation.contract.HasCustomTitle
 import com.baltsarak.cryptopricealert.presentation.contract.navigator
+import com.baltsarak.cryptopricealert.presentation.models.CoinListsViewModel
 import kotlinx.coroutines.launch
 
 class PopularCoinsFragment : Fragment(), HasCustomTitle, HasCustomAction {
 
-    private lateinit var viewModel: CoinViewModel
+    private lateinit var viewModel: CoinListsViewModel
     private lateinit var adapter: CoinInfoAdapter
 
     private var _binding: FragmentPopularCoinsBinding? = null
@@ -33,7 +33,7 @@ class PopularCoinsFragment : Fragment(), HasCustomTitle, HasCustomAction {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        viewModel = ViewModelProvider(requireActivity())[CoinViewModel::class.java]
+        viewModel = ViewModelProvider(requireActivity())[CoinListsViewModel::class.java]
         adapter = CoinInfoAdapter()
         _binding = FragmentPopularCoinsBinding.inflate(inflater, container, false)
         return binding.root

@@ -13,17 +13,17 @@ import androidx.recyclerview.widget.RecyclerView
 import com.baltsarak.cryptopricealert.R
 import com.baltsarak.cryptopricealert.databinding.FragmentWatchlistBinding
 import com.baltsarak.cryptopricealert.domain.entities.CoinInfo
-import com.baltsarak.cryptopricealert.presentation.CoinViewModel
 import com.baltsarak.cryptopricealert.presentation.adapters.CoinInfoAdapter
 import com.baltsarak.cryptopricealert.presentation.contract.CustomAction
 import com.baltsarak.cryptopricealert.presentation.contract.HasCustomAction
 import com.baltsarak.cryptopricealert.presentation.contract.HasCustomTitle
 import com.baltsarak.cryptopricealert.presentation.contract.navigator
+import com.baltsarak.cryptopricealert.presentation.models.WatchListViewModel
 import kotlinx.coroutines.launch
 
 class WatchListFragment : Fragment(), HasCustomTitle, HasCustomAction {
 
-    private lateinit var viewModel: CoinViewModel
+    private lateinit var viewModel: WatchListViewModel
     private lateinit var adapter: CoinInfoAdapter
 
     private var _binding: FragmentWatchlistBinding? = null
@@ -35,7 +35,7 @@ class WatchListFragment : Fragment(), HasCustomTitle, HasCustomAction {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        viewModel = ViewModelProvider(requireActivity())[CoinViewModel::class.java]
+        viewModel = ViewModelProvider(requireActivity())[WatchListViewModel::class.java]
         adapter = CoinInfoAdapter()
         _binding = FragmentWatchlistBinding.inflate(inflater, container, false)
         return binding.root

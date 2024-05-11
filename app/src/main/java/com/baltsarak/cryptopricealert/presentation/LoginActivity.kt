@@ -15,6 +15,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.baltsarak.cryptopricealert.R
 import com.baltsarak.cryptopricealert.databinding.ActivityLoginBinding
+import com.baltsarak.cryptopricealert.presentation.models.WatchListViewModel
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.Identity
 import com.google.firebase.FirebaseNetworkException
@@ -33,13 +34,13 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var googleSignInLauncher: ActivityResultLauncher<IntentSenderRequest>
     private val oneTapClient by lazy { Identity.getSignInClient(this) }
     private val binding by lazy { ActivityLoginBinding.inflate(layoutInflater) }
-    private lateinit var viewModel: CoinViewModel
+    private lateinit var viewModel: WatchListViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         auth = FirebaseAuth.getInstance()
-        viewModel = ViewModelProvider(this)[CoinViewModel::class.java]
+        viewModel = ViewModelProvider(this)[WatchListViewModel::class.java]
         setupGoogleSignIn()
         setupListeners()
     }

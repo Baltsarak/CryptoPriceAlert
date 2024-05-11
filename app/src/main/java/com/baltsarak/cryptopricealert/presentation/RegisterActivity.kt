@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.ViewModelProvider
 import com.baltsarak.cryptopricealert.databinding.ActivityRegisterBinding
+import com.baltsarak.cryptopricealert.presentation.models.WatchListViewModel
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.EmailAuthProvider
@@ -23,7 +24,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 class RegisterActivity : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
-    private lateinit var viewModel: CoinViewModel
+    private lateinit var viewModel: WatchListViewModel
 
     private val binding by lazy {
         ActivityRegisterBinding.inflate(layoutInflater)
@@ -33,7 +34,7 @@ class RegisterActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         auth = FirebaseAuth.getInstance()
-        viewModel = ViewModelProvider(this)[CoinViewModel::class.java]
+        viewModel = ViewModelProvider(this)[WatchListViewModel::class.java]
         binding.buttonRegister.setOnClickListener {
             registerUser()
         }

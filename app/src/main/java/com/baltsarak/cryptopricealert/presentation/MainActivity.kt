@@ -37,6 +37,7 @@ import com.baltsarak.cryptopricealert.presentation.fragments.PopularCoinsFragmen
 import com.baltsarak.cryptopricealert.presentation.fragments.SearchCoinsFragment
 import com.baltsarak.cryptopricealert.presentation.fragments.WatchListFragment
 import com.baltsarak.cryptopricealert.presentation.fragments.WebViewFragment
+import com.baltsarak.cryptopricealert.presentation.models.CoinListsViewModel
 import com.google.android.material.navigation.NavigationBarView.OnItemSelectedListener
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -54,8 +55,8 @@ class MainActivity : AppCompatActivity(), Navigator {
         ActivityMainBinding.inflate(layoutInflater)
     }
 
-    private val viewModel: CoinViewModel by lazy {
-        ViewModelProvider(this)[CoinViewModel::class.java]
+    private val viewModel: CoinListsViewModel by lazy {
+        ViewModelProvider(this)[CoinListsViewModel::class.java]
     }
 
     private val fragmentListener =
