@@ -43,8 +43,20 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 class MainActivity : AppCompatActivity(), Navigator {
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+
+    private val viewModel: CoinListsViewModel by lazy {
+        ViewModelProvider(this, viewModelFactory)[CoinListsViewModel::class.java]
+    }
+
+    private val component by lazy {
+        (application as CryptoApp).component
+    }
 
     private lateinit var auth: FirebaseAuth
     private lateinit var loginLauncher: ActivityResultLauncher<Intent>
@@ -53,10 +65,6 @@ class MainActivity : AppCompatActivity(), Navigator {
 
     private val binding by lazy {
         ActivityMainBinding.inflate(layoutInflater)
-    }
-
-    private val viewModel: CoinListsViewModel by lazy {
-        ViewModelProvider(this)[CoinListsViewModel::class.java]
     }
 
     private val fragmentListener =
@@ -117,6 +125,7 @@ class MainActivity : AppCompatActivity(), Navigator {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        component.inject(this)
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         setupActivityResultLauncher()

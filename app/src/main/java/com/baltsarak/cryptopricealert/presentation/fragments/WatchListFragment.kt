@@ -1,5 +1,6 @@
 package com.baltsarak.cryptopricealert.presentation.fragments
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,6 +14,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.baltsarak.cryptopricealert.R
 import com.baltsarak.cryptopricealert.databinding.FragmentWatchlistBinding
 import com.baltsarak.cryptopricealert.domain.entities.CoinInfo
+import com.baltsarak.cryptopricealert.presentation.CryptoApp
+import com.baltsarak.cryptopricealert.presentation.ViewModelFactory
 import com.baltsarak.cryptopricealert.presentation.adapters.CoinInfoAdapter
 import com.baltsarak.cryptopricealert.presentation.contract.CustomAction
 import com.baltsarak.cryptopricealert.presentation.contract.HasCustomAction
@@ -20,22 +23,35 @@ import com.baltsarak.cryptopricealert.presentation.contract.HasCustomTitle
 import com.baltsarak.cryptopricealert.presentation.contract.navigator
 import com.baltsarak.cryptopricealert.presentation.models.WatchListViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 class WatchListFragment : Fragment(), HasCustomTitle, HasCustomAction {
 
     private lateinit var viewModel: WatchListViewModel
     private lateinit var adapter: CoinInfoAdapter
 
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+
     private var _binding: FragmentWatchlistBinding? = null
     private val binding: FragmentWatchlistBinding
         get() = _binding ?: throw RuntimeException("FragmentWatchlistBinding is null")
+
+    private val component by lazy {
+        (requireActivity().application as CryptoApp).component
+    }
+
+    override fun onAttach(context: Context) {
+        component.inject(this)
+        super.onAttach(context)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        viewModel = ViewModelProvider(requireActivity())[WatchListViewModel::class.java]
+        viewModel = ViewModelProvider(this, viewModelFactory)[WatchListViewModel::class.java]
         adapter = CoinInfoAdapter()
         _binding = FragmentWatchlistBinding.inflate(inflater, container, false)
         return binding.root
@@ -65,7 +81,7 @@ class WatchListFragment : Fragment(), HasCustomTitle, HasCustomAction {
                 binding.textHint.visibility = View.VISIBLE
             } else {
                 adapter.submitList(watchList)
-                viewModel.watchListCoins.observe(viewLifecycleOwner) {
+                viewModel.watchListLiveData.observe(viewLifecycleOwner) {
                     adapter.submitList(it)
                 }
             }

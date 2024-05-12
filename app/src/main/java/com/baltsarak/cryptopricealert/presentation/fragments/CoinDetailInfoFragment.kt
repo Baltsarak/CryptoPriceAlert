@@ -1,6 +1,7 @@
 package com.baltsarak.cryptopricealert.presentation.fragments
 
 import android.Manifest
+import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Build
@@ -20,6 +21,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.baltsarak.cryptopricealert.R
 import com.baltsarak.cryptopricealert.databinding.FragmentCoinDetailInfoBinding
 import com.baltsarak.cryptopricealert.domain.entities.TargetPrice
+import com.baltsarak.cryptopricealert.presentation.CryptoApp
+import com.baltsarak.cryptopricealert.presentation.ViewModelFactory
 import com.baltsarak.cryptopricealert.presentation.adapters.TargetPriceAdapter
 import com.baltsarak.cryptopricealert.presentation.contract.CustomAction
 import com.baltsarak.cryptopricealert.presentation.contract.HasCustomAction
@@ -34,10 +37,14 @@ import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 class CoinDetailInfoFragment : Fragment(), HasCustomTitle, HasCustomAction {
 
     private lateinit var viewModel: CoinDetailsViewModel
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
 
     private var _binding: FragmentCoinDetailInfoBinding? = null
     private val binding: FragmentCoinDetailInfoBinding
@@ -47,11 +54,20 @@ class CoinDetailInfoFragment : Fragment(), HasCustomTitle, HasCustomAction {
     private lateinit var targetPrices: List<TargetPrice?>
     private var checkedRadioButton: Int = MONTH
 
+    private val component by lazy {
+        (requireActivity().application as CryptoApp).component
+    }
+
+    override fun onAttach(context: Context) {
+        component.inject(this)
+        super.onAttach(context)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        viewModel = ViewModelProvider(requireActivity())[CoinDetailsViewModel::class.java]
+        viewModel = ViewModelProvider(this, viewModelFactory)[CoinDetailsViewModel::class.java]
         _binding = FragmentCoinDetailInfoBinding.inflate(inflater, container, false)
         fromSymbol = requireArguments().getString(EXTRA_FROM_SYMBOL, EMPTY_SYMBOL)
         return binding.root

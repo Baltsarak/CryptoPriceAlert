@@ -10,6 +10,7 @@ import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query
 import retrofit2.http.Url
+import javax.inject.Inject
 
 interface ApiService {
     @GET("https://data-api.cryptocompare.com/asset/v1/top/list")

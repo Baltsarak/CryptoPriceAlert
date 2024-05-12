@@ -1,9 +1,9 @@
 package com.baltsarak.cryptopricealert.presentation.models
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.baltsarak.cryptopricealert.data.repository.CoinRepositoryImpl
 import com.baltsarak.cryptopricealert.domain.entities.CoinInfo
 import com.baltsarak.cryptopricealert.domain.usecases.DeleteAllFromWatchListUseCase
 import com.baltsarak.cryptopricealert.domain.usecases.DeleteCoinFromWatchListUseCase
@@ -12,22 +12,25 @@ import com.baltsarak.cryptopricealert.domain.usecases.GetWatchListCoinsUseCase
 import com.baltsarak.cryptopricealert.domain.usecases.RewriteWatchListInRemoteDatabaseUseCase
 import com.baltsarak.cryptopricealert.domain.usecases.RewriteWatchListUseCase
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class WatchListViewModel(application: Application) : AndroidViewModel(application) {
-    private val repository = CoinRepositoryImpl(application)
+class WatchListViewModel @Inject constructor(
+    private val getWatchListCoinsUseCase: GetWatchListCoinsUseCase,
+    private val rewriteWatchListUseCase: RewriteWatchListUseCase,
+    private val deleteCoinFromWatchListUseCase: DeleteCoinFromWatchListUseCase,
+    private val deleteAllFromWatchListUseCase: DeleteAllFromWatchListUseCase,
+    private val getAndAddCoinToLocalDatabaseUseCase: GetAndAddCoinToLocalDatabaseUseCase,
+    private val rewriteWatchListInRemoteDatabaseUseCase: RewriteWatchListInRemoteDatabaseUseCase,
+) : ViewModel() {
 
-    private val getWatchListCoinsUseCase = GetWatchListCoinsUseCase(repository)
-    private val rewriteWatchListUseCase = RewriteWatchListUseCase(repository)
-    private val deleteCoinFromWatchListUseCase = DeleteCoinFromWatchListUseCase(repository)
-    private val deleteAllFromWatchListUseCase = DeleteAllFromWatchListUseCase(repository)
-    private val getAndAddCoinToLocalDatabaseUseCase =
-        GetAndAddCoinToLocalDatabaseUseCase(repository)
-    private val rewriteWatchListInRemoteDatabaseUseCase =
-        RewriteWatchListInRemoteDatabaseUseCase(repository)
+    private var _watchListLiveData = MutableLiveData<List<CoinInfo>>()
+    val watchListLiveData: LiveData<List<CoinInfo>> = _watchListLiveData
 
-    val watchListCoins = repository.watchListLiveData
-
-    suspend fun getWatchListCoins() = getWatchListCoinsUseCase()
+    suspend fun getWatchListCoins():List<CoinInfo> {
+       val watchListCoins = getWatchListCoinsUseCase()
+        _watchListLiveData.value = watchListCoins
+        return watchListCoins
+    }
 
     fun rewriteWatchList(newList: List<CoinInfo>) {
         viewModelScope.launch { rewriteWatchListUseCase(newList) }

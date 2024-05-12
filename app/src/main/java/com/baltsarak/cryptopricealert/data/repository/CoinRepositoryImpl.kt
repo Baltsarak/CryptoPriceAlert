@@ -11,11 +11,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.map
 import androidx.work.ExistingWorkPolicy
 import androidx.work.WorkManager
-import com.baltsarak.cryptopricealert.data.database.AppDatabase
 import com.baltsarak.cryptopricealert.data.database.RemoteDatabaseService
+import com.baltsarak.cryptopricealert.data.database.dao.CoinInfoDao
+import com.baltsarak.cryptopricealert.data.database.dao.CoinPriceHistoryDao
+import com.baltsarak.cryptopricealert.data.database.dao.WatchListCoinInfoDao
 import com.baltsarak.cryptopricealert.data.database.entities.WatchListCoinDbModel
 import com.baltsarak.cryptopricealert.data.mapper.CoinMapper
-import com.baltsarak.cryptopricealert.data.network.ApiFactory
+import com.baltsarak.cryptopricealert.data.network.ApiService
 import com.baltsarak.cryptopricealert.data.worker.PriceMonitoringWorker
 import com.baltsarak.cryptopricealert.domain.CoinRepository
 import com.baltsarak.cryptopricealert.domain.entities.CoinInfo
@@ -30,23 +32,17 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class CoinRepositoryImpl(
+class CoinRepositoryImpl @Inject constructor(
+    private val coinInfoDao: CoinInfoDao,
+    private val watchListCoinInfoDao: WatchListCoinInfoDao,
+    private val coinPriceHistoryDao: CoinPriceHistoryDao,
+    private val apiService: ApiService,
+    private val remoteDatabaseService: RemoteDatabaseService,
+    private val mapper: CoinMapper,
     private val application: Application
 ) : CoinRepository {
-
-    private val coinInfoDao = AppDatabase.getInstance(application).coinInfoDao()
-    private val watchListCoinInfoDao = AppDatabase.getInstance(application).watchListCoinInfoDao()
-    private val coinPriceHistoryDao = AppDatabase.getInstance(application).coinPriceHistoryDao()
-
-    private val remoteDatabaseService = RemoteDatabaseService()
-
-    private val apiService = ApiFactory.apiService
-
-    private val mapper = CoinMapper()
-
-    private var _watchListLiveData = MutableLiveData<List<CoinInfo>>()
-    val watchListLiveData: LiveData<List<CoinInfo>> = _watchListLiveData
 
     private var networkConnected = false
 
@@ -144,7 +140,6 @@ class CoinRepositoryImpl(
             )
             result.add(coinInfoEntity)
         }
-        _watchListLiveData.value = result
         return result
     }
 

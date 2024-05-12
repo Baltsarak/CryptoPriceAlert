@@ -6,8 +6,9 @@ import com.baltsarak.cryptopricealert.domain.entities.TargetPrice
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
+import javax.inject.Inject
 
-class RemoteDatabaseService {
+class RemoteDatabaseService @Inject constructor() {
     private val remoteDatabase = FirebaseFirestore.getInstance()
 
     fun addToRemoteDatabase(

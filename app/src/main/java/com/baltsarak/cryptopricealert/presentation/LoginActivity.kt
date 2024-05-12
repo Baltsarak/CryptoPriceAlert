@@ -27,6 +27,7 @@ import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.GoogleAuthProvider
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import javax.inject.Inject
 
 class LoginActivity : AppCompatActivity() {
 
@@ -36,11 +37,19 @@ class LoginActivity : AppCompatActivity() {
     private val binding by lazy { ActivityLoginBinding.inflate(layoutInflater) }
     private lateinit var viewModel: WatchListViewModel
 
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+
+    private val component by lazy {
+        (application as CryptoApp).component
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        component.inject(this)
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         auth = FirebaseAuth.getInstance()
-        viewModel = ViewModelProvider(this)[WatchListViewModel::class.java]
+        viewModel = ViewModelProvider(this, viewModelFactory)[WatchListViewModel::class.java]
         setupGoogleSignIn()
         setupListeners()
     }

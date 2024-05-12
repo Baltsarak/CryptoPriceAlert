@@ -1,5 +1,6 @@
 package com.baltsarak.cryptopricealert.presentation.fragments
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +10,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.baltsarak.cryptopricealert.R
 import com.baltsarak.cryptopricealert.databinding.FragmentAccountBinding
+import com.baltsarak.cryptopricealert.presentation.CryptoApp
+import com.baltsarak.cryptopricealert.presentation.ViewModelFactory
 import com.baltsarak.cryptopricealert.presentation.contract.CustomAction
 import com.baltsarak.cryptopricealert.presentation.contract.HasCustomAction
 import com.baltsarak.cryptopricealert.presentation.contract.HasCustomTitle
@@ -17,6 +20,7 @@ import com.baltsarak.cryptopricealert.presentation.models.WatchListViewModel
 import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import javax.inject.Inject
 
 
 class AccountFragment : Fragment(), HasCustomTitle, HasCustomAction {
@@ -24,9 +28,21 @@ class AccountFragment : Fragment(), HasCustomTitle, HasCustomAction {
     private lateinit var auth: FirebaseAuth
     private lateinit var viewModel: WatchListViewModel
 
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+
     private var _binding: FragmentAccountBinding? = null
     private val binding: FragmentAccountBinding
         get() = _binding ?: throw RuntimeException("FragmentAccountBinding is null")
+
+    private val component by lazy {
+        (requireActivity().application as CryptoApp).component
+    }
+
+    override fun onAttach(context: Context) {
+        component.inject(this)
+        super.onAttach(context)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -34,7 +50,7 @@ class AccountFragment : Fragment(), HasCustomTitle, HasCustomAction {
         savedInstanceState: Bundle?
     ): View {
         auth = FirebaseAuth.getInstance()
-        viewModel = ViewModelProvider(requireActivity())[WatchListViewModel::class.java]
+        viewModel = ViewModelProvider(this, viewModelFactory)[WatchListViewModel::class.java]
         _binding = FragmentAccountBinding.inflate(inflater, container, false)
         return binding.root
     }

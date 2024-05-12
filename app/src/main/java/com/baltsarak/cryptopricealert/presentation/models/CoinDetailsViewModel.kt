@@ -1,9 +1,7 @@
 package com.baltsarak.cryptopricealert.presentation.models
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.baltsarak.cryptopricealert.data.repository.CoinRepositoryImpl
 import com.baltsarak.cryptopricealert.domain.usecases.AddCoinToWatchListUseCase
 import com.baltsarak.cryptopricealert.domain.usecases.DeleteTargetPriceUseCase
 import com.baltsarak.cryptopricealert.domain.usecases.GetCoinInfoUseCase
@@ -14,17 +12,17 @@ import com.baltsarak.cryptopricealert.domain.usecases.StartWorkerUseCase
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class CoinDetailsViewModel(application: Application) : AndroidViewModel(application) {
-    private val repository = CoinRepositoryImpl(application)
-
-    private val loadCoinPriceHistoryInfoUseCase = LoadCoinPriceHistoryInfoUseCase(repository)
-    private val getCoinInfoUseCase = GetCoinInfoUseCase(repository)
-    private val getCoinPriceHistoryInfoUseCase = GetCoinPriceHistoryInfoUseCase(repository)
-    private val addCoinToWatchListUseCase = AddCoinToWatchListUseCase(repository)
-    private val getCurrentCoinPriceUseCase = GetCurrentCoinPriceUseCase(repository)
-    private val startWorkerUseCase = StartWorkerUseCase(repository)
-    private val deleteTargetPriceUseCase = DeleteTargetPriceUseCase(repository)
+class CoinDetailsViewModel @Inject constructor(
+    private val loadCoinPriceHistoryInfoUseCase: LoadCoinPriceHistoryInfoUseCase,
+    private val getCoinInfoUseCase: GetCoinInfoUseCase,
+    private val getCoinPriceHistoryInfoUseCase: GetCoinPriceHistoryInfoUseCase,
+    private val addCoinToWatchListUseCase: AddCoinToWatchListUseCase,
+    private val getCurrentCoinPriceUseCase: GetCurrentCoinPriceUseCase,
+    private val startWorkerUseCase: StartWorkerUseCase,
+    private val deleteTargetPriceUseCase: DeleteTargetPriceUseCase
+) : ViewModel() {
 
     suspend fun getCoinDetailInfo(fromSymbol: String) =
         viewModelScope.async { getCoinInfoUseCase(fromSymbol) }.await()

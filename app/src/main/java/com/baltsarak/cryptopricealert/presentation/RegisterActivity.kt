@@ -20,21 +20,30 @@ import com.google.firebase.auth.FirebaseAuthWeakPasswordException
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.userProfileChangeRequest
 import com.google.firebase.firestore.FirebaseFirestore
+import javax.inject.Inject
 
 class RegisterActivity : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
     private lateinit var viewModel: WatchListViewModel
 
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+
     private val binding by lazy {
         ActivityRegisterBinding.inflate(layoutInflater)
     }
 
+    private val component by lazy {
+        (application as CryptoApp).component
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        component.inject(this)
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         auth = FirebaseAuth.getInstance()
-        viewModel = ViewModelProvider(this)[WatchListViewModel::class.java]
+        viewModel = ViewModelProvider(this, viewModelFactory)[WatchListViewModel::class.java]
         binding.buttonRegister.setOnClickListener {
             registerUser()
         }

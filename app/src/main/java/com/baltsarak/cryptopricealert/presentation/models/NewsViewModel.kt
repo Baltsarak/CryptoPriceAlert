@@ -1,16 +1,14 @@
 package com.baltsarak.cryptopricealert.presentation.models
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.baltsarak.cryptopricealert.data.repository.CoinRepositoryImpl
 import com.baltsarak.cryptopricealert.domain.usecases.GetNewsListUseCase
 import kotlinx.coroutines.async
+import javax.inject.Inject
 
-class NewsViewModel(application: Application) : AndroidViewModel(application) {
-    private val repository = CoinRepositoryImpl(application)
-
-    private val getNewsListUseCase = GetNewsListUseCase(repository)
+class NewsViewModel @Inject constructor(
+    private val getNewsListUseCase: GetNewsListUseCase
+) : ViewModel() {
 
     suspend fun getNewsList() = viewModelScope.async { getNewsListUseCase() }.await()
 }

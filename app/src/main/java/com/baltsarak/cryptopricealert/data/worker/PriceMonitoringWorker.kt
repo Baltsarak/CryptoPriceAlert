@@ -10,15 +10,16 @@ import androidx.work.WorkerParameters
 import com.baltsarak.cryptopricealert.data.database.AppDatabase
 import com.baltsarak.cryptopricealert.data.network.ApiFactory
 import com.baltsarak.cryptopricealert.data.repository.CoinRepositoryImpl
+import com.baltsarak.cryptopricealert.domain.CoinRepository
 import com.baltsarak.cryptopricealert.domain.entities.TargetPrice
 import kotlinx.coroutines.delay
 
 class PriceMonitoringWorker(
+    private val repository: CoinRepository,
     context: Context,
     workerParameters: WorkerParameters
 ) : CoroutineWorker(context, workerParameters) {
 
-    private val repository = CoinRepositoryImpl(context as Application)
     private val apiService = ApiFactory.apiService
     private val watchListCoinInfoDao =
         AppDatabase.getInstance(context).watchListCoinInfoDao()
