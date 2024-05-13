@@ -1,28 +1,26 @@
 package com.baltsarak.cryptopricealert.data.worker
 
-import android.app.Application
 import android.content.Context
 import androidx.work.Constraints
 import androidx.work.CoroutineWorker
+import androidx.work.ListenableWorker
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkerParameters
-import com.baltsarak.cryptopricealert.data.database.AppDatabase
-import com.baltsarak.cryptopricealert.data.network.ApiFactory
-import com.baltsarak.cryptopricealert.data.repository.CoinRepositoryImpl
+import com.baltsarak.cryptopricealert.data.database.dao.WatchListCoinInfoDao
+import com.baltsarak.cryptopricealert.data.network.ApiService
 import com.baltsarak.cryptopricealert.domain.CoinRepository
 import com.baltsarak.cryptopricealert.domain.entities.TargetPrice
 import kotlinx.coroutines.delay
+import javax.inject.Inject
 
 class PriceMonitoringWorker(
-    private val repository: CoinRepository,
     context: Context,
-    workerParameters: WorkerParameters
+    workerParameters: WorkerParameters,
+    private val repository: CoinRepository,
+    private val watchListCoinInfoDao: WatchListCoinInfoDao,
+    private val apiService: ApiService
 ) : CoroutineWorker(context, workerParameters) {
-
-    private val apiService = ApiFactory.apiService
-    private val watchListCoinInfoDao =
-        AppDatabase.getInstance(context).watchListCoinInfoDao()
 
     override suspend fun doWork(): Result {
         while (true) {
@@ -77,5 +75,24 @@ class PriceMonitoringWorker(
                 Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
             )
             .build()
+    }
+
+    class Factory @Inject constructor(
+        private val repository: CoinRepository,
+        private val watchListCoinInfoDao: WatchListCoinInfoDao,
+        private val apiService: ApiService
+    ) : ChildWorkerFactory {
+        override fun create(
+            context: Context,
+            workerParameters: WorkerParameters
+        ): ListenableWorker {
+            return PriceMonitoringWorker(
+                context,
+                workerParameters,
+                repository,
+                watchListCoinInfoDao,
+                apiService
+            )
+        }
     }
 }

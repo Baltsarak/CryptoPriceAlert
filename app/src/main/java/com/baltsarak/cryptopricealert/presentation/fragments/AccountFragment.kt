@@ -11,7 +11,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.baltsarak.cryptopricealert.R
 import com.baltsarak.cryptopricealert.databinding.FragmentAccountBinding
 import com.baltsarak.cryptopricealert.presentation.CryptoApp
-import com.baltsarak.cryptopricealert.presentation.ViewModelFactory
+import com.baltsarak.cryptopricealert.presentation.models.ViewModelFactory
 import com.baltsarak.cryptopricealert.presentation.contract.CustomAction
 import com.baltsarak.cryptopricealert.presentation.contract.HasCustomAction
 import com.baltsarak.cryptopricealert.presentation.contract.HasCustomTitle

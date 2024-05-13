@@ -17,11 +17,13 @@ import dagger.Provides
 interface DataModule {
 
     @Binds
+    @ApplicationScope
     fun bindCoinRepository(impl: CoinRepositoryImpl): CoinRepository
 
     companion object {
 
         @Provides
+        @ApplicationScope
         fun provideCoinInfoDao(
             application: Application
         ): CoinInfoDao {
@@ -29,6 +31,7 @@ interface DataModule {
         }
 
         @Provides
+        @ApplicationScope
         fun provideWatchListCoinInfoDao(
             application: Application
         ): WatchListCoinInfoDao {
@@ -36,6 +39,7 @@ interface DataModule {
         }
 
         @Provides
+        @ApplicationScope
         fun provideCoinPriceHistoryDao(
             application: Application
         ): CoinPriceHistoryDao {
@@ -43,6 +47,7 @@ interface DataModule {
         }
 
         @Provides
+        @ApplicationScope
         fun provideApiService(): ApiService {
             return ApiFactory.apiService
         }

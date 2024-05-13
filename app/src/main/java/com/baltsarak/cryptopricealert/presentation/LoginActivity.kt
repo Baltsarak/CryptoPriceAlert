@@ -15,6 +15,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.baltsarak.cryptopricealert.R
 import com.baltsarak.cryptopricealert.databinding.ActivityLoginBinding
+import com.baltsarak.cryptopricealert.presentation.models.ViewModelFactory
 import com.baltsarak.cryptopricealert.presentation.models.WatchListViewModel
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.Identity

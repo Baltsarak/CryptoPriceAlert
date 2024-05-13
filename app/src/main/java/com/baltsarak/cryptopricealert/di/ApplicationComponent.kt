@@ -1,6 +1,7 @@
 package com.baltsarak.cryptopricealert.di
 
 import android.app.Application
+import com.baltsarak.cryptopricealert.presentation.CryptoApp
 import com.baltsarak.cryptopricealert.presentation.LoginActivity
 import com.baltsarak.cryptopricealert.presentation.MainActivity
 import com.baltsarak.cryptopricealert.presentation.RegisterActivity
@@ -13,7 +14,14 @@ import com.baltsarak.cryptopricealert.presentation.fragments.WatchListFragment
 import dagger.BindsInstance
 import dagger.Component
 
-@Component(modules = [DataModule::class, ViewModelModule::class])
+@ApplicationScope
+@Component(
+    modules = [
+        DataModule::class,
+        ViewModelModule::class,
+        WorkerModule::class
+    ]
+)
 interface ApplicationComponent {
 
     fun inject(activity: MainActivity)
@@ -26,6 +34,8 @@ interface ApplicationComponent {
     fun inject(fragment: CoinDetailInfoFragment)
     fun inject(fragment: AccountFragment)
     fun inject(fragment: SearchCoinsFragment)
+
+    fun inject(application: CryptoApp)
 
     @Component.Factory
     interface Factory {

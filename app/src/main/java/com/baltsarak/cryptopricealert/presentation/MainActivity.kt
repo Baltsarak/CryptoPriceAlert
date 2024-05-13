@@ -38,6 +38,7 @@ import com.baltsarak.cryptopricealert.presentation.fragments.SearchCoinsFragment
 import com.baltsarak.cryptopricealert.presentation.fragments.WatchListFragment
 import com.baltsarak.cryptopricealert.presentation.fragments.WebViewFragment
 import com.baltsarak.cryptopricealert.presentation.models.CoinListsViewModel
+import com.baltsarak.cryptopricealert.presentation.models.ViewModelFactory
 import com.google.android.material.navigation.NavigationBarView.OnItemSelectedListener
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth

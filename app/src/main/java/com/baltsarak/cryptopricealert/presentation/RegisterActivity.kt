@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.ViewModelProvider
 import com.baltsarak.cryptopricealert.databinding.ActivityRegisterBinding
+import com.baltsarak.cryptopricealert.presentation.models.ViewModelFactory
 import com.baltsarak.cryptopricealert.presentation.models.WatchListViewModel
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthResult

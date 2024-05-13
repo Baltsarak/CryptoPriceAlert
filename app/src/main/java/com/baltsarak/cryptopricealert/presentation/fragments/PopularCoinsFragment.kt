@@ -13,7 +13,7 @@ import com.baltsarak.cryptopricealert.R
 import com.baltsarak.cryptopricealert.databinding.FragmentPopularCoinsBinding
 import com.baltsarak.cryptopricealert.domain.entities.CoinInfo
 import com.baltsarak.cryptopricealert.presentation.CryptoApp
-import com.baltsarak.cryptopricealert.presentation.ViewModelFactory
+import com.baltsarak.cryptopricealert.presentation.models.ViewModelFactory
 import com.baltsarak.cryptopricealert.presentation.adapters.CoinInfoAdapter
 import com.baltsarak.cryptopricealert.presentation.contract.CustomAction
 import com.baltsarak.cryptopricealert.presentation.contract.HasCustomAction

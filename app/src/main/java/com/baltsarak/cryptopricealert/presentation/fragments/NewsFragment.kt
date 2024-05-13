@@ -12,7 +12,7 @@ import com.baltsarak.cryptopricealert.R
 import com.baltsarak.cryptopricealert.databinding.FragmentNewsBinding
 import com.baltsarak.cryptopricealert.domain.entities.News
 import com.baltsarak.cryptopricealert.presentation.CryptoApp
-import com.baltsarak.cryptopricealert.presentation.ViewModelFactory
+import com.baltsarak.cryptopricealert.presentation.models.ViewModelFactory
 import com.baltsarak.cryptopricealert.presentation.adapters.NewsAdapter
 import com.baltsarak.cryptopricealert.presentation.contract.HasCustomTitle
 import com.baltsarak.cryptopricealert.presentation.contract.navigator
